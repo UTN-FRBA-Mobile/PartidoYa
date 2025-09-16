@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun LogIn(navController: NavController){
+fun LogInScreen(navController: NavController){
     Column {
         Spacer(Modifier.size(200.dp))
         Text(text = "LOGIN")

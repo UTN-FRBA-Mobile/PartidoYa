@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.partidoya.main.HomeScreen
-import com.example.partidoya.main.LogIn
+import com.example.partidoya.main.LogInScreen
 import com.example.partidoya.ui.theme.PartidoYaTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,6 +43,11 @@ fun App() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
-        composable ("logIn" ) { LogIn(navController) }
+        composable ("logIn" ) { LogInScreen(navController) }
     }
+}
+
+@Composable
+fun BottomBar(){
+
 }
