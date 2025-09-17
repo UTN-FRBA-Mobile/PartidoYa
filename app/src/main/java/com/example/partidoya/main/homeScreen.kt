@@ -35,18 +35,13 @@ fun HomeScreen(navController: NavController){
             horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")
         Text(text = "PartidoYa!", fontSize = 50.sp, modifier = Modifier.padding(30.dp))
-        Box(modifier = Modifier.width(386.dp)
-            .height(235.dp)
-            .background(Color(0x33020202),
-                shape = RoundedCornerShape(30.dp))) {
-            Column(modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        GlassCard(width = 386, height = 235){
                 HomeButton(onClick = {}, text = "BUSCAR JUGADORES")
                 Spacer(modifier = Modifier.height(30.dp))
                 HomeButton(onClick = {}, text = "BUSCAR PARTIDOS")
-            }
+                Button(onClick = {navController.navigate("newAccount")}) { //para poder navegar a la pantalla
+                    Text(text = "NUEVA CUENTA")
+                }
         }
     }
 }
@@ -58,35 +53,19 @@ fun HomeScreenPreview(){
     Column (modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(painter = painterResource(id = R.drawable.logoapp),
-                contentDescription = "Logo de la App",
-                modifier = Modifier.size(250.dp))
-        Text(text = "PartidoYa!", fontSize = 50.sp, modifier = Modifier.padding(30.dp),
-            fontWeight = FontWeight.Black)
-        Box(modifier = Modifier.width(386.dp)
-            .height(235.dp)
-            .background(Color(0x33020202),
-                shape = RoundedCornerShape(30.dp))) {
-            Column(modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                HomeButton(onClick = {}, text = "BUSCAR JUGADORES")
-                Spacer(modifier = Modifier.height(30.dp))
-                HomeButton(onClick = {}, text = "BUSCAR PARTIDOS")
-            }
+        Image(
+            painter = painterResource(id = R.drawable.logoapp),
+            contentDescription = "Logo de la App",
+            modifier = Modifier.size(250.dp)
+        )
+        Text(
+            text = "PartidoYa!", fontSize = 50.sp, modifier = Modifier.padding(30.dp),
+            fontWeight = FontWeight.Black
+        )
+        GlassCard(width = 386, height = 235) {
+            HomeButton(onClick = {}, text = "BUSCAR JUGADORES")
+            Spacer(modifier = Modifier.height(30.dp))
+            HomeButton(onClick = {}, text = "BUSCAR PARTIDOS")
         }
-    }
-}
-
-@Composable
-fun HomeButton(text:String, onClick: ()->Unit){
-    Button(onClick = onClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color.Black),
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.width(322.dp).height(56.dp)){
-        Text(text=text, style = MaterialTheme.typography.bodyMedium)
     }
 }
