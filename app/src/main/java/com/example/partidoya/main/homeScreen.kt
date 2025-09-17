@@ -39,9 +39,6 @@ fun HomeScreen(navController: NavController){
                 HomeButton(onClick = {}, text = "BUSCAR JUGADORES")
                 Spacer(modifier = Modifier.height(30.dp))
                 HomeButton(onClick = {}, text = "BUSCAR PARTIDOS")
-                Button(onClick = {navController.navigate("newAccount")}) { //para poder navegar a la pantalla
-                    Text(text = "NUEVA CUENTA")
-                }
         }
     }
 }
