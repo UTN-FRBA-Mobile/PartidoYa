@@ -17,12 +17,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -83,6 +88,20 @@ fun LabeledInput(label: String, icon: ImageVector){
                             .height(56.dp)
                             .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
 
+    )
+}
+
+
+@Composable
+fun OutlineLabelInput(label: String, placeholder: String){
+
+    var text by remember { mutableStateOf("") }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { newValue -> text = newValue },
+        label = { Text(label) },
+        placeholder = { Text(placeholder) },
+        singleLine = false
     )
 }
 
