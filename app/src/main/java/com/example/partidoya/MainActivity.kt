@@ -17,7 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-//import com.example.partidoya.main.BottomNavigationBar
+import com.example.partidoya.main.BottomNavigationBar
 import com.example.partidoya.main.HomeScreen
 import com.example.partidoya.main.LandingPageScreen
 import com.example.partidoya.main.LogInScreen
@@ -42,7 +42,7 @@ fun App() {
     val navController = rememberNavController()
     Scaffold(containerColor = MaterialTheme.colorScheme.background, //color del background
              bottomBar = {if (shouldShowBottomBar(navController)){
-                                //BottomNavigationBar(navController)
+                                BottomNavigationBar(navController)
              } })
     { paddingValues ->
         Box(
