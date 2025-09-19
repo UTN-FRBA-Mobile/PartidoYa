@@ -34,7 +34,7 @@ fun HomeScreen(navController: NavController){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")
-        Text(text = "PartidoYa!", fontSize = 50.sp, modifier = Modifier.padding(30.dp))
+        Text(text = "PartidoYa!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(30.dp))
         GlassCard(width = 386, height = 235){
                 HomeButton(onClick = {}, text = "BUSCAR JUGADORES")
                 Spacer(modifier = Modifier.height(30.dp))

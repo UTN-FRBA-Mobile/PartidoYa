@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,11 +34,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.partidoya.R
 
 @Composable
 fun HomeButton(text:String, onClick: ()->Unit){
+
     Button(onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
@@ -63,8 +69,18 @@ fun GlassCard(width: Int, height: Int, content: @Composable ColumnScope.() -> Un
 }
 
 @Composable
+fun GlassCardTitle(title: String){
+    Text(text = title,
+        style = MaterialTheme.typography.titleMedium,
+        color = Color.White,
+        modifier = Modifier.padding(top = 30.dp))
+    Spacer(Modifier.height(70.dp))
+}
+
+@Composable
 fun LabeledInput(label: String, icon: ImageVector){
     TextField(
+        textStyle = MaterialTheme.typography.bodyMedium,
         colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
@@ -97,6 +113,7 @@ fun OutlineLabelInput(label: String, placeholder: String){
 
     var text by remember { mutableStateOf("") }
     OutlinedTextField(
+        textStyle = MaterialTheme.typography.bodyMedium,
         value = text,
         onValueChange = { newValue -> text = newValue },
         label = { Text(label) },

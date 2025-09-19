@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+//import com.example.partidoya.main.BottomNavigationBar
 import com.example.partidoya.main.HomeScreen
 import com.example.partidoya.main.LandingPageScreen
 import com.example.partidoya.main.LogInScreen
@@ -27,33 +31,43 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PartidoYaTheme {
-                Scaffold(containerColor = MaterialTheme.colorScheme.background) //color del background
-                { paddingValues ->
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                            .padding(paddingValues)
-                    ) {
-                        App()
-                    }
+                    App()
                 }
             }
         }
     }
-}
 
 @Composable
 fun App() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "landingPage") {
-        composable("home") { HomeScreen(navController) }
-        composable ("logIn" ) { LogInScreen(navController) }
-        composable ("newAccount" ) { NewAccountScreen(navController) }
-        composable ("landingPage" ) { LandingPageScreen(navController) }
-        composable ("profile" ) { ProfileScreen(navController) }
-    }
+    Scaffold(containerColor = MaterialTheme.colorScheme.background, //color del background
+             bottomBar = {if (shouldShowBottomBar(navController)){
+                                //BottomNavigationBar(navController)
+             } })
+    { paddingValues ->
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(paddingValues)
+        )
+            NavHost(navController = navController, startDestination = "landingPage") {
+                composable("home") { HomeScreen(navController) }
+                composable("logIn") { LogInScreen(navController) }
+                composable("newAccount") { NewAccountScreen(navController) }
+                composable("landingPage") { LandingPageScreen(navController) }
+                composable ("profile" ) { ProfileScreen(navController) }
+            }
+        }
 }
 
+
 @Composable
-fun BottomBar(){
+fun shouldShowBottomBar(navController: NavController): Boolean {
+    //Para que se actualize cada vez que se cambia de pantalla
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreen = navBackStackEntry?.destination?.route
+
+    val screensWithOutNavBar = listOf("logIn","newAccount","landingPage")
+
+    return !screensWithOutNavBar.contains(currentScreen)
 
 }
