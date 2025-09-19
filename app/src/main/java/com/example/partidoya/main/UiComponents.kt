@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.partidoya.ui.theme.InputModifier
+import com.example.partidoya.ui.theme.largeInputModifier
+import com.example.partidoya.ui.theme.unwrap
 
 @Composable
 fun HomeButton(text:String, onClick: ()->Unit){
@@ -49,14 +56,14 @@ fun HomeButton(text:String, onClick: ()->Unit){
 }
 
 @Composable
-fun GlassCard(width: Int, height: Int, content: @Composable ColumnScope.() -> Unit){
+fun GlassCard(width: Int, height: Int, space_between: Dp = 0.dp, content: @Composable ColumnScope.() -> Unit){
     //Permite pasar contenido dinamico para insertar en la columna
     Box(modifier = Modifier.width(width.dp)
         .height(height.dp)
         .background(Color(0x33020202),
             shape = RoundedCornerShape(30.dp))){
         Column(modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(space_between, alignment = Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
             content = content)
     }
@@ -93,15 +100,66 @@ fun LabeledInput(label: String, icon: ImageVector){
 
 
 @Composable
-fun OutlineLabelInput(label: String, placeholder: String){
+fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier){
 
     var text by remember { mutableStateOf("") }
     OutlinedTextField(
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedLabelColor = Color.White,
+            unfocusedLabelColor = Color.White,
+            focusedTrailingIconColor = Color.White,
+            unfocusedTrailingIconColor = Color.White,
+            unfocusedBorderColor = Color.White,
+            focusedBorderColor = Color.Red,
+            cursorColor = Color.Red
+
+        ),
         value = text,
         onValueChange = { newValue -> text = newValue },
         label = { Text(label) },
         placeholder = { Text(placeholder) },
-        singleLine = false
+        singleLine = true,
+        shape = RoundedCornerShape(16.dp),
+        modifier = modifier.unwrap()
+
     )
 }
 
+
+
+
+@Composable
+fun AutoCompleteInput(label: String) {
+    //TODO: Esto tiene que salir de alguna api con las localidades
+    val options = listOf("Villa Luro, CABA","Caballito, CABA","Moron, Buenos Aires")
+    var query by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    Column {
+        TextField(
+        value = query,
+        onValueChange = {
+            query = it
+            expanded = it.isNotEmpty()
+        },
+        label = { Text(label) },
+    )
+        DropdownMenu(
+            expanded= expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+           options.filter { it.contains(query,ignoreCase = false) }
+               .forEach{ option ->
+               DropdownMenuItem(
+                   text = { Text(option) },
+                   onClick = {
+                       query = option
+                       expanded = false
+                   }
+               )
+           }
+        }
+
+    }
+}

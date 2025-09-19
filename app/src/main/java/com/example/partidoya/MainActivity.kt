@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.partidoya.main.HomeScreen
 import com.example.partidoya.main.LandingPageScreen
 import com.example.partidoya.main.LogInScreen
+import com.example.partidoya.main.ModifyAccountScreen
 import com.example.partidoya.main.NewAccountScreen
 import com.example.partidoya.ui.theme.PartidoYaTheme
 
@@ -48,6 +49,7 @@ fun App() {
         composable ("logIn" ) { LogInScreen(navController) }
         composable ("newAccount" ) { NewAccountScreen(navController) }
         composable ("landingPage" ) { LandingPageScreen(navController) }
+        composable ("modifyProfile" ) { ModifyAccountScreen(navController) }
     }
 }
 
