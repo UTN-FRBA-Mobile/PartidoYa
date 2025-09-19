@@ -20,7 +20,7 @@ fun InputModifier.unwrap(): Modifier = this.modifier
 
 //NOTE: Esto tal vez tiene que tomar en cuenta las dimensiones del dispositivo
 val normalInputModifier: InputModifier = Modifier.width(322.dp)
-    .height(56.dp).asInput
+    .height(80.dp).asInput
 
 val largeInputModifier: InputModifier = Modifier.width(322.dp)
     .height(200.dp)

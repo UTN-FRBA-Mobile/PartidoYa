@@ -45,7 +45,7 @@ fun ModifyAccountScreenContent(){
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()){
 
-        GlassCard(width = 364, height = 653, space_between = 8.dp){
+        GlassCard(width = 364, height = 750, space_between = 8.dp){
             Text(text = "Completa tus datos",fontSize = 30.sp, color = Color.White)
             Spacer(Modifier.height(10.dp))
             OutlineLabelInput(label = "Nombre", placeholder = "Pepe", normalInputModifier)
@@ -53,6 +53,9 @@ fun ModifyAccountScreenContent(){
             OutlineLabelInput(label = "Nombre de usuario", placeholder = "@PepZals",normalInputModifier)
             AutoCompleteInput(label = "Ubicacion");
             OutlineLabelInput(label = "Sobre vos", placeholder = ".....", largeInputModifier)
+
+            Spacer(Modifier.height(10.dp))
+            HomeButton("Continuar", onClick = {})
         }
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,8 +19,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -39,8 +43,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.partidoya.ui.theme.InputColors
 import com.example.partidoya.ui.theme.InputModifier
 import com.example.partidoya.ui.theme.largeInputModifier
+import com.example.partidoya.ui.theme.normalInputModifier
 import com.example.partidoya.ui.theme.unwrap
 
 @Composable
@@ -100,22 +106,11 @@ fun LabeledInput(label: String, icon: ImageVector){
 
 
 @Composable
-fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier){
+fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier,){
 
     var text by remember { mutableStateOf("") }
     OutlinedTextField(
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            focusedLabelColor = Color.White,
-            unfocusedLabelColor = Color.White,
-            focusedTrailingIconColor = Color.White,
-            unfocusedTrailingIconColor = Color.White,
-            unfocusedBorderColor = Color.White,
-            focusedBorderColor = Color.Red,
-            cursorColor = Color.Red
-
-        ),
+        colors = InputColors,
         value = text,
         onValueChange = { newValue -> text = newValue },
         label = { Text(label) },
@@ -130,24 +125,35 @@ fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AutoCompleteInput(label: String) {
     //TODO: Esto tiene que salir de alguna api con las localidades
-    val options = listOf("Villa Luro, CABA","Caballito, CABA","Moron, Buenos Aires")
+    val options = listOf("Villa Luro, CABA","Caballito, CABA","Moron, Buenos Aires","Retiro, CABA","Villa Ortuza, CABA","Santa Rita, CABA")
     var query by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-    Column {
-        TextField(
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    )  {
+        OutlinedTextField(
         value = query,
+        colors = InputColors,
+        shape = RoundedCornerShape(16.dp),
         onValueChange = {
             query = it
             expanded = it.isNotEmpty()
         },
+            modifier = normalInputModifier.unwrap()
+                .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
+            singleLine = true,
         label = { Text(label) },
     )
-        DropdownMenu(
+        ExposedDropdownMenu(
             expanded= expanded,
             onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .heightIn(max = 200.dp)
         ) {
            options.filter { it.contains(query,ignoreCase = false) }
                .forEach{ option ->
@@ -162,4 +168,5 @@ fun AutoCompleteInput(label: String) {
         }
 
     }
+
 }
