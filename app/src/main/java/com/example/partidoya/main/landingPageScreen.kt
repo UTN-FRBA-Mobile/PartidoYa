@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +25,7 @@ fun LandingPageScreen(navController: NavController){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally){
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")
-        Text(text = "PartidoYa!", fontSize = 50.sp, modifier = Modifier.padding(30.dp))
+        Text(text = "PartidoYa!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(30.dp))
         GlassCard(width = 386, height = 235){
             HomeButton(onClick = {navController.navigate("logIn")}, text = "INICIAR SESIÓN")
             Spacer(modifier = Modifier.height(30.dp))

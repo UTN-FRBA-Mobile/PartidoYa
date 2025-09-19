@@ -31,8 +31,7 @@ fun LogInScreen(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()) {
         GlassCard(width = 364, height = 653) {
-            Text(text = "INICIAR SESIÓN",fontSize = 30.sp, color = Color.White)
-            Spacer(Modifier.height(100.dp))
+            GlassCardTitle("INICIAR SESIÓN")
             LabeledInput("CORREO ELECTRÓNICO", Icons.Default.Email)
             Spacer(Modifier.height(15.dp))
             LabeledInput("CONTRASEÑA", Icons.Default.Lock)
@@ -57,8 +56,7 @@ fun logInScreenPreview(){
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()) {
         GlassCard(width = 364, height = 653) {
-            Text(text = "INICIAR SESIÓN",fontSize = 30.sp, color = Color.White)
-            Spacer(Modifier.height(100.dp))
+            GlassCardTitle("INICIAR SESIÓN")
             LabeledInput("CORREO ELECTRÓNICO", Icons.Default.Email)
             Spacer(Modifier.height(15.dp))
             LabeledInput("CONTRASEÑA", Icons.Default.Lock)

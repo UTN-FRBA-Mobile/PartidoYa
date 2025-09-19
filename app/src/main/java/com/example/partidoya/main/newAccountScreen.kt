@@ -34,8 +34,7 @@ fun NewAccountScreen(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()) {
         GlassCard(width = 364, height = 653) {
-            Text(text = "CREAR CUENTA",fontSize = 30.sp, color = Color.White)
-            Spacer(Modifier.height(100.dp))
+            GlassCardTitle("CREAR CUENTA")
             LabeledInput("CORREO ELECTRÓNICO*", Icons.Default.Email)
             Spacer(Modifier.height(15.dp))
             LabeledInput("CONTRASEÑA*", Icons.Default.Lock)
@@ -65,8 +64,7 @@ fun NewAccountScreenPreview(){
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()) {
         GlassCard(width = 364, height = 653) {
-            Text(text = "CREAR CUENTA",fontSize = 30.sp, color = Color.White)
-            Spacer(Modifier.height(100.dp))
+            GlassCardTitle("CREAR CUENTA")
             LabeledInput("CORREO ELECTRÓNICO*", Icons.Default.Email)
             Spacer(Modifier.height(15.dp))
             LabeledInput("CONTRASEÑA*", Icons.Default.Lock)
