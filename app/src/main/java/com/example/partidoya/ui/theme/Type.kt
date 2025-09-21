@@ -23,6 +23,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 30.sp),
 
+    titleSmall = TextStyle( //Para titulos de partidos
+        fontFamily = holtwood,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp),
+
     bodyMedium = TextStyle( //Para botones e inputs
         fontFamily = lexend,
         fontWeight = FontWeight.Normal,
