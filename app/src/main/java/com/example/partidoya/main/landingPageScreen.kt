@@ -31,7 +31,6 @@ fun LandingPageScreen(navController: NavController){
             Spacer(modifier = Modifier.height(30.dp))
             HomeButton(onClick = {navController.navigate("newAccount")}, text = "REGISTRARSE")
         })
-        HomeButton(onClick = {navController.navigate("home")}, text = "BOTON PARA VEL LA HOME SCREEN")
     }
 }
 

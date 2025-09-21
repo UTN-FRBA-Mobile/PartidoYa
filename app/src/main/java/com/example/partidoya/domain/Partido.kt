@@ -1,14 +1,18 @@
 package com.example.partidoya.domain
 
+import java.time.LocalDate
+import java.time.LocalTime
+
 data class Partido(
-    val id: Int,
-    val formato: String,
-    val tipo: String,
+    val fecha: LocalDate,
     val dia: String,
-    val horario: String,
-    val zona: String,
+    val horario: LocalTime,
+    val duracion: Int,
+    val formato: String,
     val cancha: String,
-    val distancia: Int,
-    val jugadoresFaltantes: Int,
-    val posiciones: String
+    val zona: String,
+    //val distancia: Int,
+    val busqueda: String,
+    val jugadoresFaltantes: Int ? = null,
+    val posiciones: List<String> ? = null
 )

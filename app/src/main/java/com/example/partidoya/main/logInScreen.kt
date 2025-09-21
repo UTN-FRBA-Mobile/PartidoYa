@@ -52,7 +52,7 @@ fun LogInScreen(navController: NavController){
             Spacer(Modifier.height(50.dp))
             HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
             Spacer(Modifier.height(50.dp))
-            HomeButton("Continuar", onClick = {})
+            HomeButton("Continuar", onClick = {navController.navigate("home")})
             Spacer(Modifier.height(30.dp))
             Text(text = "¿Olvidaste tu contraseña?",
                 color = Color.White,

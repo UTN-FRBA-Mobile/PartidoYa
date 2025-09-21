@@ -58,13 +58,23 @@ fun Matches(viewModel: PartidosViewModel){
         viewModel.cargarPartidos()
     }
 
-    LazyColumn (modifier = Modifier.fillMaxSize().padding(top= 50.dp),
-                horizontalAlignment = Alignment.CenterHorizontally){
-        items(partidos) {partido ->
-                                            MatchCard(partido)
-                                            Spacer(Modifier.height(15.dp))
+    Column (verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()){
+
+        GlassCardTitle("PARTIDOS")
+
+        LazyColumn (modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally){
+            items(partidos) {partido ->
+                MatchCard(partido)
+                Spacer(Modifier.height(15.dp))
+            }
         }
+
     }
+
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O) //Necesario para el LocalTime
@@ -82,6 +92,16 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
 
+
+    //Formato para traducir los dias a español
+    val format = DateTimeFormatter.ofPattern("EEEE", Locale.forLanguageTag("es-ES"))
+
+    var diaSeleccionado = fechaSeleccionada.format(format).uppercase()
+    var completo = false
+    var datosGeneralesCompletos = duracionDefinida != "" && formatoSeleccionado != "" && busquedaSeleccionada != "" &&
+                                    zonaDefinida != "" && canchaDefinida != ""
+
+
     LaunchedEffect(cantJugadoresFalatantesDefinido) { //Se ejecuta solo cuando cambia la cant de jugadores faltantes
         posicionesSeleccionadas.clear()
         cantJugadoresFaltantes = cantJugadoresFalatantesDefinido.toIntOrNull() ?: 0
@@ -95,8 +115,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     ) {
         GlassCard({
 
-            //Formato para traducir los dias a español
-            val format = DateTimeFormatter.ofPattern("EEEE", Locale.forLanguageTag("es-ES"))
+
 
             GlassCardTitle("CREAR PARTIDO")
             Row (modifier = Modifier.fillMaxWidth()){
@@ -121,7 +140,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                             .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp))
                     ) {
                         Text(
-                            text = fechaSeleccionada.format(format).uppercase(),
+                            text = diaSeleccionado,
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White,
                             modifier = Modifier.padding(10.dp)
@@ -144,7 +163,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                 }
                 Spacer(Modifier.width(15.dp))
                 Column {
-                    LabelOverInput(label = "DURACIÓN(Hs)", onChange = { dur -> duracionDefinida = dur}, value = duracionDefinida)
+                    LabelOverInput(label = "DURACIÓN(min)", onChange = { dur -> duracionDefinida = dur}, value = duracionDefinida)
                 }
             }
             Spacer(Modifier.height(15.dp))
@@ -180,6 +199,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                         formatoSeleccionado == "FUTBOL 11",
                         { formatoSeleccionado = "FUTBOL 11" })
                 }
+            }
                 Spacer(Modifier.height(15.dp))
                 LabelOverInput(label = "CANCHA", onChange = { cancha -> canchaDefinida = cancha}, value = canchaDefinida)
                 Spacer(Modifier.height(15.dp))
@@ -206,6 +226,13 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                 }
                 Spacer(Modifier.height(15.dp))
                 if (busquedaSeleccionada == "JUGADORES") {
+
+                    completo= datosGeneralesCompletos &&
+                                cantJugadoresFalatantesDefinido != "" &&
+                                !posicionesSeleccionadas.any { posicion -> posicion == "" }
+
+
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "JUGADORES FALTANTES",
@@ -238,8 +265,59 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                                 }
                             }
                         }
+                }else if(busquedaSeleccionada == "EQUIPO"){
+                    completo = datosGeneralesCompletos
                 }
-            }
+
+                Button(colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF3C7440),
+                            contentColor = Color.White),
+                        enabled = completo,
+                        onClick = {
+                            if (busquedaSeleccionada == "JUGADORES") {
+                                val listaAux = posicionesSeleccionadas.toList() //Para persistir la informacion cuando se reinicia el estado
+                                    viewModel.crearPartido(
+                                        fechaSeleccionada,
+                                        diaSeleccionado,
+                                        horarioSeleccionado,
+                                        duracionDefinida.toIntOrNull() ?: 0,
+                                        formatoSeleccionado,
+                                        busquedaSeleccionada,
+                                        canchaDefinida,
+                                        zonaDefinida,
+                                        cantJugadoresFaltantes,
+                                        listaAux
+                                    )
+
+                            } else {
+
+                                    viewModel.crearPartido(
+                                        fechaSeleccionada,
+                                        diaSeleccionado,
+                                        horarioSeleccionado,
+                                        duracionDefinida.toIntOrNull() ?: 0,
+                                        formatoSeleccionado,
+                                        busquedaSeleccionada,
+                                        canchaDefinida,
+                                        zonaDefinida
+                                    )
+
+                            }
+
+                            fechaSeleccionada = LocalDate.now()
+                            horarioSeleccionado = LocalTime.of(0,0)
+                            duracionDefinida = ""
+                            formatoSeleccionado = ""
+                            busquedaSeleccionada = ""
+                            canchaDefinida = ""
+                            zonaDefinida = ""
+                            cantJugadoresFalatantesDefinido = ""
+                        }
+
+
+                ) {
+                    Text(text = "CREAR", style = MaterialTheme.typography.bodyMedium)
+                }
         })
     }
 }

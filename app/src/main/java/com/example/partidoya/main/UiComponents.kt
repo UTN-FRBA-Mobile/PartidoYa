@@ -171,7 +171,8 @@ fun OutlineLabelInput(label: String, placeholder: String){
 
 @Composable
 fun MatchCard(partido: Partido){
-    val titulo = partido.formato + " " + partido.tipo
+    val titulo = "BUSCANDO ${partido.busqueda} PARA ${partido.formato}"
+
     Box(modifier = Modifier
         .width(386.dp)
         .background(
@@ -187,28 +188,41 @@ fun MatchCard(partido: Partido){
                 color = Color.White,
                 style = MaterialTheme.typography.titleSmall)
             Spacer(Modifier.height(30.dp))
-            Row (modifier = Modifier.fillMaxWidth()){
-                MediumText("DIA: " + partido.dia)
-                Spacer(Modifier.height(5.dp))
+            Row (modifier = Modifier.fillMaxWidth()) {
+                MediumText("FECHA: " + partido.fecha)
                 Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
-                MediumText("HORARIO: " + partido.horario)
-
-
+                MediumText("DIA: " + partido.dia)
             }
             Spacer(Modifier.height(5.dp))
-            MediumText("ZONA: " + partido.zona)
+            Row (modifier = Modifier.fillMaxWidth()){
+                MediumText("HORARIO: " + partido.horario)
+                Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
+                MediumText("DURACIÓN: " + partido.duracion)
+            }
             Spacer(Modifier.height(5.dp))
             MediumText("CANCHA: " + partido.cancha)
             Spacer(Modifier.height(5.dp))
-            MediumText("DISTANCIA: " + partido.distancia + "KM")
+            MediumText("ZONA: " + partido.zona)
             Spacer(Modifier.height(5.dp))
-            MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
-            Spacer(Modifier.height(5.dp))
-            MediumText("POSICIONES: " + partido.posiciones)
-            Spacer(Modifier.height(40.dp))
+            //MediumText("DISTANCIA: " + partido.distancia + "KM")
+            //Spacer(Modifier.height(5.dp))
+            if(partido.busqueda == "JUGADORES") {
+                MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
+                Spacer(Modifier.height(5.dp))
+
+
+                MediumText("POSICIONES: " + partido.posiciones?.joinToString(", "))
+                Spacer(Modifier.height(40.dp))
+            }
             Row (modifier = Modifier.fillMaxWidth(),
                 Arrangement.Center){
-                MatchButton("SUMARME",Color(0xFF3C7440), Color.White)
+                var texto: String
+                if(partido.busqueda == "JUGADORES")
+                   texto = "SUMARME"
+                else
+                    texto = "CONFIRMAR"
+
+                MatchButton(texto,Color(0xFF3C7440), Color.White)
                 Spacer(Modifier.weight(1F))
                 MatchButton("DESCARTAR",Color(0xFFA93838), Color.White)
             }
