@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,9 +54,9 @@ fun ProfileScreen(navController: NavController){
 fun Container(nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String){
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()) {
+        modifier = Modifier.fillMaxSize().offset(y = (-25).dp).padding(16.dp)) {
         GlassCard({
-            Column (verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column (verticalArrangement = Arrangement.spacedBy(30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box (modifier = Modifier
                     .size(200.dp),
                     contentAlignment = Alignment.Center) {
@@ -65,15 +66,43 @@ fun Container(nombre: String, usuario: String, posicion: String, ubicacion: Stri
                 Text(text = nombre, fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
                 Text(text = usuario, fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
             }
-            Spacer(Modifier.height(50.dp))
-            Row (
+            Spacer(Modifier.height(30.dp))
+
+            // First version of icons + labels (too much text to be on the same line)
+            /*Row (
                 modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconLabel(posicion, Icons.Default.Star)
                 IconLabel(ubicacion, Icons.Default.LocationOn)
                 IconLabel(modoJuego, Icons.Default.Face)
+            }*/
+
+            // Second version with 2 lines
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                Row( // première ligne avec 2 champs
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconLabel(posicion, Icons.Default.Star)
+                    Spacer(modifier = Modifier.width(30.dp)) // space between the 2 IconLabels
+                    IconLabel(ubicacion, Icons.Default.LocationOn)
+                }
+
+                Spacer(Modifier.height(8.dp)) // space between the lines
+
+                Row( // deuxième ligne avec le dernier champ
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconLabel(modoJuego, Icons.Default.Face)
+                }
             }
+
             Spacer(Modifier.height(20.dp))
             Column(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
