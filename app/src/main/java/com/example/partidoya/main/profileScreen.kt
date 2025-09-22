@@ -54,7 +54,7 @@ fun Container(nombre: String, usuario: String, posicion: String, ubicacion: Stri
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()) {
-        GlassCard({
+        GlassCard(){
             Column (verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box (modifier = Modifier
                     .size(200.dp),
@@ -84,7 +84,7 @@ fun Container(nombre: String, usuario: String, posicion: String, ubicacion: Stri
                     }
                 }
             }
-        })
+        }
     }
 }
 

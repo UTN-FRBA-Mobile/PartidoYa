@@ -28,11 +28,11 @@ fun HomeScreen(navController: NavController){
             horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")
         Text(text = "PartidoYa!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(30.dp))
-        GlassCard({
+        GlassCard(){
             HomeButton(onClick = {navController.navigate("createMatch")}, text = "BUSCAR JUGADORES")
             Spacer(modifier = Modifier.height(30.dp))
             HomeButton(onClick = {navController.navigate("matches")}, text = "BUSCAR PARTIDOS")
-        })
+        }
     }
 }
 
@@ -52,10 +52,10 @@ fun HomeScreenPreview(){
             text = "PartidoYa!", fontSize = 50.sp, modifier = Modifier.padding(30.dp),
             fontWeight = FontWeight.Black
         )
-        GlassCard({
+        GlassCard(){
             HomeButton(onClick = {}, text = "BUSCAR JUGADORES")
             Spacer(modifier = Modifier.height(30.dp))
             HomeButton(onClick = {}, text = "BUSCAR PARTIDOS")
-        })
+        }
     }
 }

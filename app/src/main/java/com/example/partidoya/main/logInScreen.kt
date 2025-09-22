@@ -34,7 +34,7 @@ fun LogInScreen(navController: NavController){
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()) {
-        GlassCard({
+        GlassCard(){
             GlassCardTitle("INICIAR SESIÓN")
             LabelOverInput(
                 label = "CORREO ELECTRÓNICO",
@@ -59,6 +59,6 @@ fun LogInScreen(navController: NavController){
                 fontStyle = FontStyle.Italic,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable(onClick = {}))
-        })
+        }
     }
 }

@@ -26,11 +26,11 @@ fun LandingPageScreen(navController: NavController){
             horizontalAlignment = Alignment.CenterHorizontally){
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")
         Text(text = "PartidoYa!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(30.dp))
-        GlassCard({
+        GlassCard(){
             HomeButton(onClick = {navController.navigate("logIn")}, text = "INICIAR SESIÓN")
             Spacer(modifier = Modifier.height(30.dp))
             HomeButton(onClick = {navController.navigate("newAccount")}, text = "REGISTRARSE")
-        })
+        }
     }
 }
 
@@ -41,10 +41,10 @@ fun LandingPageScreenPreview(){
         horizontalAlignment = Alignment.CenterHorizontally){
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")
         Text(text = "PartidoYa!", fontSize = 50.sp, modifier = Modifier.padding(30.dp))
-        GlassCard({
+        GlassCard(){
             HomeButton(onClick = {}, text = "INICIAR SESIÓN")
             Spacer(modifier = Modifier.height(30.dp))
             HomeButton(onClick = {}, text = "REGISTRARSE")
-        })
+        }
     }
 }
