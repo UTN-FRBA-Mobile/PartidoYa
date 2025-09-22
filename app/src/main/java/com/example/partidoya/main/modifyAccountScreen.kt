@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +35,7 @@ fun ModifyAccountScreenContent(navController: NavController?  = null){
         modifier = Modifier.fillMaxSize()){
 
         GlassCard(spaceBetween = 8.dp){
-            Text(text = "Completa tus datos",fontSize = 30.sp, color = Color.White)
+            Text(text = "Completa tus datos",fontSize = 30.sp, color = Color.White, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(10.dp))
             OutlineLabelInput(label = "Nombre", placeholder = "Pepe", normalInputModifier)
             OutlineLabelInput(label = "Apellido", placeholder = "Gonzales",normalInputModifier)

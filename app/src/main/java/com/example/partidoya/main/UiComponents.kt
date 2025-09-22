@@ -180,7 +180,7 @@ fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier
         textStyle = MaterialTheme.typography.bodyMedium,
         value = text,
         onValueChange = { newValue -> text = newValue },
-        label = { Text(label) },
+        label = { Text(label, style = MaterialTheme.typography.bodyMedium) },
         placeholder = { Text(placeholder) },
         singleLine = true,
         shape = RoundedCornerShape(16.dp),
@@ -221,7 +221,7 @@ fun AutoCompleteInput(label: String) {
             modifier = normalInputModifier.unwrap()
                 .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
             singleLine = true,
-            label = { Text(label) },
+            label = { Text(label, style = MaterialTheme.typography.bodyMedium) },
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -233,7 +233,7 @@ fun AutoCompleteInput(label: String) {
             options.filter { it.contains(query, ignoreCase = false) }
                 .forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option) },
+                        text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
                         onClick = {
                             query = option
                             expanded = false
