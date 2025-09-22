@@ -20,7 +20,7 @@ import com.example.partidoya.ui.theme.normalInputModifier
 
 @Composable
 fun ModifyAccountScreen(navController: NavController){
- ModifyAccountScreenContent()
+ ModifyAccountScreenContent(navController)
 }
 @Preview
 @Composable
@@ -28,7 +28,7 @@ fun ModifyAccountScreenPreview(){
     ModifyAccountScreenContent()
 }
 @Composable
-fun ModifyAccountScreenContent(){
+fun ModifyAccountScreenContent(navController: NavController?  = null){
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()){
@@ -43,7 +43,7 @@ fun ModifyAccountScreenContent(){
             OutlineLabelInput(label = "Sobre vos", placeholder = ".....", largeInputModifier)
 
             Spacer(Modifier.height(10.dp))
-            HomeButton("Continuar", onClick = {})
+            HomeButton("Continuar", onClick = {navController?.navigate("home")?: Unit})
         }
 
     }

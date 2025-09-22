@@ -38,16 +38,16 @@ fun BottomNavigationBar(navController: NavController){
                 { painterResource(id = R.drawable.logomispartidos) },
                 contentDescription = "homeIcon",
                 modifier = Modifier.align(Alignment.CenterVertically).padding(top=10.dp)) },
-            selected = currentDestination == "",
-            onClick = {navController.navigate("")},
+            selected = currentDestination == "matches",
+            onClick = {navController.navigate("matches")},
             colors = NavigationBarItemColors(
                 selectedIconColor = Color.Gray,
                 unselectedIconColor = Color.White,
                 selectedTextColor = Color.Gray,
                 unselectedTextColor = Color.White,
-                selectedIndicatorColor = Color.Gray,
-                disabledIconColor = Color.White,
-                disabledTextColor = Color.White
+                selectedIndicatorColor = Color.Transparent,
+                disabledIconColor = Color.Transparent,
+                disabledTextColor = Color.Transparent
             )
         )
         NavigationBarItem(
@@ -72,22 +72,22 @@ fun BottomNavigationBar(navController: NavController){
         )
         NavigationBarItem(
             icon = { Image(painter =
-                if (currentDestination == "account")
+                if (currentDestination == "profile")
                 { painterResource(id = R.drawable.logoperfilseleccionado) }
                 else
                 { painterResource(id = R.drawable.logoperfil) },
                 contentDescription = "accountIcon",
                 modifier = Modifier.align(Alignment.CenterVertically).padding(top=10.dp)) },
-            selected = currentDestination == "account" ,
-            onClick = {navController.navigate("account")},
+            selected = currentDestination == "profile" ,
+            onClick = {navController.navigate("profile")},
             colors = NavigationBarItemColors(
                 selectedIconColor = Color.Gray,
                 unselectedIconColor = Color.White,
                 selectedTextColor = Color.Gray,
                 unselectedTextColor = Color.White,
-                selectedIndicatorColor = Color.Gray,
-                disabledIconColor = Color.White,
-                disabledTextColor = Color.White
+                selectedIndicatorColor = Color.Transparent,
+                disabledIconColor = Color.Transparent,
+                disabledTextColor = Color.Transparent
             )
         )
     }
