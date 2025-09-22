@@ -6,66 +6,53 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
 fun LogInScreen(navController: NavController){
-    Column (verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()) {
-        GlassCard(width = 364, height = 653) {
-            Text(text = "INICIAR SESIÓN",fontSize = 30.sp, color = Color.White)
-            Spacer(Modifier.height(100.dp))
-            LabeledInput("CORREO ELECTRÓNICO", Icons.Default.Email)
-            Spacer(Modifier.height(15.dp))
-            LabeledInput("CONTRASEÑA", Icons.Default.Lock)
-            Spacer(Modifier.height(50.dp))
-            HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
-            Spacer(Modifier.height(50.dp))
-            HomeButton("Continuar", onClick = {})
-            Spacer(Modifier.height(30.dp))
-            Text(text = "¿Olvidaste tu contraseña?",
-                color = Color.White,
-                fontStyle = FontStyle.Italic,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable(onClick = {}))
-        }
-    }
-}
+    var correoElectronico by rememberSaveable { mutableStateOf("") }
+    var contrasenia by remember { mutableStateOf("") }
 
-@Preview
-@Composable
-fun logInScreenPreview(){
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()) {
-        GlassCard(width = 364, height = 653) {
-            Text(text = "INICIAR SESIÓN",fontSize = 30.sp, color = Color.White)
-            Spacer(Modifier.height(100.dp))
-            LabeledInput("CORREO ELECTRÓNICO", Icons.Default.Email)
+        GlassCard(){
+            GlassCardTitle("INICIAR SESIÓN")
+            LabelOverInput(
+                label = "CORREO ELECTRÓNICO",
+                icon = Icons.Default.Email,
+                onChange = { mail -> correoElectronico = mail},
+                value = correoElectronico
+            )
             Spacer(Modifier.height(15.dp))
-            LabeledInput("CONTRASEÑA", Icons.Default.Lock)
+            LabelOverInput(
+                label = "CONTRASEÑA",
+                icon = Icons.Default.Lock,
+                onChange = { cont -> contrasenia = cont},
+                value = contrasenia
+            )
             Spacer(Modifier.height(50.dp))
             HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
             Spacer(Modifier.height(50.dp))
-            HomeButton("Continuar", onClick = {})
+            HomeButton("Continuar", onClick = {navController.navigate("home")})
             Spacer(Modifier.height(30.dp))
             Text(text = "¿Olvidaste tu contraseña?",
                 color = Color.White,

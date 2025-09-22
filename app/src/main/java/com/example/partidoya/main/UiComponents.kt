@@ -6,15 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -28,8 +28,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,36 +46,54 @@ import com.example.partidoya.ui.theme.InputModifier
 import com.example.partidoya.ui.theme.largeInputModifier
 import com.example.partidoya.ui.theme.normalInputModifier
 import com.example.partidoya.ui.theme.unwrap
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.example.partidoya.domain.Partido
 
 @Composable
 fun HomeButton(text:String, onClick: ()->Unit){
+
     Button(onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color.Black),
         shape = RoundedCornerShape(10.dp),
-        modifier = Modifier.width(322.dp).height(56.dp)){
+        modifier = Modifier
+            .width(322.dp)
+            .height(56.dp)){
         Text(text=text, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
 @Composable
-fun GlassCard(width: Int, height: Int, space_between: Dp = 0.dp, content: @Composable ColumnScope.() -> Unit){
+
+fun GlassCard(spaceBetween: Dp = 0.dp,content: @Composable ColumnScope.() -> Unit){
     //Permite pasar contenido dinamico para insertar en la columna
-    Box(modifier = Modifier.width(width.dp)
-        .height(height.dp)
-        .background(Color(0x33020202),
-            shape = RoundedCornerShape(30.dp))){
-        Column(modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(space_between, alignment = Alignment.CenterVertically),
+    Box(modifier = Modifier
+        .background(
+            Color(0x33020202),
+            shape = RoundedCornerShape(30.dp)
+        )){
+        Column(modifier = Modifier.padding(30.dp),
+            verticalArrangement = Arrangement.spacedBy(spaceBetween, alignment = Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
             content = content)
     }
 }
 
 @Composable
+fun GlassCardTitle(title: String){
+    Text(text = title,
+        style = MaterialTheme.typography.titleMedium,
+        color = Color.White,
+        modifier = Modifier.padding(top = 30.dp))
+    Spacer(Modifier.height(70.dp))
+}
+
+@Composable
 fun LabeledInput(label: String, icon: ImageVector){
     TextField(
+        textStyle = MaterialTheme.typography.bodyMedium,
         colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
@@ -97,13 +113,63 @@ fun LabeledInput(label: String, icon: ImageVector){
                 contentDescription = "Password icon"
             )
         },
-        modifier = Modifier.width(322.dp)
-                            .height(56.dp)
-                            .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
+        modifier = Modifier
+            .width(322.dp)
+            .height(56.dp)
+            .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
 
     )
 }
 
+@Composable
+fun LabelOverInput(
+    label: String? = null,
+    icon: ImageVector? = null,
+    onChange: (String) -> Unit,
+    value: String
+){
+    Column {
+        if(label!=null) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White
+            )
+        }
+        Spacer(Modifier.height(15.dp))
+        TextField(
+            textStyle = MaterialTheme.typography.bodyMedium,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White,
+                focusedTrailingIconColor = Color.White,
+                unfocusedTrailingIconColor = Color.White,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+
+            ),
+            value = value,
+            onValueChange = onChange,
+            singleLine = true,
+            trailingIcon =
+                if(icon != null) {
+                    {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = "Password icon"
+                        )
+                    }
+                }else null,
+            modifier = Modifier
+                .width(322.dp)
+                .height(56.dp)
+                .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
+
+            )
+    }
+}
 
 @Composable
 fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier,){
@@ -111,6 +177,7 @@ fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier
     var text by remember { mutableStateOf("") }
     OutlinedTextField(
         colors = InputColors,
+        textStyle = MaterialTheme.typography.bodyMedium,
         value = text,
         onValueChange = { newValue -> text = newValue },
         label = { Text(label) },
@@ -129,44 +196,131 @@ fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier
 @Composable
 fun AutoCompleteInput(label: String) {
     //TODO: Esto tiene que salir de alguna api con las localidades
-    val options = listOf("Villa Luro, CABA","Caballito, CABA","Moron, Buenos Aires","Retiro, CABA","Villa Ortuza, CABA","Santa Rita, CABA")
+    val options = listOf(
+        "Villa Luro, CABA",
+        "Caballito, CABA",
+        "Moron, Buenos Aires",
+        "Retiro, CABA",
+        "Villa Ortuza, CABA",
+        "Santa Rita, CABA"
+    )
     var query by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
-    )  {
+    ) {
         OutlinedTextField(
-        value = query,
-        colors = InputColors,
-        shape = RoundedCornerShape(16.dp),
-        onValueChange = {
-            query = it
-            expanded = it.isNotEmpty()
-        },
+            value = query,
+            colors = InputColors,
+            shape = RoundedCornerShape(16.dp),
+            onValueChange = {
+                query = it
+                expanded = it.isNotEmpty()
+            },
             modifier = normalInputModifier.unwrap()
                 .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
             singleLine = true,
-        label = { Text(label) },
-    )
+            label = { Text(label) },
+        )
         ExposedDropdownMenu(
-            expanded= expanded,
+            expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .heightIn(max = 200.dp)
-        ) {
-           options.filter { it.contains(query,ignoreCase = false) }
-               .forEach{ option ->
-               DropdownMenuItem(
-                   text = { Text(option) },
-                   onClick = {
-                       query = option
-                       expanded = false
-                   }
-               )
-           }
+        )
+        {
+            options.filter { it.contains(query, ignoreCase = false) }
+                .forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            query = option
+                            expanded = false
+                        }
+                    )
+                }
+
         }
 
     }
+}
 
+@Composable
+fun MatchCard(partido: Partido){
+    val titulo = "BUSCANDO ${partido.busqueda} PARA ${partido.formato}"
+
+    Box(modifier = Modifier
+        .width(386.dp)
+        .background(
+            Color(0x33020202),
+            shape = RoundedCornerShape(30.dp)
+        )){
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)){
+            Text(text = titulo,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                style = MaterialTheme.typography.titleSmall)
+            Spacer(Modifier.height(30.dp))
+            Row (modifier = Modifier.fillMaxWidth()) {
+                MediumText("FECHA: " + partido.fecha)
+                Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
+                MediumText("DIA: " + partido.dia)
+            }
+            Spacer(Modifier.height(5.dp))
+            Row (modifier = Modifier.fillMaxWidth()){
+                MediumText("HORARIO: " + partido.horario)
+                Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
+                MediumText("DURACIÓN: " + partido.duracion)
+            }
+            Spacer(Modifier.height(5.dp))
+            MediumText("CANCHA: " + partido.cancha)
+            Spacer(Modifier.height(5.dp))
+            MediumText("ZONA: " + partido.zona)
+            Spacer(Modifier.height(5.dp))
+            //MediumText("DISTANCIA: " + partido.distancia + "KM")
+            //Spacer(Modifier.height(5.dp))
+            if(partido.busqueda == "JUGADORES") {
+                MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
+                Spacer(Modifier.height(5.dp))
+
+
+                MediumText("POSICIONES: " + partido.posiciones?.joinToString(", "))
+                Spacer(Modifier.height(40.dp))
+            }
+            Row (modifier = Modifier.fillMaxWidth(),
+                Arrangement.Center){
+                var texto: String
+                if(partido.busqueda == "JUGADORES")
+                   texto = "SUMARME"
+                else
+                    texto = "CONFIRMAR"
+
+                MatchButton(texto,Color(0xFF3C7440), Color.White)
+                Spacer(Modifier.weight(1F))
+                MatchButton("DESCARTAR",Color(0xFFA93838), Color.White)
+            }
+        }
+    }
+}
+
+@Composable
+fun MediumText(text: String){
+    Text(text = text,style = MaterialTheme.typography.bodyMedium, color = Color.White)
+}
+
+@Composable
+fun MatchButton(text: String, containerColor: Color, contentColor: Color){
+    Button(modifier = Modifier
+        .width(169.dp)
+        .height(49.dp),
+            onClick = {},
+            colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor)){
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+    }
 }

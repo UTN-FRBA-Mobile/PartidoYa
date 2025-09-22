@@ -8,12 +8,28 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import com.example.partidoya.R
 
-//val lexendFont = FontFamily(Font(R.font.lexend))
+val lexend = FontFamily(Font(R.font.lexendvariable, FontWeight.Normal))
+val holtwood = FontFamily(Font(R.font.holtwoodonescregular,FontWeight.Normal))
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+    titleLarge = TextStyle( //Para titulo de la app
+        fontFamily = holtwood,
+        fontWeight = FontWeight.Normal,
+        fontSize = 40.sp),
+
+    titleMedium = TextStyle( //Para titulos de tarjetas
+        fontFamily = holtwood,
+        fontWeight = FontWeight.Normal,
+        fontSize = 30.sp),
+
+    titleSmall = TextStyle( //Para titulos de partidos
+        fontFamily = holtwood,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp),
+
+    bodyMedium = TextStyle( //Para botones e inputs
+        fontFamily = lexend,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
