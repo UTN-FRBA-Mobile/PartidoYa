@@ -113,7 +113,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp).verticalScroll(scrollState)
     ) {
-        GlassCard({
+        GlassCard(){
 
 
 
@@ -318,7 +318,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                 ) {
                     Text(text = "CREAR", style = MaterialTheme.typography.bodyMedium)
                 }
-        })
+        }
     }
 }
 

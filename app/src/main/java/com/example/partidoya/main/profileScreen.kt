@@ -54,8 +54,9 @@ fun ProfileScreen(navController: NavController){
 fun Container(nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String){
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
+
         modifier = Modifier.fillMaxSize().offset(y = (-25).dp).padding(16.dp)) {
-        GlassCard({
+        GlassCard(){
             Column (verticalArrangement = Arrangement.spacedBy(30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box (modifier = Modifier
                     .size(200.dp),
@@ -113,7 +114,7 @@ fun Container(nombre: String, usuario: String, posicion: String, ubicacion: Stri
                     }
                 }
             }
-        })
+        }
     }
 }
 

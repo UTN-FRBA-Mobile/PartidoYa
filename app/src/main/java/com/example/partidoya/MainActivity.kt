@@ -25,6 +25,7 @@ import com.example.partidoya.main.CreateMatch
 import com.example.partidoya.main.HomeScreen
 import com.example.partidoya.main.LandingPageScreen
 import com.example.partidoya.main.LogInScreen
+import com.example.partidoya.main.ModifyAccountScreen
 import com.example.partidoya.main.Matches
 import com.example.partidoya.main.NewAccountScreen
 import com.example.partidoya.main.ProfileScreen
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
     val partidosViewModel: PartidosViewModel = viewModel()
     val navController = rememberNavController()
+
     Scaffold(containerColor = MaterialTheme.colorScheme.background, //color del background
              bottomBar = {if (shouldShowBottomBar(navController)){
                                 BottomNavigationBar(navController)
@@ -66,6 +68,7 @@ fun App() {
                 composable("profile" ) { ProfileScreen(navController) }
                 composable("matches") { Matches(partidosViewModel) }
                 composable("createMatch") { CreateMatch(partidosViewModel) }
+                composable ("modifyProfile" ) { ModifyAccountScreen(navController) }
             }
         }
 }
