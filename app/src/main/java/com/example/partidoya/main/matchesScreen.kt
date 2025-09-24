@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.partidoya.domain.Cancha
 import com.example.partidoya.viewModels.PartidosViewModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -53,10 +54,6 @@ import java.util.Locale
 @Composable
 fun Matches(viewModel: PartidosViewModel){
     val partidos by viewModel.partidosIncompletos.observeAsState(emptyList())
-
-    LaunchedEffect(Unit){ //Se actualizan los partidos cada vez que se entra a la pagina
-        viewModel.cargarPartidos()
-    }
 
     Column (verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,8 +83,8 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     var formatoSeleccionado by remember { mutableStateOf("") }
     var busquedaSeleccionada by remember { mutableStateOf("") }
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
-    var canchaDefinida by remember { mutableStateOf("") }
-    var zonaDefinida by remember { mutableStateOf("") }
+    var canchaDefinida by remember { mutableStateOf<Cancha?>(null) }
+    var barrioDefinido by remember { mutableStateOf("") }
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
@@ -99,7 +96,16 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     var diaSeleccionado = fechaSeleccionada.format(format).uppercase()
     var completo = false
     var datosGeneralesCompletos = duracionDefinida != "" && formatoSeleccionado != "" && busquedaSeleccionada != "" &&
-                                    zonaDefinida != "" && canchaDefinida != ""
+                                    barrioDefinido != "" && canchaDefinida != null
+
+    LaunchedEffect(Unit) { //Se ejecuta una unica vez al cargar la pantalla
+        viewModel.cargarCanchas()
+    }
+
+    LaunchedEffect(barrioDefinido) { //Se ejecuta solo cuando cambia el barrio
+        viewModel.canchasPorBarrio(barrioDefinido)
+        canchaDefinida = null
+    }
 
 
     LaunchedEffect(cantJugadoresFalatantesDefinido) { //Se ejecuta solo cuando cambia la cant de jugadores faltantes
@@ -114,9 +120,6 @@ fun CreateMatch(viewModel: PartidosViewModel) {
         modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp).verticalScroll(scrollState)
     ) {
         GlassCard(){
-
-
-
             GlassCardTitle("CREAR PARTIDO")
             Row (modifier = Modifier.fillMaxWidth()){
                 Column{
@@ -201,10 +204,22 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                 }
             }
                 Spacer(Modifier.height(15.dp))
-                LabelOverInput(label = "CANCHA", onChange = { cancha -> canchaDefinida = cancha}, value = canchaDefinida)
                 Spacer(Modifier.height(15.dp))
-                LabelOverInput(label = "ZONA", onChange = { zona -> zonaDefinida = zona}, value = zonaDefinida)
+                LabelOverInput(label = "BARRIO", onChange = { barrio -> barrioDefinido = barrio}, value = barrioDefinido)
                 Spacer(Modifier.height(15.dp))
+
+                //LabelOverInput(label = "CANCHA", onChange = { cancha -> canchaDefinida = cancha}, value = canchaDefinida)
+                Text(
+                    text = "CANCHA",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Left
+                )
+                Spacer(Modifier.height(10.dp))
+                DropDownFootballFields(viewModel = viewModel, seleccion = canchaDefinida, onClick =  { cancha -> canchaDefinida = cancha})
+
+                 Spacer(Modifier.height(15.dp))
                 Text(
                     text = "BUSCAR",
                     modifier = Modifier.fillMaxWidth(),
@@ -275,7 +290,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                         enabled = completo,
                         onClick = {
                             if (busquedaSeleccionada == "JUGADORES") {
-                                val listaAux = posicionesSeleccionadas.toList() //Para persistir la informacion cuando se reinicia el estado
+                                    val listaAux = posicionesSeleccionadas.toList() //Para persistir la informacion cuando se reinicia el estado
                                     viewModel.crearPartido(
                                         fechaSeleccionada,
                                         diaSeleccionado,
@@ -284,7 +299,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                                         formatoSeleccionado,
                                         busquedaSeleccionada,
                                         canchaDefinida,
-                                        zonaDefinida,
+                                        barrioDefinido,
                                         cantJugadoresFaltantes,
                                         listaAux
                                     )
@@ -299,7 +314,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                                         formatoSeleccionado,
                                         busquedaSeleccionada,
                                         canchaDefinida,
-                                        zonaDefinida
+                                        barrioDefinido
                                     )
 
                             }
@@ -309,8 +324,8 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                             duracionDefinida = ""
                             formatoSeleccionado = ""
                             busquedaSeleccionada = ""
-                            canchaDefinida = ""
-                            zonaDefinida = ""
+                            canchaDefinida = null
+                            barrioDefinido = ""
                             cantJugadoresFalatantesDefinido = ""
                         }
 
@@ -318,6 +333,36 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                 ) {
                     Text(text = "CREAR", style = MaterialTheme.typography.bodyMedium)
                 }
+        }
+    }
+}
+
+@Composable
+fun DropDownFootballFields(viewModel: PartidosViewModel, seleccion: Cancha?, onClick: (Cancha) -> Unit) {
+    val canchas = viewModel.canchasFiltradasPorBarrio.value
+
+    var expanded by remember { mutableStateOf(false) } //si se expandió o no
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        DropdownButton(seleccion?.nombre ?: "-", { expanded = true })
+
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            canchas?.forEach { cancha ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = cancha.nombre,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    onClick = {
+                        onClick(cancha)
+                        expanded = false
+                    })
+
+            }
+
+
         }
     }
 }

@@ -277,9 +277,9 @@ fun MatchCard(partido: Partido){
                 MediumText("DURACIÓN: " + partido.duracion)
             }
             Spacer(Modifier.height(5.dp))
-            MediumText("CANCHA: " + partido.cancha)
+            MediumText("CANCHA: " + partido.cancha.nombre)
             Spacer(Modifier.height(5.dp))
-            MediumText("ZONA: " + partido.zona)
+            MediumText("ZONA: " + partido.barrio)
             Spacer(Modifier.height(5.dp))
             //MediumText("DISTANCIA: " + partido.distancia + "KM")
             //Spacer(Modifier.height(5.dp))

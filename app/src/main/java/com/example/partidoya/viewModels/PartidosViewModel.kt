@@ -1,50 +1,74 @@
 package com.example.partidoya.viewModels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.partidoya.Service.RetrofitClient
+import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.Partido
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 class PartidosViewModel() : ViewModel() {
     private val _partidosIncompletos: MutableLiveData<List<Partido>> = MutableLiveData(emptyList())
     val partidosIncompletos: LiveData<List<Partido>> = _partidosIncompletos
 
+    private val _canchas: MutableLiveData<List<Cancha>> = MutableLiveData(emptyList())
+    val canchas: LiveData<List<Cancha>> = _canchas
 
-    fun cargarPartidos() { //Aca deberia consultarse el almacenamiento
-       /* val p1 = Partido(1,"FUTBOL 5","Entre amigos","Lunes","18:00","Caballito","ATENEO FUTBOL", 5,2,"Arquero, Defensor")
-        val p2 = Partido(2,"FUTBOL 11","Torneo","Martes","19:00","Quilmes","ATENEO FUTBOL", 10,2,"-")
-        val p3 = Partido(3,"FUTBOL 7","Entre amigos","Jueves","22:00","Recoleta","ATENEO FUTBOL", 4,1,"Defensor")
-        val p4 = Partido(1,"FUTBOL 5","Serio","Lunes","18:00","Caballito","ATENEO FUTBOL", 5,2,"Arquero, Defensor")
-        val p5 = Partido(2,"FUTBOL 11","Torneo","Martes","19:00","Quilmes","ATENEO FUTBOL", 10,2,"-")
-        val p6 = Partido(3,"FUTBOL 7","Entre amigos","Jueves","22:00","Recoleta","ATENEO FUTBOL", 4,1,"Defensor")
+    private val _canchasFiltradasPorBarrio: MutableLiveData<List<Cancha>> = MutableLiveData(emptyList())
+    val canchasFiltradasPorBarrio: LiveData<List<Cancha>> = _canchasFiltradasPorBarrio
 
-        _partidosIncompletos.value = listOf(p1,p2,p3,p4,p5,p6)*/
+
+    fun cargarCanchas(){
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                val response = RetrofitClient.footballFieldsService.list()
+                if(response.isSuccessful)
+                    _canchas.value = response.body() ?: emptyList()
+            }
+            catch (e: Exception){
+                Log.e("API CANCHAS", e.message, e)
+            }
+        }
+
     }
 
-    fun crearPartido(fecha: LocalDate,
-                     dia: String,
-                     horario: LocalTime,
-                     duracion: Int,
-                     formato: String,
-                     busqueda: String,
-                     cancha: String,
-                     zona: String,
-                     cantJugadores: Int? = null,
-                     posiciones: List<String>? = null)
+    fun canchasPorBarrio(barrioBuscado: String){
+        _canchasFiltradasPorBarrio.value = _canchas.value.filter { cancha -> cancha.barrio == barrioBuscado }
+    }
+
+    fun crearPartido(
+        fecha: LocalDate,
+        dia: String,
+        horario: LocalTime,
+        duracion: Int,
+        formato: String,
+        busqueda: String,
+        cancha: Cancha?,
+        zona: String,
+        cantJugadores: Int? = null,
+        posiciones: List<String>? = null)
     {
 
         val partido: Partido
 
-        if(busqueda == "JUGADORES")
-            partido = Partido(fecha,dia,horario,duracion,formato,cancha,zona,busqueda,cantJugadores,posiciones)
-        else
-            partido =  Partido(fecha,dia,horario,duracion,formato,cancha,zona,busqueda)
+        if(cancha != null) {
+            if (busqueda == "JUGADORES")
+                partido = Partido(fecha, dia, horario, duracion, formato, cancha, zona, busqueda, cantJugadores, posiciones
+                )
+            else
+                partido = Partido(fecha, dia, horario, duracion, formato, cancha, zona, busqueda)
 
 
-        _partidosIncompletos.value = _partidosIncompletos.value + partido
+            _partidosIncompletos.value = _partidosIncompletos.value + partido
+        }
+
+
 
     }
 
