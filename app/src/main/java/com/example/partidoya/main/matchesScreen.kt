@@ -32,8 +32,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +45,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.partidoya.domain.Cancha
+import com.example.partidoya.domain.PartidoEquipo
+import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.viewModels.PartidosViewModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -53,18 +55,23 @@ import java.util.Locale
 
 @Composable
 fun Matches(viewModel: PartidosViewModel){
-    val partidos by viewModel.partidosIncompletos.observeAsState(emptyList())
+    val partidos by viewModel.partidos.collectAsState()
+    //var scrollState = rememberScrollState()
 
     Column (verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()){
+            modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)){
 
         GlassCardTitle("PARTIDOS")
 
         LazyColumn (modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally){
             items(partidos) {partido ->
-                MatchCard(partido)
+                when(partido){
+                    is PartidoJugadores -> MatchPlayersCard(partido, viewModel)
+                    is PartidoEquipo -> MatchTeamCard(partido, viewModel)
+                }
+
                 Spacer(Modifier.height(15.dp))
             }
         }
@@ -291,7 +298,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                         onClick = {
                             if (busquedaSeleccionada == "JUGADORES") {
                                     val listaAux = posicionesSeleccionadas.toList() //Para persistir la informacion cuando se reinicia el estado
-                                    viewModel.crearPartido(
+                                    viewModel.crearPartidoJugadores(
                                         fechaSeleccionada,
                                         diaSeleccionado,
                                         horarioSeleccionado,
@@ -306,13 +313,12 @@ fun CreateMatch(viewModel: PartidosViewModel) {
 
                             } else {
 
-                                    viewModel.crearPartido(
+                                    viewModel.crearPartidoEquipo(
                                         fechaSeleccionada,
                                         diaSeleccionado,
                                         horarioSeleccionado,
                                         duracionDefinida.toIntOrNull() ?: 0,
                                         formatoSeleccionado,
-                                        busquedaSeleccionada,
                                         canchaDefinida,
                                         barrioDefinido
                                     )
@@ -339,7 +345,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
 
 @Composable
 fun DropDownFootballFields(viewModel: PartidosViewModel, seleccion: Cancha?, onClick: (Cancha) -> Unit) {
-    val canchas = viewModel.canchasFiltradasPorBarrio.value
+    val canchas by viewModel.canchasFiltradasPorBarrio.collectAsState()
 
     var expanded by remember { mutableStateOf(false) } //si se expandió o no
 
