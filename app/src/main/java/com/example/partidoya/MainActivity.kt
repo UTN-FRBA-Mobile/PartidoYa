@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -28,6 +29,7 @@ import com.example.partidoya.main.LogInScreen
 import com.example.partidoya.main.ModifyAccountScreen
 import com.example.partidoya.main.Matches
 import com.example.partidoya.main.NewAccountScreen
+import com.example.partidoya.main.OSMMap
 import com.example.partidoya.main.ProfileScreen
 import com.example.partidoya.ui.theme.PartidoYaTheme
 import com.example.partidoya.viewModels.PartidosViewModel
@@ -50,6 +52,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
     val partidosViewModel: PartidosViewModel = viewModel()
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background, //color del background
              bottomBar = {if (shouldShowBottomBar(navController)){
@@ -69,6 +72,7 @@ fun App() {
                 composable("matches") { Matches(partidosViewModel) }
                 composable("createMatch") { CreateMatch(partidosViewModel) }
                 composable ("modifyProfile" ) { ModifyAccountScreen(navController) }
+                composable ("map"){ OSMMap() }
             }
         }
 }

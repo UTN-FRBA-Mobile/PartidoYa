@@ -90,5 +90,30 @@ fun BottomNavigationBar(navController: NavController){
                 disabledTextColor = Color.Transparent
             )
         )
+        NavigationBarItem(
+            icon = { Image(
+                painter =
+                    if (currentDestination == "map") {
+                        painterResource(id = R.drawable.map) // ícono seleccionado
+                    } else {
+                        painterResource(id = R.drawable.map) // ícono normal
+                    },
+                contentDescription = "mapIcon",
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(top = 10.dp)
+            ) },
+            selected = currentDestination == "map",
+            onClick = { navController.navigate("map") },
+            colors = NavigationBarItemColors(
+                selectedIconColor = Color.Gray,
+                unselectedIconColor = Color.White,
+                selectedTextColor = Color.Gray,
+                unselectedTextColor = Color.White,
+                selectedIndicatorColor = Color.Transparent,
+                disabledIconColor = Color.Transparent,
+                disabledTextColor = Color.Transparent
+            )
+        )
     }
 }
