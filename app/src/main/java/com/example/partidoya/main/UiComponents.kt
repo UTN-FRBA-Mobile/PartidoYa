@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.partidoya.ui.theme.InputColors
@@ -172,14 +173,13 @@ fun LabelOverInput(
 }
 
 @Composable
-fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier,){
+fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier, value: String,onValueChange: (String)-> Unit){
 
-    var text by remember { mutableStateOf("") }
     OutlinedTextField(
         colors = InputColors,
         textStyle = MaterialTheme.typography.bodyMedium,
-        value = text,
-        onValueChange = { newValue -> text = newValue },
+        value = value,
+        onValueChange = onValueChange,
         label = { Text(label, style = MaterialTheme.typography.bodyMedium) },
         placeholder = { Text(placeholder) },
         singleLine = true,
@@ -194,7 +194,7 @@ fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutoCompleteInput(label: String) {
+fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit) {
     //TODO: Esto tiene que salir de alguna api con las localidades
     val options = listOf(
         "Villa Luro, CABA",
@@ -204,19 +204,18 @@ fun AutoCompleteInput(label: String) {
         "Villa Ortuza, CABA",
         "Santa Rita, CABA"
     )
-    var query by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
-            value = query,
+            value = value,
             colors = InputColors,
             shape = RoundedCornerShape(16.dp),
-            onValueChange = {
-                query = it
-                expanded = it.isNotEmpty()
+            onValueChange = { newValue ->
+                onValueChange(newValue)
+                expanded = newValue.isNotEmpty()
             },
             modifier = normalInputModifier
                 .unwrap()
@@ -231,12 +230,12 @@ fun AutoCompleteInput(label: String) {
                 .heightIn(max = 200.dp)
         )
         {
-            options.filter { it.contains(query, ignoreCase = false) }
+            options.filter { it.contains(value, ignoreCase = false) }
                 .forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
                         onClick = {
-                            query = option
+                            onValueChange(option)
                             expanded = false
                         }
                     )
