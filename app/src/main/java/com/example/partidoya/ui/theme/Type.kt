@@ -28,6 +28,13 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp),
 
+    bodyLarge = TextStyle( //Para botones e inputs
+        fontFamily = lexend,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp),
+
     bodyMedium = TextStyle( //Para botones e inputs
         fontFamily = lexend,
         fontWeight = FontWeight.Normal,
