@@ -106,8 +106,8 @@ class PartidosViewModel() : ViewModel() {
 
     fun confirmarPartidoJugadores(partidoConfirmado: PartidoJugadores, posicion: String ? = null){
 
-        //TODO crear una nueva instancia de participacion con el jugador y la posicion elegida
-        //TODO hacer un post al backend para modificar el partido
+        //TODO hacer un post al backend para modificar el partido (quitar la posicion y crear instancia de participacion)
+        //TODO Post("partido, posicion, jugador")
 
         if(posicion != null) {
             val jugador = Jugador(1, "juan", "perez", "palermo", "competitivo", "capo")
@@ -127,7 +127,7 @@ class PartidosViewModel() : ViewModel() {
     }
 
     fun confirmarPartidoEquipo(partidoConfirmado: PartidoEquipo){
-
+        //TODO Post("partido, representante")
         _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
     }
 

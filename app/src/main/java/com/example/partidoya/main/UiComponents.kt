@@ -1,5 +1,6 @@
 package com.example.partidoya.main
 
+import android.location.Location
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,6 +47,7 @@ import com.example.partidoya.ui.theme.InputModifier
 import com.example.partidoya.ui.theme.normalInputModifier
 import com.example.partidoya.ui.theme.unwrap
 import androidx.compose.ui.text.style.TextAlign
+import com.example.partidoya.Service.DistanceCalculator
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.viewModels.PartidosViewModel
@@ -248,11 +250,12 @@ fun AutoCompleteInput(label: String) {
 }
 
 @Composable
-fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel) {
+fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ubicacion: Location?) {
     var mostrarAlerta by remember { mutableStateOf(false) }
     var posicionElegida by remember { mutableStateOf("") }
 
     val titulo = "BUSCANDO JUGADORES PARA ${partido.formato}"
+
 
     LaunchedEffect(posicionElegida) { //Solo se ejecuta al modificar la posicionElegida
         if (posicionElegida != "")
@@ -297,8 +300,8 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel) {
             Spacer(Modifier.height(5.dp))
             MediumText("ZONA: " + partido.barrio)
             Spacer(Modifier.height(5.dp))
-            //MediumText("DISTANCIA: " + partido.distancia + "KM")
-            //Spacer(Modifier.height(5.dp))
+            MediumText("DISTANCIA: " + DistanceCalculator.distance(partido.cancha,ubicacion).toInt() + "KM")
+            Spacer(Modifier.height(5.dp))
             MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
             Spacer(Modifier.height(5.dp))
 
@@ -360,7 +363,7 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel) {
 
 
 @Composable
-fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel){
+fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacion: Location?){
 
     val titulo = "BUSCANDO EQUIPO PARA ${partido.formato}"
 
@@ -395,8 +398,8 @@ fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel){
             Spacer(Modifier.height(5.dp))
             MediumText("ZONA: " + partido.barrio)
             Spacer(Modifier.height(5.dp))
-            //MediumText("DISTANCIA: " + partido.distancia + "KM")
-            //Spacer(Modifier.height(5.dp))
+            MediumText("DISTANCIA: " + DistanceCalculator.distance(partido.cancha,ubicacion).toInt() + "KM")
+            Spacer(Modifier.height(5.dp))
 
             Row (modifier = Modifier.fillMaxWidth(),
                 Arrangement.Center){
