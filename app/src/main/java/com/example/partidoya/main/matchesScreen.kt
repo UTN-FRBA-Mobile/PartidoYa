@@ -2,7 +2,12 @@ package com.example.partidoya.main
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -44,10 +49,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.viewModels.PartidosViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -56,29 +65,72 @@ import java.util.Locale
 @Composable
 fun Matches(viewModel: PartidosViewModel){
     val partidos by viewModel.partidos.collectAsState()
-    //var scrollState = rememberScrollState()
+    val context = LocalContext.current
+    var isGranted by remember { mutableStateOf(false) }
+    var ubicacion by remember { mutableStateOf<Location?>(null) }
+    val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+
+    //SI NO TENGO PERMISO PARA ACCEDER A SU UBICACION SE LO PIDO
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = {granted ->
+            if(granted){
+                isGranted = true
+            }else{
+                isGranted = false
+            }
+        }
+    )
+
+    //VER SI TENGO ACCESO A SU UBICACION
+    LaunchedEffect(Unit) {
+        //Consultar si ya tengo permiso para acceder a la ubicacion
+        isGranted = ContextCompat.checkSelfPermission(context,android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        //Si no tengo el permiso consultarlo
+        if(!isGranted){
+            launcher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+    if(isGranted) {
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    Log.d("UBICACION","BUSCANDO")
+                    ubicacion = location
+                    Log.d("UBICACION","${location.latitude} + ${location.longitude}")
+                } else {
+                    Log.e("UBICACION", "NO SE PUDO OBTENER LA UBICACION")
+                }
+            }
+    }
+
+
 
     Column (verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)){
 
         GlassCardTitle("PARTIDOS")
+        if(isGranted && ubicacion == null) { //Mientras intenta definir la ubicacion
+                Text(text = "CALCULANDO LA UBICACIÓN...", style = MaterialTheme.typography.bodyLarge, color = Color.White)
+        }else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(partidos) { partido ->
+                    when (partido) {
+                        is PartidoJugadores -> MatchPlayersCard(partido, viewModel, ubicacion)
+                        is PartidoEquipo -> MatchTeamCard(partido, viewModel, ubicacion)
+                    }
 
-        LazyColumn (modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally){
-            items(partidos) {partido ->
-                when(partido){
-                    is PartidoJugadores -> MatchPlayersCard(partido, viewModel)
-                    is PartidoEquipo -> MatchTeamCard(partido, viewModel)
+                    Spacer(Modifier.height(15.dp))
                 }
-
-                Spacer(Modifier.height(15.dp))
             }
         }
-
     }
-
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O) //Necesario para el LocalTime
