@@ -34,11 +34,15 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchColors
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +57,7 @@ import androidx.core.content.ContextCompat
 import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
+import com.example.partidoya.viewModels.MainViewModel
 import com.example.partidoya.viewModels.PartidosViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -62,12 +67,16 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Matches(viewModel: PartidosViewModel){
+fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     val partidos by viewModel.partidos.collectAsState()
+    val filtroJugEqui by viewModel.filtroJugEqui.collectAsState()
     val context = LocalContext.current
     var isGranted by remember { mutableStateOf(false) }
     var ubicacion by remember { mutableStateOf<Location?>(null) }
+    var partidoConfirmado = viewModel.partidoConfirmado.collectAsState().value
+    var saveInCalendar = mainViewModel.saveInCalendar.observeAsState(false).value
     val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
     //SI NO TENGO PERMISO PARA ACCEDER A SU UBICACION SE LO PIDO
@@ -82,8 +91,29 @@ fun Matches(viewModel: PartidosViewModel){
         }
     )
 
-    //VER SI TENGO ACCESO A SU UBICACION
+    LaunchedEffect(filtroJugEqui){
+        when(filtroJugEqui){
+            "Jugadores" -> viewModel.cargarPartidosJugadores()
+            "Equipo" -> viewModel.cargarPartidosEquipo()
+        }
+    }
+
+    LaunchedEffect(partidoConfirmado) {
+        if(saveInCalendar && partidoConfirmado != null)
+                agendarEnCalendario(partidoConfirmado, context)
+
+        viewModel.eliminarPartidoConfirmado()
+    }
+
+
     LaunchedEffect(Unit) {
+
+        when(filtroJugEqui){
+            "Jugadores" -> viewModel.cargarPartidosJugadores()
+            "Equipo" -> viewModel.cargarPartidosEquipo()
+        }
+
+        //VER SI TENGO ACCESO A SU UBICACION
         //Consultar si ya tengo permiso para acceder a la ubicacion
         isGranted = ContextCompat.checkSelfPermission(context,android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
@@ -107,7 +137,6 @@ fun Matches(viewModel: PartidosViewModel){
     }
 
 
-
     Column (verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)){
@@ -116,6 +145,19 @@ fun Matches(viewModel: PartidosViewModel){
         if(isGranted && ubicacion == null) { //Mientras intenta definir la ubicacion
                 Text(text = "CALCULANDO LA UBICACIÓN...", style = MaterialTheme.typography.bodyLarge, color = Color.White)
         }else {
+
+            Row (verticalAlignment = Alignment.CenterVertically){
+                Filtro(filtroJugEqui, {viewModel.alternarFiltroJugEqui()})
+                Spacer(Modifier.width(5.dp))
+                Text("Agendar partidos en el calendario: ", color = Color.White,style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.weight(1F))
+                Switch(
+                    checked = saveInCalendar,
+                    onCheckedChange = { mainViewModel.toggleSaveInCalendar() },
+                    colors = SwitchDefaults.colors(checkedTrackColor = Color(0xFF3C7440))
+                )
+            }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -143,10 +185,11 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     var busquedaSeleccionada by remember { mutableStateOf("") }
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
     var canchaDefinida by remember { mutableStateOf<Cancha?>(null) }
-    var barrioDefinido by remember { mutableStateOf("") }
+    var barrioDefinido by remember { mutableStateOf("-") }
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
+    var partidoCreadoConExito by remember { mutableStateOf(false) }
 
 
     //Formato para traducir los dias a español
@@ -171,6 +214,12 @@ fun CreateMatch(viewModel: PartidosViewModel) {
         posicionesSeleccionadas.clear()
         cantJugadoresFaltantes = cantJugadoresFalatantesDefinido.toIntOrNull() ?: 0
         repeat(cantJugadoresFaltantes){posicionesSeleccionadas.add("")}
+    }
+
+
+    if(partidoCreadoConExito){
+        ToastMatchCreated()
+        partidoCreadoConExito = false
     }
 
     Column(
@@ -264,7 +313,17 @@ fun CreateMatch(viewModel: PartidosViewModel) {
             }
                 Spacer(Modifier.height(15.dp))
                 Spacer(Modifier.height(15.dp))
-                LabelOverInput(label = "BARRIO", onChange = { barrio -> barrioDefinido = barrio}, value = barrioDefinido)
+               // LabelOverInput(label = "BARRIO", onChange = { barrio -> barrioDefinido = barrio}, value = barrioDefinido)
+                Text(
+                    text = "BARRIO",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Left
+                )
+                Spacer(Modifier.height(10.dp))
+                DropDownBarrios(viewModel = viewModel, seleccion = barrioDefinido, onClick =  { barrio -> barrioDefinido = barrio})
+
                 Spacer(Modifier.height(15.dp))
 
                 //LabelOverInput(label = "CANCHA", onChange = { cancha -> canchaDefinida = cancha}, value = canchaDefinida)
@@ -377,6 +436,10 @@ fun CreateMatch(viewModel: PartidosViewModel) {
 
                             }
 
+                            //TODO corroborar que se haya creado el partido exitosamente en el backend
+                            partidoCreadoConExito = true
+
+
                             fechaSeleccionada = LocalDate.now()
                             horarioSeleccionado = LocalTime.of(0,0)
                             duracionDefinida = ""
@@ -421,6 +484,33 @@ fun DropDownFootballFields(viewModel: PartidosViewModel, seleccion: Cancha?, onC
             }
 
 
+        }
+    }
+}
+
+@Composable
+fun DropDownBarrios(viewModel: PartidosViewModel, seleccion: String?, onClick: (String) -> Unit) {
+    val barrios by viewModel.barrios.collectAsState()
+
+    var expanded by remember { mutableStateOf(false) } //si se expandió o no
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        DropdownButton(seleccion ?: "-", { expanded = true })
+
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            barrios.forEach { barrio ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = barrio,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    onClick = {
+                        onClick(barrio)
+                        expanded = false
+                    })
+            }
         }
     }
 }

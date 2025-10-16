@@ -3,14 +3,14 @@ package com.example.partidoya.domain
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class PartidoEquipo(
-    val fecha: LocalDate,
-    val dia: String,
-    val horario: LocalTime,
-    val duracion: Int,
-    val formato: String,
-    val cancha: Cancha?,
-    val barrio: String,
+class PartidoEquipo(
+     fecha: LocalDate,
+     dia: String,
+     horario: LocalTime,
+     duracion: Int,
+     formato: String,
+     cancha: Cancha?,
+     barrio: String,
     val representante: Jugador? = null
 ):
     Partido(fecha, dia, horario, duracion, formato, cancha, barrio)
