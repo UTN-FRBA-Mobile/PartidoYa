@@ -34,7 +34,8 @@ object RetrofitClient {
     @RequiresApi(Build.VERSION_CODES.O)
     val footballFieldsService = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create(gson)) // Para parsear automágicamente el json
-        .baseUrl("https://partido-ya-backend.onrender.com/") // la URL
+        //.baseUrl("https://partido-ya-backend.onrender.com/") // la URL
+        .baseUrl("http://IPLOCAL:8080/") // la URL
         .build()
         .create(FootballFieldsService::class.java)
 }
