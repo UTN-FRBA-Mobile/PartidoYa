@@ -1,6 +1,14 @@
 package com.example.partidoya.main
 
+import android.content.Context
+import android.content.Intent
 import android.location.Location
+import android.os.Build
+import android.provider.CalendarContract
+import android.provider.ContactsContract
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -40,7 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.partidoya.ui.theme.InputColors
@@ -48,10 +56,15 @@ import com.example.partidoya.ui.theme.InputModifier
 import com.example.partidoya.ui.theme.normalInputModifier
 import com.example.partidoya.ui.theme.unwrap
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.partidoya.Service.DistanceCalculator
+import com.example.partidoya.domain.Partido
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.viewModels.PartidosViewModel
+import java.time.LocalDateTime
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun HomeButton(text:String, onClick: ()->Unit){
@@ -90,7 +103,7 @@ fun GlassCardTitle(title: String){
         style = MaterialTheme.typography.titleMedium,
         color = Color.White,
         modifier = Modifier.padding(top = 30.dp))
-    Spacer(Modifier.height(70.dp))
+    Spacer(Modifier.height(30.dp))
 }
 
 @Composable
@@ -248,10 +261,12 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ubicacion: Location?) {
     var mostrarAlerta by remember { mutableStateOf(false) }
     var posicionElegida by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     val titulo = "BUSCANDO JUGADORES PARA ${partido.formato}"
 
@@ -312,13 +327,12 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
                 modifier = Modifier.fillMaxWidth(),
                 Arrangement.Center
             ) {
-                var texto: String
 
                 Button(
                     modifier = Modifier
                         .width(169.dp)
                         .height(49.dp),
-                    onClick = { mostrarAlerta = true },
+                    onClick = { mostrarAlerta=true },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF3C7440),
                         contentColor = Color.White
@@ -347,7 +361,7 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
                         var posicionesOpciones: List<String> = partido.posicionesFaltantes.toList()
 
                         if(partido.jugadoresFaltantes > 1)
-                            posicionesOpciones = posicionesOpciones + "Comodín"
+                            posicionesOpciones = posicionesOpciones + "COMODÍN"
 
                         SeleccionPosicion(
                             onDismiss = { mostrarAlerta = false },
@@ -359,11 +373,11 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
     }
 }
 
-
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacion: Location?){
 
+    val context = LocalContext.current
     val titulo = "BUSCANDO EQUIPO PARA ${partido.formato}"
 
     Box(modifier = Modifier
@@ -454,4 +468,53 @@ fun SeleccionPosicion(onDismiss: ()-> Unit, posiciones: List<String>?, accion: (
             }
             }
         )
+}
+
+@Composable
+fun ToastMatchCreated(){
+    val context = LocalContext.current
+    Toast.makeText(context, "Partido creado exitosamente", Toast.LENGTH_LONG).show()
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun agendarEnCalendario(partido: Partido, context: Context){
+    val fechaHora = LocalDateTime.of(partido.fecha, partido.horario)
+    val fechaHoraInicio = Calendar.getInstance().run {
+        set(
+            fechaHora.year,
+            fechaHora.monthValue-1,
+            fechaHora.dayOfMonth,
+            fechaHora.hour,
+            fechaHora.minute
+        )
+        timeInMillis
+    }
+
+    val duracionEnMilis = TimeUnit.MINUTES.toMillis(partido.duracion.toLong())
+    val fechaHoraFin = fechaHoraInicio + duracionEnMilis
+    val ubicacion = "${partido.cancha?.direccion}"
+
+    val intent = Intent(Intent.ACTION_INSERT)
+        .setData(CalendarContract.Events.CONTENT_URI)
+        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, fechaHoraInicio)
+        .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, fechaHoraFin)
+        .putExtra(CalendarContract.Events.TITLE, "PARTIDO DE FUTBOL")
+        .putExtra(CalendarContract.Events.DESCRIPTION, partido.formato)
+        .putExtra(CalendarContract.Events.EVENT_LOCATION, ubicacion)
+
+    context.startActivity(intent)
+}
+
+@Composable
+fun Filtro(texto: String, onClick: () -> Unit){
+
+    Button(onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color.White),
+        border = BorderStroke(2.dp, Color.White)
+    ){
+        Text(text = texto, style = MaterialTheme.typography.bodyMedium)
+
+    }
 }
