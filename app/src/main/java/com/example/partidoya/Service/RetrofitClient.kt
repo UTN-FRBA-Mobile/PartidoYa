@@ -14,6 +14,16 @@ import java.time.LocalTime
 
 object RetrofitClient {
 
+    private val retrofit =
+        Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create()) // Para parsear automágicamente el json
+            .baseUrl("https://partido-ya-backend.onrender.com/") // la URL
+            .build()
+    //val footballFieldsService = retrofit.create(FootballFieldsService::class.java)
+
+    val userService = retrofit.create(UserService::class.java)
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     val gson = GsonBuilder() //Para convertir datos desde String a LocalDate y LocalTime
         .registerTypeAdapter(LocalDate::class.java, JsonDeserializer { json, _, _ ->

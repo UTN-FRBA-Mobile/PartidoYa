@@ -26,7 +26,7 @@ import com.example.partidoya.main.HomeScreen
 import com.example.partidoya.main.LandingPageScreen
 import com.example.partidoya.main.LogInScreen
 import com.example.partidoya.main.ModifyAccountScreen
-import com.example.partidoya.main.Matches
+//import com.example.partidoya.main.Matches
 import com.example.partidoya.main.NewAccountScreen
 import com.example.partidoya.main.ProfileScreen
 import com.example.partidoya.ui.theme.PartidoYaTheme
@@ -66,7 +66,7 @@ fun App() {
                 composable("newAccount") { NewAccountScreen(navController) }
                 composable("landingPage") { LandingPageScreen(navController) }
                 composable("profile" ) { ProfileScreen(navController) }
-                composable("matches") { Matches(partidosViewModel) }
+//                composable("matches") { Matches(partidosViewModel) }
                 composable("createMatch") { CreateMatch(partidosViewModel) }
                 composable ("modifyProfile" ) { ModifyAccountScreen(navController) }
             }

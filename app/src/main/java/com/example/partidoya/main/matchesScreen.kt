@@ -57,7 +57,7 @@ import androidx.core.content.ContextCompat
 import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
-import com.example.partidoya.viewModels.MainViewModel
+//import com.example.partidoya.viewModels.MainViewModel
 import com.example.partidoya.viewModels.PartidosViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -67,6 +67,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/*
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
@@ -174,6 +175,8 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
         }
     }
 }
+
+ */
 
 @RequiresApi(Build.VERSION_CODES.O) //Necesario para el LocalTime
 @Composable
