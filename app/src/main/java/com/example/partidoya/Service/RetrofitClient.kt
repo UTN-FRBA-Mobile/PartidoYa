@@ -7,21 +7,33 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.LocalTime
 
 object RetrofitClient {
+    private const val HARDCODED_JWT = "eyJhbGciOiJIUzM4NCJ9.eyJwdXJwb3NlIjoiYWNjZXNzLXRva2VuIiwicm9sZXMiOltdLCJzdWIiOiJqb2huLWRvZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA3MjQzOTQsImV4cCI6MTc2ODUwMDM5NH0.pizIna6fGoGoSWnq0WX_2jnJmBTLoi4hRGn6kHH-F1sOkCRz1j_aqf3SeVBlUvee";
 
+    private val client = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer $HARDCODED_JWT")
+                .build()
+            chain.proceed(request)
+        }
+        .build()
     private val retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create()) // Para parsear automágicamente el json
-            .baseUrl("https://partido-ya-backend.onrender.com/") // la URL
+            .baseUrl("http://10.0.2.2:8080/") // la URL
+            .client(client)
             .build()
     //val footballFieldsService = retrofit.create(FootballFieldsService::class.java)
 
-    val userService = retrofit.create(UserService::class.java)
+    @RequiresApi(Build.VERSION_CODES.O)
+    val userService: UserService = retrofit.create(UserService::class.java)
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -42,10 +54,10 @@ object RetrofitClient {
         .create()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val footballFieldsService = Retrofit.Builder()
+    val footballFieldsService: FootballFieldsService = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create(gson)) // Para parsear automágicamente el json
         //.baseUrl("https://partido-ya-backend.onrender.com/") // la URL
-        .baseUrl("http://IPLOCAL:8080/") // la URL
+        .baseUrl("http://localhost:8080/") // la URL
         .build()
         .create(FootballFieldsService::class.java)
 }

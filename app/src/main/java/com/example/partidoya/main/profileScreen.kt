@@ -1,5 +1,7 @@
 package com.example.partidoya.main
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +22,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,13 +37,44 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.partidoya.R
+import com.example.partidoya.viewModels.ProfileViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ProfileScreen(navController: NavController){
+fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel<ProfileViewModel>() ){
+
+    val profile by viewModel.profileData.collectAsState()
+
+    LaunchedEffect(Unit) {viewModel.obtenerDatosDelPerfil() }
+
+    if (profile == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    } else {
+        val profile = profile!!
+        Container(
+            profile.name + profile.surname,
+            profile.userIdentifier,
+            profile.preferedPosition,
+            profile.location,
+            profile.playStyle,
+            profile.description
+        )
+
+    }
+}
+
+@Preview
+@Composable
+fun ProfileScreenPreview(){
     val nombre = "DAMIAN MARTINEZ";
     val usuario = "@dibu";
     val posicion = "ARQUERO";
