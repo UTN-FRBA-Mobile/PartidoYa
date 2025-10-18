@@ -7,6 +7,7 @@ class Preferences(context: Context) {
 
     companion object{
         private const val saveInCalendarKey = "saveInCalendar"
+        private const val tokenKey = "token"
     }
 
     var saveInCalendar: Boolean
@@ -14,4 +15,14 @@ class Preferences(context: Context) {
         set(value) {
             sharedPreferences.edit().putBoolean(saveInCalendarKey,value).apply()
         }
+
+    fun saveToken(token: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString(tokenKey, token)
+        editor.apply()
+    }
+
+    fun getToken(): String? {
+        return sharedPreferences.getString(tokenKey, null)
+    }
 }

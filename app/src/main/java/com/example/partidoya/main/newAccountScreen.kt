@@ -47,7 +47,7 @@ fun NewAccountScreen(navController: NavController, viewModel: NewAccountViewMode
         if (uiState.registerSuccess) {
             Toast.makeText(context, "Registro exitoso", Toast.LENGTH_LONG).show()
             // Llama al callback de navegación
-            navController.navigate("home")
+            navController.navigate("logIn")
         }
     }
 

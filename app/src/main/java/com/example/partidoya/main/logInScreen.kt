@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.partidoya.Preferences.Preferences
 import com.example.partidoya.viewModels.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -39,6 +40,8 @@ fun LogInScreen(navController: NavController, viewModel: LoginViewModel = viewMo
         if (uiState.loginSuccess) {
             Toast.makeText(context, "Login exitoso", Toast.LENGTH_LONG).show()
             // Llama al callback de navegación
+            val preferences = Preferences(context)
+            preferences.saveToken(uiState.token.toString())
             navController.navigate("home")
         }
     }
