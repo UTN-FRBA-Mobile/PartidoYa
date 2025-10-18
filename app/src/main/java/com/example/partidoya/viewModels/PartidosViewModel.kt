@@ -1,51 +1,274 @@
 package com.example.partidoya.viewModels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.partidoya.Service.RetrofitClient
+import com.example.partidoya.domain.Cancha
+import com.example.partidoya.domain.Jugador
+import com.example.partidoya.domain.Participacion
+import com.example.partidoya.domain.PartidoEquipo
+import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.domain.Partido
+import com.example.partidoya.dto.req.PartidoEquiReq
+import com.example.partidoya.dto.req.PartidoJugReq
+import com.example.partidoya.dto.req.PartidoReq
+import com.example.partidoya.dto.res.PartidoEquiRes
+import com.example.partidoya.dto.res.PartidoJugRes
+import com.example.partidoya.main.ToastMatchCreated
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 class PartidosViewModel() : ViewModel() {
-    private val _partidosIncompletos: MutableLiveData<List<Partido>> = MutableLiveData(emptyList())
-    val partidosIncompletos: LiveData<List<Partido>> = _partidosIncompletos
 
 
-    fun cargarPartidos() { //Aca deberia consultarse el almacenamiento
-       /* val p1 = Partido(1,"FUTBOL 5","Entre amigos","Lunes","18:00","Caballito","ATENEO FUTBOL", 5,2,"Arquero, Defensor")
-        val p2 = Partido(2,"FUTBOL 11","Torneo","Martes","19:00","Quilmes","ATENEO FUTBOL", 10,2,"-")
-        val p3 = Partido(3,"FUTBOL 7","Entre amigos","Jueves","22:00","Recoleta","ATENEO FUTBOL", 4,1,"Defensor")
-        val p4 = Partido(1,"FUTBOL 5","Serio","Lunes","18:00","Caballito","ATENEO FUTBOL", 5,2,"Arquero, Defensor")
-        val p5 = Partido(2,"FUTBOL 11","Torneo","Martes","19:00","Quilmes","ATENEO FUTBOL", 10,2,"-")
-        val p6 = Partido(3,"FUTBOL 7","Entre amigos","Jueves","22:00","Recoleta","ATENEO FUTBOL", 4,1,"Defensor")
+    private val _partidos = MutableStateFlow<List<Partido>>(emptyList())
+    val partidos = _partidos.asStateFlow()
 
-        _partidosIncompletos.value = listOf(p1,p2,p3,p4,p5,p6)*/
+    private val _canchas = MutableStateFlow<List<Cancha>>(emptyList())
+    val canchas = _canchas.asStateFlow()
+
+    private val _canchasFiltradasPorBarrio = MutableStateFlow<List<Cancha>>(emptyList())
+    val canchasFiltradasPorBarrio = _canchasFiltradasPorBarrio.asStateFlow()
+
+    private val _partidoConfirmado = MutableStateFlow<Partido?>(null)
+    val partidoConfirmado = _partidoConfirmado.asStateFlow()
+
+    private val _barrios = MutableStateFlow<List<String>>(emptyList())
+    val barrios = _barrios.asStateFlow()
+
+    private val _filtroJugEqui = MutableStateFlow<String>("Jugadores")
+    val filtroJugEqui = _filtroJugEqui.asStateFlow()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun cargarCanchas(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.list()
+                if(response.isSuccessful)
+                    _canchas.value = response.body() ?: emptyList()
+                    _barrios.value = barriosConCanchas()
+            }
+            catch (e: Exception){
+                Log.e("API CANCHAS", e.message, e)
+            }
+        }
+
     }
 
-    fun crearPartido(fecha: LocalDate,
-                     dia: String,
-                     horario: LocalTime,
-                     duracion: Int,
-                     formato: String,
-                     busqueda: String,
-                     cancha: String,
-                     zona: String,
-                     cantJugadores: Int? = null,
-                     posiciones: List<String>? = null)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun nuevoPartido(){ //PARA PROBAR CUANDO NO FUNCIONA LA API
+        _partidos.value = _partidos.value + PartidoJugadores(
+            LocalDate.of(2025,10,1),
+            "Miercoles",
+            LocalTime.now(),
+            50,
+            "Futbol 5",
+            Cancha(1,"Fulbo","SS123","Palermo",1.0,0.1, listOf()),
+            "Palermo",
+            jugadoresFaltantes = 4,
+            posicionesFaltantes = listOf("Medio","Delantero"),
+            //jugadores = emptyList()
+        )
+    }
+
+    fun canchasPorBarrio(barrioBuscado: String){
+        _canchasFiltradasPorBarrio.value = _canchas.value.filter { cancha -> cancha.barrio == barrioBuscado }
+    }
+
+    fun barriosConCanchas(): List<String>{
+        val barriosDisp = _canchas.value.map { cancha -> cancha.barrio }
+        return barriosDisp.distinct()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun cargarPartidosJugadores(){
+
+        //CARGAR PARTIDOS DE JUGADORES
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.getMatchesJug()
+                if(response.isSuccessful) {
+                    val partidosRes = response.body() ?: emptyList()
+
+                    _partidos.value = partidosRes.map { p ->
+                        PartidoJugadores(
+                            fecha = p.fecha,
+                            dia = p.dia,
+                            horario = p.horario,
+                            duracion = p.duracion,
+                            formato = p.formato,
+                            cancha = p.cancha,
+                            barrio = p.barrio,
+                            jugadoresFaltantes = p.jugadoresFaltantes,
+                            posicionesFaltantes = p.posicionesFaltantes
+                        )
+                    }
+                }
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun cargarPartidosEquipo(){
+
+        //CARGAR PARTIDOS DE JUGADORES
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.getMatchesEqui()
+                if(response.isSuccessful) {
+                    val partidosRes = response.body() ?: emptyList()
+
+                    _partidos.value = partidosRes.map { p ->
+                        PartidoEquipo(
+                            fecha = p.fecha,
+                            dia = p.dia,
+                            horario = p.horario,
+                            duracion = p.duracion,
+                            formato = p.formato,
+                            cancha = p.cancha,
+                            barrio = p.barrio,
+                           //TODO representante
+                        )
+                    }
+                }
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun crearPartidoJugadores(
+        fecha: LocalDate,
+        dia: String,
+        horario: LocalTime,
+        duracion: Int,
+        formato: String,
+        busqueda: String,
+        cancha: Cancha?,
+        zona: String,
+        cantJugadores: Int,
+        posiciones: List<String>)
+    {
+        val partidoJugReq = PartidoJugReq(
+            tipo = "jugadores",
+            fecha = fecha,
+            dia = dia,
+            horario =  horario,
+            duracion = duracion,
+            formato = formato,
+            cancha = cancha,
+            barrio = zona,
+            jugadoresFaltantes = cantJugadores,
+            posicionesFaltantes = posiciones
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.newMatchJug(partidoJugReq)
+                if(response.isSuccessful)
+                    Log.d("API PARTIDOS", "CREADO CON EXITO")
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun crearPartidoEquipo(
+        fecha: LocalDate,
+        dia: String,
+        horario: LocalTime,
+        duracion: Int,
+        formato: String,
+        cancha: Cancha?,
+        zona: String
+    )
     {
 
-        val partido: Partido
+        val partidoEqReq = PartidoEquiReq(
+            tipo = "equipo",
+            fecha = fecha,
+            dia = dia,
+            horario =  horario,
+            duracion = duracion,
+            formato = formato,
+            cancha = cancha,
+            barrio = zona
+        )
 
-        if(busqueda == "JUGADORES")
-            partido = Partido(fecha,dia,horario,duracion,formato,cancha,zona,busqueda,cantJugadores,posiciones)
-        else
-            partido =  Partido(fecha,dia,horario,duracion,formato,cancha,zona,busqueda)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.newMatchEqui(partidoEqReq)
+                if(response.isSuccessful)
+                    Log.d("API PARTIDOS", "CREADO CON EXITO")
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
+
+    }
 
 
-        _partidosIncompletos.value = _partidosIncompletos.value + partido
 
+    fun confirmarPartidoJugadores(partidoConfirmado: PartidoJugadores, posicion: String ? = null){
+
+        //TODO hacer un post al backend para modificar el partido (quitar la posicion y crear instancia de participacion)
+        //TODO Post("partido, posicion, jugador")
+
+        if(posicion != null) {
+            val jugador = Jugador(1, "juan", "perez", "palermo", "competitivo", "capo")
+
+
+
+            partidoConfirmado.posicionesFaltantes =
+                partidoConfirmado.posicionesFaltantes.filter { pos -> pos != posicion }
+
+            partidoConfirmado.jugadoresFaltantes -= 1
+
+
+            val participacion = Participacion(partidoConfirmado, jugador, posicion)
+
+             _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
+        }
+    }
+
+    fun confirmarPartidoEquipo(partidoConfirmado: PartidoEquipo){
+        //TODO Post("partido, representante")
+        _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
+
+
+        _partidoConfirmado.value = partidoConfirmado
+    }
+
+        fun descartarPartido(partidoConfirmado: Partido){
+        _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
+    }
+
+    fun eliminarPartidoConfirmado(){
+        _partidoConfirmado.value = null
+    }
+
+    fun alternarFiltroJugEqui(){
+        _filtroJugEqui.value =  if(_filtroJugEqui.value == "Jugadores") "Equipo" else  "Jugadores"
     }
 
 }

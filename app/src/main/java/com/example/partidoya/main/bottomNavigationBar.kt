@@ -4,12 +4,6 @@ package com.example.partidoya.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
@@ -17,78 +11,48 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.partidoya.R
 
+data class BarItem(val nombre: String, val logoSeleccionado: Int, val logoNoSeleccionado: Int)
 @Composable
 fun BottomNavigationBar(navController: NavController){
     NavigationBar (containerColor = Color.Black,
                     contentColor = Color.White,
                     modifier = Modifier.height(70.dp)){
         val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-        NavigationBarItem(
-            icon = { Image(painter =
-                if (currentDestination == "misPartidos")
-                { painterResource(id = R.drawable.logomispartidosseleccionado) }
-                else
-                { painterResource(id = R.drawable.logomispartidos) },
-                contentDescription = "homeIcon",
-                modifier = Modifier.align(Alignment.CenterVertically).padding(top=10.dp)) },
-            selected = currentDestination == "matches",
-            onClick = {navController.navigate("matches")},
-            colors = NavigationBarItemColors(
-                selectedIconColor = Color.Gray,
-                unselectedIconColor = Color.White,
-                selectedTextColor = Color.Gray,
-                unselectedTextColor = Color.White,
-                selectedIndicatorColor = Color.Transparent,
-                disabledIconColor = Color.Transparent,
-                disabledTextColor = Color.Transparent
-            )
+
+        val barItems = arrayOf(
+            BarItem("matches", R.drawable.logomispartidosseleccionado, R.drawable.logomispartidos),
+            BarItem("home", R.drawable.logomenuseleccionado, R.drawable.logomenu),
+            BarItem("profile", R.drawable.logoperfilseleccionado, R.drawable.logoperfil)
         )
-        NavigationBarItem(
-            icon = { Image(painter =
-                if (currentDestination == "home")
-                { painterResource(id = R.drawable.logomenuseleccionado) }
-                else
-                { painterResource(id = R.drawable.logomenu) },
-                contentDescription = "homeIcon",
-                modifier = Modifier.align(Alignment.CenterVertically).padding(top=10.dp)) },
-            selected = currentDestination == "home" ,
-            onClick = {navController.navigate("home")},
-            colors = NavigationBarItemColors(
-                selectedIconColor = Color.Gray,
-                unselectedIconColor = Color.White,
-                selectedTextColor = Color.Gray,
-                unselectedTextColor = Color.White,
-                selectedIndicatorColor = Color.Transparent,
-                disabledIconColor = Color.Transparent,
-                disabledTextColor = Color.Transparent
+        
+        barItems.forEach { item ->
+            NavigationBarItem(
+                icon = { Image(painter =
+                    if (currentDestination == item.nombre) {
+                        painterResource(id = item.logoSeleccionado)
+                    } else {
+                        painterResource(id = item.logoNoSeleccionado)
+                    },
+                    contentDescription = item.nombre + "Icon",
+                    modifier = Modifier.align(Alignment.CenterVertically).padding(top=10.dp)) },
+                selected = currentDestination == item.nombre,
+                onClick = {navController.navigate(item.nombre)},
+                colors = NavigationBarItemColors(
+                    selectedIconColor = Color.Gray,
+                    unselectedIconColor = Color.White,
+                    selectedTextColor = Color.Gray,
+                    unselectedTextColor = Color.White,
+                    selectedIndicatorColor = Color.Transparent,
+                    disabledIconColor = Color.Transparent,
+                    disabledTextColor = Color.Transparent
+                )
             )
-        )
-        NavigationBarItem(
-            icon = { Image(painter =
-                if (currentDestination == "profile")
-                { painterResource(id = R.drawable.logoperfilseleccionado) }
-                else
-                { painterResource(id = R.drawable.logoperfil) },
-                contentDescription = "accountIcon",
-                modifier = Modifier.align(Alignment.CenterVertically).padding(top=10.dp)) },
-            selected = currentDestination == "profile" ,
-            onClick = {navController.navigate("profile")},
-            colors = NavigationBarItemColors(
-                selectedIconColor = Color.Gray,
-                unselectedIconColor = Color.White,
-                selectedTextColor = Color.Gray,
-                unselectedTextColor = Color.White,
-                selectedIndicatorColor = Color.Transparent,
-                disabledIconColor = Color.Transparent,
-                disabledTextColor = Color.Transparent
-            )
-        )
+        }
     }
 }
