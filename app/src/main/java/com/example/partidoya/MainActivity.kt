@@ -14,6 +14,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.AndroidViewModel
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -28,8 +30,10 @@ import com.example.partidoya.main.LogInScreen
 import com.example.partidoya.main.ModifyAccountScreen
 import com.example.partidoya.main.Matches
 import com.example.partidoya.main.NewAccountScreen
+import com.example.partidoya.main.OSMMap
 import com.example.partidoya.main.ProfileScreen
 import com.example.partidoya.ui.theme.PartidoYaTheme
+import com.example.partidoya.viewModels.MainViewModel
 import com.example.partidoya.viewModels.PartidosViewModel
 
 class MainActivity : ComponentActivity() {
@@ -49,7 +53,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App() {
     val partidosViewModel: PartidosViewModel = viewModel()
+    val mainViewModel: MainViewModel = viewModel()
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background, //color del background
              bottomBar = {if (shouldShowBottomBar(navController)){
@@ -66,7 +72,7 @@ fun App() {
                 composable("newAccount") { NewAccountScreen(navController) }
                 composable("landingPage") { LandingPageScreen(navController) }
                 composable("profile" ) { ProfileScreen(navController) }
-                composable("matches") { Matches(partidosViewModel) }
+                composable("matches") { Matches(partidosViewModel, mainViewModel) }
                 composable("createMatch") { CreateMatch(partidosViewModel) }
                 composable ("modifyProfile" ) { ModifyAccountScreen(navController) }
             }
@@ -80,7 +86,7 @@ fun shouldShowBottomBar(navController: NavController): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = navBackStackEntry?.destination?.route
 
-    val screensWithOutNavBar = listOf("logIn","newAccount","landingPage")
+    val screensWithOutNavBar = listOf("logIn","newAccount","landingPage", "modifyProfile")
 
     return !screensWithOutNavBar.contains(currentScreen)
 

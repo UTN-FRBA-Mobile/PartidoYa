@@ -59,6 +59,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("org.osmdroid:osmdroid-android:6.1.14")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.30.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")

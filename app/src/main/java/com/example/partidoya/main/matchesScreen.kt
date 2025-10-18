@@ -10,6 +10,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +47,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.PartidoEquipo
@@ -78,6 +81,9 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     var partidoConfirmado = viewModel.partidoConfirmado.collectAsState().value
     var saveInCalendar = mainViewModel.saveInCalendar.observeAsState(false).value
     val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+    var viewMap by remember { mutableStateOf(false) }
+    var canchaConsultada by remember { mutableStateOf<Cancha?>(null) }
+
 
     //SI NO TENGO PERMISO PARA ACCEDER A SU UBICACION SE LO PIDO
     val launcher = rememberLauncherForActivityResult(
@@ -136,6 +142,20 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
             }
     }
 
+    if(viewMap) {
+        canchaConsultada?.let { cancha ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xAA000000))
+                    .zIndex(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                OSMMap(canchaConsultada!!, { viewMap = false })
+            }
+        }
+    }
+
 
     Column (verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -164,8 +184,10 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
             ) {
                 items(partidos) { partido ->
                     when (partido) {
-                        is PartidoJugadores -> MatchPlayersCard(partido, viewModel, ubicacion)
-                        is PartidoEquipo -> MatchTeamCard(partido, viewModel, ubicacion)
+                        is PartidoJugadores -> MatchPlayersCard(partido, viewModel, ubicacion, { cancha -> canchaConsultada = cancha
+                                                                                                                        viewMap = true })
+                        is PartidoEquipo -> MatchTeamCard(partido, viewModel, ubicacion, {cancha -> canchaConsultada = cancha
+                                                                                                                viewMap = true})
                     }
 
                     Spacer(Modifier.height(15.dp))
