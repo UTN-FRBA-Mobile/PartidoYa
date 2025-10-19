@@ -319,32 +319,13 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
                 style = MaterialTheme.typography.titleSmall
             )
             Spacer(Modifier.height(30.dp))
-            Row(modifier = Modifier.fillMaxWidth()) {
-                MediumText("FECHA: " + partido.fecha)
-                Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
-                MediumText("DIA: " + partido.dia)
-            }
-            Spacer(Modifier.height(5.dp))
-            Row(modifier = Modifier.fillMaxWidth()) {
-                MediumText("HORARIO: " + partido.horario)
-                Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
-                MediumText("DURACIÓN: " + partido.duracion + " min")
-            }
-            Spacer(Modifier.height(5.dp))
-            Text(text = "CANCHA: " + partido.cancha?.nombre,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xff3366cc),
-                modifier = Modifier.clickable(enabled = true, onClick = { onClickUbi(partido.cancha) }))
-            Spacer(Modifier.height(5.dp))
-            MediumText("ZONA: " + partido.barrio)
-            Spacer(Modifier.height(5.dp))
+
+            GenericInfoMatch(partido, onClickUbi)
+
             MediumText("DISTANCIA: " + DistanceCalculator.distance(partido.cancha,ubicacion).toInt() + "KM")
             Spacer(Modifier.height(5.dp))
             MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
             Spacer(Modifier.height(5.dp))
-
-
             MediumText("POSICIONES: " + partido.posicionesFaltantes.joinToString(", "))
             Spacer(Modifier.height(40.dp))
 
@@ -420,26 +401,9 @@ fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacio
                 color = Color.White,
                 style = MaterialTheme.typography.titleSmall)
             Spacer(Modifier.height(30.dp))
-            Row (modifier = Modifier.fillMaxWidth()) {
-                MediumText("FECHA: " + partido.fecha)
-                Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
-                MediumText("DIA: " + partido.dia)
-            }
-            Spacer(Modifier.height(5.dp))
-            Row (modifier = Modifier.fillMaxWidth()){
-                MediumText("HORARIO: " + partido.horario)
-                Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
-                MediumText("DURACIÓN: " + partido.duracion + " min")
-            }
-            Spacer(Modifier.height(5.dp))
-            Text(text = "CANCHA: " + partido.cancha?.nombre,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xff3366cc),
-                modifier = Modifier.clickable(enabled = true, onClick = {onClickUbi(partido.cancha)}))
-            Spacer(Modifier.height(5.dp))
-            MediumText("ZONA: " + partido.barrio)
-            Spacer(Modifier.height(5.dp))
+
+            GenericInfoMatch(partido, onClickUbi)
+
             MediumText("DISTANCIA: " + DistanceCalculator.distance(partido.cancha,ubicacion).toInt() + "KM")
             Spacer(Modifier.height(5.dp))
 
@@ -467,10 +431,132 @@ fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacio
                         contentColor = Color.White)){
                     Text(text = "DESCARTAR", style = MaterialTheme.typography.bodyMedium)
                 }
-
             }
         }
     }
+}
+
+@Composable
+fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, onClickUbi: (Cancha?) -> Unit){
+
+    var titulo = if(partido.jugadoresFaltantes == 0) "COMPLETO" else "INCOMPLETO"
+
+    Box(
+        modifier = Modifier
+            .width(386.dp)
+            .background(
+                Color(0x33020202),
+                shape = RoundedCornerShape(30.dp)
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+        ) {
+            Text(
+                text = titulo,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = when(titulo){
+                    "COMPLETO" -> Color.Green
+                    else -> Color.Red
+                },
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            GenericInfoMatch(partido, onClickUbi)
+
+            Spacer(Modifier.height(5.dp))
+            MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
+            Spacer(Modifier.height(5.dp))
+
+            MediumText("POSICION: " + viewModel.posicionElegida(partido))
+            Spacer(Modifier.height(5.dp))
+
+            Button(modifier = Modifier
+                .width(169.dp)
+                .height(49.dp),
+                onClick = { viewModel.abandonarPartido(partido) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFA93838),
+                    contentColor = Color.White)){
+                Text(text = "CANCELAR", style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClickUbi: (Cancha?) -> Unit){
+
+    var titulo = "CONFIRMADO"
+
+    Box(
+        modifier = Modifier
+            .width(386.dp)
+            .background(
+                Color(0x33020202),
+                shape = RoundedCornerShape(30.dp)
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+        ) {
+            Text(
+                text = titulo,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.Green,
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            GenericInfoMatch(partido, onClickUbi)
+
+            Button(modifier = Modifier
+                .width(169.dp)
+                .height(49.dp),
+                onClick = { viewModel.abandonarPartido(partido) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFA93838),
+                    contentColor = Color.White)){
+                Text(text = "CANCELAR", style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
+}
+
+@Composable
+fun GenericInfoMatch(partido: Partido, onClickUbi: (Cancha?) -> Unit){
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+        MediumText("FECHA: " + partido.fecha)
+        Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
+        MediumText("DIA: " + partido.dia)
+    }
+    Spacer(Modifier.height(5.dp))
+    Row(modifier = Modifier.fillMaxWidth()) {
+        MediumText("HORARIO: " + partido.horario)
+        Spacer(Modifier.weight(1f))//Empuja el horario a la derecha
+        MediumText("DURACIÓN: " + partido.duracion + " min")
+    }
+    Spacer(Modifier.height(5.dp))
+    Text(
+        text = "CANCHA: " + partido.cancha?.nombre,
+        textDecoration = TextDecoration.Underline,
+        style = MaterialTheme.typography.bodyMedium,
+        color = Color(0xff3366cc),
+        modifier = Modifier.clickable(
+            enabled = true,
+            onClick = { onClickUbi(partido.cancha) })
+    )
+    Spacer(Modifier.height(5.dp))
+    MediumText("ZONA: " + partido.barrio)
+    Spacer(Modifier.height(5.dp))
 }
 
 @Composable

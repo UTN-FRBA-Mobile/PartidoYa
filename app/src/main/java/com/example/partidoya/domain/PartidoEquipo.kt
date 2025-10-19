@@ -11,7 +11,6 @@ class PartidoEquipo(
      duracion: Int,
      formato: String,
      cancha: Cancha?,
-     barrio: String,
-    val representante: Jugador? = null
+     barrio: String
 ):
     Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio)

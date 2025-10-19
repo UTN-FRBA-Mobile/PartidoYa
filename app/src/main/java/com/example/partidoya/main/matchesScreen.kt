@@ -115,10 +115,10 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
 
     LaunchedEffect(Unit) {
 
-        when(filtroJugEqui){
+       /* when(filtroJugEqui){
             "Jugadores" -> viewModel.cargarPartidosJugadores()
             "Equipo" -> viewModel.cargarPartidosEquipo()
-        }
+        }*/
 
         //VER SI TENGO ACCESO A SU UBICACION
         //Consultar si ya tengo permiso para acceder a la ubicacion
@@ -198,6 +198,67 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     }
 }
 
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun MyMatches(viewModel: PartidosViewModel){
+    val filtroJugEqui by viewModel.filtroJugEqui.collectAsState()
+    var viewMap by remember { mutableStateOf(false) }
+    var canchaConsultada by remember { mutableStateOf<Cancha?>(null) }
+    val partidos by viewModel.misPartidos.collectAsState()
+
+    LaunchedEffect(filtroJugEqui){
+        when(filtroJugEqui){
+            "Jugadores" -> viewModel.cargarMisPartidosJugadores()
+            "Equipo" -> viewModel.cargarMisPartidosEquipo()
+        }
+    }
+
+    if(viewMap) {
+        canchaConsultada?.let { cancha ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xAA000000))
+                    .zIndex(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                OSMMap(canchaConsultada!!, { viewMap = false })
+            }
+        }
+    }
+
+
+        Column (verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)) {
+
+            GlassCardTitle("MIS PARTIDOS")
+
+            Filtro(filtroJugEqui, { viewModel.alternarFiltroJugEqui() })
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(partidos) { partido ->
+                    when (partido) {
+                        is PartidoJugadores -> MyMatchPlayerCard(partido, viewModel, { cancha ->
+                            canchaConsultada = cancha
+                            viewMap = true
+                        })
+
+                        is PartidoEquipo -> MyMatchTeamCard(partido, viewModel, { cancha ->
+                            canchaConsultada = cancha
+                            viewMap = true
+                        })
+                    }
+
+                    Spacer(Modifier.height(15.dp))
+                }
+            }
+        }
+}
 
 
 @RequiresApi(Build.VERSION_CODES.O) //Necesario para el LocalTime

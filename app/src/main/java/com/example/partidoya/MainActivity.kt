@@ -30,6 +30,7 @@ import com.example.partidoya.main.LandingPageScreen
 import com.example.partidoya.main.LogInScreen
 import com.example.partidoya.main.ModifyAccountScreen
 import com.example.partidoya.main.Matches
+import com.example.partidoya.main.MyMatches
 import com.example.partidoya.main.NewAccountScreen
 import com.example.partidoya.main.OSMMap
 import com.example.partidoya.main.ProfileScreen
@@ -76,6 +77,7 @@ fun App() {
                 composable("matches") { Matches(partidosViewModel, mainViewModel) }
                 composable("createMatch") { CreateMatch(partidosViewModel) }
                 composable ("modifyProfile" ) { ModifyAccountScreen(navController) }
+                composable ("myMatches" ) { MyMatches(partidosViewModel) }
             }
         }
 }

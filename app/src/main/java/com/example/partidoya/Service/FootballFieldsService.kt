@@ -5,6 +5,7 @@ import com.example.partidoya.dto.req.ParticipacionReq
 import com.example.partidoya.dto.req.PartidoEquiReq
 import com.example.partidoya.dto.req.PartidoJugReq
 import com.example.partidoya.dto.req.PartidoReq
+import com.example.partidoya.dto.res.ParticipacionRes
 import com.example.partidoya.dto.res.PartidoEquiRes
 import com.example.partidoya.dto.res.PartidoJugRes
 import com.example.partidoya.dto.res.PartidoRes
@@ -31,5 +32,21 @@ interface FootballFieldsService {
     suspend fun getMatchesEqui(): Response<List<PartidoEquiRes>>
 
     @POST("/api/partidos/jugadores/{idPartido}")
-    suspend fun joinMatch(@Path("idPartido") idPartido: Int , @Body participacion: ParticipacionReq): Response<Unit>
+    suspend fun joinMatchJug(@Path("idPartido") idPartido: Int , @Body participacion: ParticipacionReq): Response<Unit>
+    @POST("/api/partidos/equipo/{idPartido}")
+    suspend fun joinMatchEqui(@Path("idPartido") idPartido: Int): Response<Unit>
+
+    @POST("/api/partidos/{idPartido}")
+    suspend fun leaveMatch(@Path("idPartido") idPartido: Int): Response<Unit>
+
+    @GET("/api/partidos/usuario/jugadores")
+    suspend fun getMyMatchesJug(): Response<List<PartidoJugRes>>
+
+    @GET("/api/partidos/usuario/equipo")
+    suspend fun getMyMatchesEqui(): Response<List<PartidoEquiRes>>
+
+    @GET("/api/participaciones/usuario")
+    suspend fun getMyParticipations(): Response<List<ParticipacionRes>>
+
+
 }

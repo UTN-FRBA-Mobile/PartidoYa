@@ -16,6 +16,7 @@ import com.example.partidoya.dto.req.ParticipacionReq
 import com.example.partidoya.dto.req.PartidoEquiReq
 import com.example.partidoya.dto.req.PartidoJugReq
 import com.example.partidoya.dto.req.PartidoReq
+import com.example.partidoya.dto.res.ParticipacionRes
 import com.example.partidoya.dto.res.PartidoEquiRes
 import com.example.partidoya.dto.res.PartidoJugRes
 import com.example.partidoya.main.ToastMatchCreated
@@ -32,6 +33,12 @@ class PartidosViewModel() : ViewModel() {
 
     private val _partidos = MutableStateFlow<List<Partido>>(emptyList())
     val partidos = _partidos.asStateFlow()
+
+    private val _participaciones = MutableStateFlow<List<ParticipacionRes>>(emptyList())
+    val participaciones = _participaciones.asStateFlow()
+
+    private val _misPartidos = MutableStateFlow<List<Partido>>(emptyList())
+    val misPartidos = _misPartidos.asStateFlow()
 
     private val _canchas = MutableStateFlow<List<Cancha>>(emptyList())
     val canchas = _canchas.asStateFlow()
@@ -110,7 +117,7 @@ class PartidosViewModel() : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun cargarPartidosEquipo(){
 
-        //CARGAR PARTIDOS DE JUGADORES
+        //CARGAR PARTIDOS DE EQUIPOS
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -128,7 +135,6 @@ class PartidosViewModel() : ViewModel() {
                             formato = p.formato,
                             cancha = p.cancha,
                             barrio = p.barrio,
-                           //TODO representante
                         )
                     }
                 }
@@ -224,7 +230,7 @@ class PartidosViewModel() : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitClient.footballFieldsService.joinMatch(partidoConfirmado.id, participacionReq)
+                val response = RetrofitClient.footballFieldsService.joinMatchJug(partidoConfirmado.id, participacionReq)
                 if(response.isSuccessful) {
                     _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
                     Log.d("API PARTIDOS", "NUEVA PARTICIPACION EXITOSA")
@@ -238,14 +244,90 @@ class PartidosViewModel() : ViewModel() {
 
 
     fun confirmarPartidoEquipo(partidoConfirmado: PartidoEquipo){
-        //TODO Post("partido, representante")
-        _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
-
-
-        _partidoConfirmado.value = partidoConfirmado
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.joinMatchEqui(partidoConfirmado.id)
+                if(response.isSuccessful) {
+                    _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
+                    Log.d("API PARTIDOS", "NUEVO EQUIPO EXITOSO")
+                }
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
     }
 
-        fun descartarPartido(partidoConfirmado: Partido){
+    fun cargarMisPartidosJugadores(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.getMyParticipations()
+                if(response.isSuccessful) {
+                    _participaciones.value = response.body() ?: emptyList()
+                    Log.d("API PARTIDOS", "PARTICIPACIONES OBTENIDAS EXITOSAMENTE")
+                }
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+
+                try {
+                    val response = RetrofitClient.footballFieldsService.getMyMatchesJug()
+                    if (response.isSuccessful) {
+                        val partidosRes = response.body() ?: emptyList()
+
+                        _misPartidos.value = partidosRes.map { p ->
+                            PartidoJugadores(
+                                id = p.id,
+                                fecha = p.fecha,
+                                dia = p.dia,
+                                horario = p.horario,
+                                duracion = p.duracion,
+                                formato = p.formato,
+                                cancha = p.cancha,
+                                barrio = p.barrio,
+                                jugadoresFaltantes = p.jugadoresFaltantes,
+                                posicionesFaltantes = p.posicionesFaltantes
+                            )
+                        }
+                        Log.d("API PARTIDOS", "MIS PARTIDOS JUGADORES CARGADOS EXITOSAMENTE")
+                    }
+                } catch (e: Exception) {
+                    Log.e("API PARTIDOS", e.message, e)
+                }
+        }
+
+    }
+
+    fun cargarMisPartidosEquipo(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.getMyMatchesEqui()
+                if(response.isSuccessful) {
+                    val partidosRes = response.body() ?: emptyList()
+
+                    _misPartidos.value = partidosRes.map { p ->
+                        PartidoEquipo(
+                            id = p.id,
+                            fecha = p.fecha,
+                            dia = p.dia,
+                            horario = p.horario,
+                            duracion = p.duracion,
+                            formato = p.formato,
+                            cancha = p.cancha,
+                            barrio = p.barrio
+                        )
+                    }
+                    Log.d("API PARTIDOS", "MIS PARTIDOS EQUIPO CARGADOS EXITOSAMENTE")
+                }
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
+    }
+
+    fun descartarPartido(partidoConfirmado: Partido){
         _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
     }
 
@@ -255,6 +337,25 @@ class PartidosViewModel() : ViewModel() {
 
     fun alternarFiltroJugEqui(){
         _filtroJugEqui.value =  if(_filtroJugEqui.value == "Jugadores") "Equipo" else  "Jugadores"
+    }
+
+    fun abandonarPartido(partido: Partido){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.joinMatchEqui(partido.id)
+                if(response.isSuccessful) {
+                    _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
+                    Log.d("API PARTIDOS", "NUEVO EQUIPO EXITOSO")
+                }
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
+    }
+
+    fun posicionElegida(partido: Partido): String{
+       return _participaciones.value.filter { participacion -> participacion.partidoId.equals(partido.id) }.get(0).posicion
     }
 
 }

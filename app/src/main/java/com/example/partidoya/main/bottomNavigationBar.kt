@@ -26,7 +26,7 @@ fun BottomNavigationBar(navController: NavController){
         val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
 
         val barItems = arrayOf(
-            BarItem("matches", R.drawable.logomispartidosseleccionado, R.drawable.logomispartidos),
+            BarItem("myMatches", R.drawable.logomispartidosseleccionado, R.drawable.logomispartidos),
             BarItem("home", R.drawable.logomenuseleccionado, R.drawable.logomenu),
             BarItem("profile", R.drawable.logoperfilseleccionado, R.drawable.logoperfil)
         )
