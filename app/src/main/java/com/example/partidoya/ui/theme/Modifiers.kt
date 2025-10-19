@@ -24,6 +24,5 @@ val normalInputModifier: InputModifier = Modifier.width(322.dp)
 
 val largeInputModifier: InputModifier = Modifier.width(322.dp)
     .height(200.dp)
-
     .asInput
 

@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.partidoya.Service.RetrofitClient
 import com.example.partidoya.main.BottomNavigationBar
 import com.example.partidoya.main.CreateMatch
 import com.example.partidoya.main.HomeScreen
@@ -56,7 +57,7 @@ fun App() {
     val mainViewModel: MainViewModel = viewModel()
     val navController = rememberNavController()
     val context = LocalContext.current
-
+    RetrofitClient.init(context)
     Scaffold(containerColor = MaterialTheme.colorScheme.background, //color del background
              bottomBar = {if (shouldShowBottomBar(navController)){
                                 BottomNavigationBar(navController)
