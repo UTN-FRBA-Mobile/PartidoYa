@@ -22,6 +22,7 @@ class ProfileViewModel: ViewModel(){
     fun obtenerDatosDelPerfil(){
         viewModelScope.launch(Dispatchers.IO){
             try {
+
                 val response = RetrofitClient.userService.getProfileData()
                 if (response.isSuccessful)
                     _profileData.value = response.body()

@@ -1,6 +1,7 @@
 package com.example.partidoya.Service
 
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.google.gson.GsonBuilder
@@ -14,17 +15,14 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 object RetrofitClient {
-    private const val HARDCODED_JWT = "eyJhbGciOiJIUzM4NCJ9.eyJwdXJwb3NlIjoiYWNjZXNzLXRva2VuIiwicm9sZXMiOltdLCJzdWIiOiJqb2huLWRvZUBnbWFpbC5jb20iLCJpYXQiOjE3NjA3MjQzOTQsImV4cCI6MTc2ODUwMDM5NH0.pizIna6fGoGoSWnq0WX_2jnJmBTLoi4hRGn6kHH-F1sOkCRz1j_aqf3SeVBlUvee";
+    private var retrofit: Retrofit? = null
+    private var userServiceInstance: UserService? = null
 
-    private val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer $HARDCODED_JWT")
-                .build()
-            chain.proceed(request)
-        }
+    fun init(context: Context) {
+    val client = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor(context))
         .build()
-    private val retrofit =
+    retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create()) // Para parsear automágicamente el json
             .baseUrl("http://10.0.2.2:8080/") // la URL
@@ -32,9 +30,12 @@ object RetrofitClient {
             .build()
     //val footballFieldsService = retrofit.create(FootballFieldsService::class.java)
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val userService: UserService = retrofit.create(UserService::class.java)
+     userServiceInstance = retrofit!!.create(UserService::class.java)
+}
 
+    val userService: UserService
+        get() = userServiceInstance
+            ?: throw IllegalStateException("RetrofitClient not initialized. Call init(context) first.")
 
     @RequiresApi(Build.VERSION_CODES.O)
     val gson = GsonBuilder() //Para convertir datos desde String a LocalDate y LocalTime
@@ -60,4 +61,11 @@ object RetrofitClient {
         .baseUrl("http://localhost:8080/") // la URL
         .build()
         .create(FootballFieldsService::class.java)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val authService = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create(gson)) // Para parsear automágicamente el json
+        .baseUrl("http://10.0.2.2:8080/") // la URL
+        .build()
+        .create(AuthService::class.java)
 }

@@ -1,5 +1,8 @@
 package com.example.partidoya.main
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,23 +16,46 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.partidoya.viewModels.NewAccountViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NewAccountScreen(navController: NavController){
-    var correoElectronico by remember { mutableStateOf("") }
-    var contrasenia by remember { mutableStateOf("") }
-    var repetirContrasenia by remember { mutableStateOf("") }
+fun NewAccountScreen(navController: NavController, viewModel: NewAccountViewModel = viewModel<NewAccountViewModel>()){
+    val uiState = viewModel.uiState
+    val context = LocalContext.current
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun handleContinuar () {
+        if (uiState.password != uiState.passwordRepeatable) {
+            Toast.makeText(context, "Las contraseñas deben ser iguales", Toast.LENGTH_LONG).show()
+        } else {
+            viewModel.register()
+        }
+    }
+
+    LaunchedEffect (uiState.registerSuccess) {
+        if (uiState.registerSuccess) {
+            Toast.makeText(context, "Registro exitoso", Toast.LENGTH_LONG).show()
+            // Llama al callback de navegación
+            navController.navigate("modifyProfile")
+        }
+    }
+
+    LaunchedEffect (uiState.error) {
+        if (uiState.error != null) {
+            Toast.makeText(context, uiState.error, Toast.LENGTH_LONG).show()
+        }
+    }
 
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -39,27 +65,27 @@ fun NewAccountScreen(navController: NavController){
             LabelOverInput(
                 label = "CORREO ELECTRÓNICO*",
                 icon = Icons.Default.Email,
-                onChange = { mail -> correoElectronico = mail},
-                value = correoElectronico
+                onChange = { mail -> viewModel.onEmailChange(mail)},
+                value = uiState.email
             )
             Spacer(Modifier.height(15.dp))
             LabelOverInput(
                 label = "CONTRASEÑA*",
                 icon = Icons.Default.Lock,
-                onChange = { cont -> contrasenia = cont},
-                value = contrasenia
+                onChange = { cont -> viewModel.onPasswordChange(cont)},
+                value = uiState.password
             )
             Spacer(Modifier.height(15.dp))
             LabelOverInput(
                 label = "REPETIR CONTRASEÑA*",
                 icon = Icons.Default.Lock,
-                onChange = { cont -> repetirContrasenia = cont},
-                value = repetirContrasenia
+                onChange = { cont -> viewModel.onPasswordRepeatableChange(cont)},
+                value = uiState.passwordRepeatable
             )
             Spacer(Modifier.height(50.dp))
             HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
             Spacer(Modifier.height(50.dp))
-            HomeButton("Continuar", onClick = {navController.navigate("modifyProfile")})
+            HomeButton("Continuar", onClick = {handleContinuar()})
             Spacer(Modifier.height(15.dp))
             HomeButton("Continuar con Google", onClick = {})
             Spacer(Modifier.height(30.dp))

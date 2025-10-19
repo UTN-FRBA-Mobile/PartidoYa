@@ -3,6 +3,9 @@ package com.example.partidoya.viewModels
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.partidoya.Service.RetrofitClient
@@ -27,7 +30,10 @@ class ModifyProfileViewModel:ViewModel() {
      description= ""
     )
     )
+
     val profileData = _profileData.asStateFlow()
+    var uiState by mutableStateOf(modifyProfileUiState())
+        private set
     @RequiresApi(Build.VERSION_CODES.O)
     fun modificarPerfil(){
         viewModelScope.launch(Dispatchers.IO){
@@ -40,8 +46,10 @@ class ModifyProfileViewModel:ViewModel() {
                 val response = RetrofitClient.userService.updateProfileData(body)
                 if (response.isSuccessful) {
                     val result: ApiResponse? = response.body()
-                    if (result  !=null)
-                    Log.i("PROFILE", result.message)
+                    if (result  !=null) {
+                        Log.i("PROFILE", result.message)
+                        uiState = uiState.copy(success = true)
+                    }
                     else{
                         Log.e("PROFILE", "Response body was null")
                     }}
@@ -55,6 +63,10 @@ class ModifyProfileViewModel:ViewModel() {
     fun <T> onProfileChanged(transform: UserProfileReq.()-> UserProfileReq) {
         _profileData.value = _profileData.value?.transform()
 
-        Log.e("INFO","Cambiando datos" + _profileData.value)
+        Log.i("INFO","Cambiando datos" + _profileData.value)
     }
 }
+
+data class modifyProfileUiState(
+    val success: Boolean = false
+)

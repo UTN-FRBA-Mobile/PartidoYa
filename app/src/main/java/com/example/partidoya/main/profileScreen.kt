@@ -61,12 +61,13 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = vi
     } else {
         val profile = profile!!
         Container(
-            profile.name + profile.surname,
-            profile.userIdentifier,
-            profile.preferedPosition,
-            profile.location,
-            profile.playStyle,
-            profile.description
+            navController,
+            (profile.name ?: "No tienes nombre") + " " + (profile.surname ?: "No tienes apellido"),
+            profile.userIdentifier ?: "No tienes nombre de usuario",
+            profile.preferedPosition ?: "N/A",
+            profile.location ?: "N/A",
+            profile.playStyle ?: "N/A",
+            profile.description ?: "No has contado nada sobre ti"
         )
 
     }
@@ -84,17 +85,32 @@ fun ProfileScreenPreview(){
             "más conocido como Dibu Martinez o simplemente Dibu, es un futbolista argentino " +
             "que juega en el Aston Villa de la Premier League.";
 
-    Container(nombre, usuario, posicion, ubicacion, modoJuego, presentacion)
+    Container(null,nombre, usuario, posicion, ubicacion, modoJuego, presentacion)
 }
 
 @Composable
-fun Container(nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String){
+fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String){
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
         modifier = Modifier.fillMaxSize().offset(y = (-25).dp).padding(16.dp)) {
         GlassCard(){
+
+                // 🔹 Button aligned to top end
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(8.dp)
+                ) {
+                    MiniButton("Modificar perfil") {
+                        navController?.navigate("modifyProfile")
+                    }
+                }
+
             Column (verticalArrangement = Arrangement.spacedBy(30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+
+
+
                 Box (modifier = Modifier
                     .size(200.dp),
                     contentAlignment = Alignment.Center) {
@@ -151,6 +167,7 @@ fun Container(nombre: String, usuario: String, posicion: String, ubicacion: Stri
                     }
                 }
             }
+
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -56,8 +58,11 @@ import com.example.partidoya.ui.theme.InputModifier
 import com.example.partidoya.ui.theme.normalInputModifier
 import com.example.partidoya.ui.theme.unwrap
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import com.example.partidoya.Service.DistanceCalculator
+import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.Partido
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
@@ -79,6 +84,23 @@ fun HomeButton(text:String, onClick: ()->Unit){
             .height(56.dp)){
         Text(text=text, style = MaterialTheme.typography.bodyMedium)
     }
+}
+
+
+@Composable
+fun MiniButton(text: String,onClick: () -> Unit){
+    Button(onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White,
+            contentColor = Color.Black),
+        shape = RoundedCornerShape(10.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+        modifier = Modifier
+            .widthIn(min = 80.dp)
+            .height(32.dp)){
+        Text(text=text, style = MaterialTheme.typography.bodyMedium)
+    }
+
 }
 
 @Composable
@@ -188,7 +210,7 @@ fun LabelOverInput(
 }
 
 @Composable
-fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier, value: String,onValueChange: (String)-> Unit){
+fun OutlineLabelInput(label: String, placeholder: String,singleLine: Boolean,modifier: InputModifier, value: String,onValueChange: (String)-> Unit){
 
     OutlinedTextField(
         colors = InputColors,
@@ -197,7 +219,7 @@ fun OutlineLabelInput(label: String, placeholder: String,modifier: InputModifier
         onValueChange = onValueChange,
         label = { Text(label, style = MaterialTheme.typography.bodyMedium) },
         placeholder = { Text(placeholder) },
-        singleLine = true,
+        singleLine = singleLine,
         shape = RoundedCornerShape(16.dp),
         modifier = modifier.unwrap()
 
@@ -263,7 +285,7 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ubicacion: Location?) {
+fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ubicacion: Location?, onClickUbi: (Cancha?) -> Unit) {
     var mostrarAlerta by remember { mutableStateOf(false) }
     var posicionElegida by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -275,7 +297,6 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
         if (posicionElegida != "")
             viewModel.confirmarPartidoJugadores(partido, posicionElegida)
     }
-
 
     Box(
         modifier = Modifier
@@ -310,7 +331,11 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
                 MediumText("DURACIÓN: " + partido.duracion + " min")
             }
             Spacer(Modifier.height(5.dp))
-            MediumText("CANCHA: " + partido.cancha?.nombre)
+            Text(text = "CANCHA: " + partido.cancha?.nombre,
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xff3366cc),
+                modifier = Modifier.clickable(enabled = true, onClick = { onClickUbi(partido.cancha) }))
             Spacer(Modifier.height(5.dp))
             MediumText("ZONA: " + partido.barrio)
             Spacer(Modifier.height(5.dp))
@@ -375,7 +400,7 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacion: Location?){
+fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacion: Location?, onClickUbi: (Cancha?)-> Unit){
 
     val context = LocalContext.current
     val titulo = "BUSCANDO EQUIPO PARA ${partido.formato}"
@@ -407,7 +432,11 @@ fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacio
                 MediumText("DURACIÓN: " + partido.duracion + " min")
             }
             Spacer(Modifier.height(5.dp))
-            MediumText("CANCHA: " + partido.cancha?.nombre)
+            Text(text = "CANCHA: " + partido.cancha?.nombre,
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xff3366cc),
+                modifier = Modifier.clickable(enabled = true, onClick = {onClickUbi(partido.cancha)}))
             Spacer(Modifier.height(5.dp))
             MediumText("ZONA: " + partido.barrio)
             Spacer(Modifier.height(5.dp))
