@@ -17,7 +17,9 @@ import java.time.LocalTime
 object RetrofitClient {
     private var retrofit: Retrofit? = null
     private var userServiceInstance: UserService? = null
+    private var footballFieldsServiceInstance: FootballFieldsService? = null
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun init(context: Context) {
     val client = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor(context))
@@ -31,10 +33,15 @@ object RetrofitClient {
     //val footballFieldsService = retrofit.create(FootballFieldsService::class.java)
 
      userServiceInstance = retrofit!!.create(UserService::class.java)
+        footballFieldsServiceInstance = retrofit!!.create(FootballFieldsService::class.java)
 }
 
     val userService: UserService
         get() = userServiceInstance
+            ?: throw IllegalStateException("RetrofitClient not initialized. Call init(context) first.")
+
+    val footballFieldsService: FootballFieldsService
+        get() = footballFieldsServiceInstance
             ?: throw IllegalStateException("RetrofitClient not initialized. Call init(context) first.")
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -54,13 +61,13 @@ object RetrofitClient {
         })
         .create()
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    /*@RequiresApi(Build.VERSION_CODES.O)
     val footballFieldsService: FootballFieldsService = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create(gson)) // Para parsear automágicamente el json
         //.baseUrl("https://partido-ya-backend.onrender.com/") // la URL
         .baseUrl("http://localhost:8080/") // la URL
         .build()
-        .create(FootballFieldsService::class.java)
+        .create(FootballFieldsService::class.java)*/
 
     @RequiresApi(Build.VERSION_CODES.O)
     val authService = Retrofit.Builder()

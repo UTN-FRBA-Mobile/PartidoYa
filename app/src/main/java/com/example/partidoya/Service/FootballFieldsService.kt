@@ -1,6 +1,7 @@
 package com.example.partidoya.Service
 
 import com.example.partidoya.domain.Cancha
+import com.example.partidoya.dto.req.ParticipacionReq
 import com.example.partidoya.dto.req.PartidoEquiReq
 import com.example.partidoya.dto.req.PartidoJugReq
 import com.example.partidoya.dto.req.PartidoReq
@@ -11,6 +12,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface FootballFieldsService {
     @GET("/api/canchas")
@@ -27,4 +29,7 @@ interface FootballFieldsService {
 
     @GET("/api/partidos/equipo")
     suspend fun getMatchesEqui(): Response<List<PartidoEquiRes>>
+
+    @POST("/api/partidos/jugadores/{idPartido}")
+    suspend fun joinMatch(@Path("idPartido") idPartido: Int , @Body participacion: ParticipacionReq): Response<Unit>
 }

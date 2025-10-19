@@ -4,7 +4,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class PartidoEquipo(
-     fecha: LocalDate,
+    id: Int,
+    fecha: LocalDate,
      dia: String,
      horario: LocalTime,
      duracion: Int,
@@ -13,4 +14,4 @@ class PartidoEquipo(
      barrio: String,
     val representante: Jugador? = null
 ):
-    Partido(fecha, dia, horario, duracion, formato, cancha, barrio)
+    Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio)

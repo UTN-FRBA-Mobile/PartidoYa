@@ -4,6 +4,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class PartidoJugadores(
+        id: Int,
      fecha: LocalDate,
      dia: String,
      horario: LocalTime,
@@ -15,5 +16,5 @@ class PartidoJugadores(
     var posicionesFaltantes: List<String>,
     //var jugadores: List<Participacion>
 ):
-    Partido(fecha, dia, horario, duracion, formato, cancha, barrio)
+    Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio)
 
