@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.partidoya.Preferences.Preferences
 import com.example.partidoya.viewModels.NewAccountViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -46,6 +47,8 @@ fun NewAccountScreen(navController: NavController, viewModel: NewAccountViewMode
     LaunchedEffect (uiState.registerSuccess) {
         if (uiState.registerSuccess) {
             Toast.makeText(context, "Registro exitoso", Toast.LENGTH_LONG).show()
+            val preferences = Preferences(context)
+            preferences.saveToken(uiState.token.toString())
             // Llama al callback de navegación
             navController.navigate("modifyProfile")
         }
