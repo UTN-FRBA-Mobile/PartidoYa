@@ -1,5 +1,7 @@
 package com.example.partidoya.main
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +22,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,13 +37,45 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.partidoya.R
+import com.example.partidoya.viewModels.ProfileViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ProfileScreen(navController: NavController){
+fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel<ProfileViewModel>() ){
+
+    val profile by viewModel.profileData.collectAsState()
+
+    LaunchedEffect(Unit) {viewModel.obtenerDatosDelPerfil() }
+
+    if (profile == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    } else {
+        val profile = profile!!
+        Container(
+            navController,
+            (profile.name ?: "No tienes nombre") + " " + (profile.surname ?: "No tienes apellido"),
+            profile.userIdentifier ?: "No tienes nombre de usuario",
+            profile.preferedPosition ?: "N/A",
+            profile.location ?: "N/A",
+            profile.playStyle ?: "N/A",
+            profile.description ?: "No has contado nada sobre ti"
+        )
+
+    }
+}
+
+@Preview
+@Composable
+fun ProfileScreenPreview(){
     val nombre = "DAMIAN MARTINEZ";
     val usuario = "@dibu";
     val posicion = "ARQUERO";
@@ -47,17 +85,32 @@ fun ProfileScreen(navController: NavController){
             "más conocido como Dibu Martinez o simplemente Dibu, es un futbolista argentino " +
             "que juega en el Aston Villa de la Premier League.";
 
-    Container(nombre, usuario, posicion, ubicacion, modoJuego, presentacion)
+    Container(null,nombre, usuario, posicion, ubicacion, modoJuego, presentacion)
 }
 
 @Composable
-fun Container(nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String){
+fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String){
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
         modifier = Modifier.fillMaxSize().offset(y = (-25).dp).padding(16.dp)) {
         GlassCard(){
+
+                // 🔹 Button aligned to top end
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(8.dp)
+                ) {
+                    MiniButton("Modificar perfil") {
+                        navController?.navigate("modifyProfile")
+                    }
+                }
+
             Column (verticalArrangement = Arrangement.spacedBy(30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+
+
+
                 Box (modifier = Modifier
                     .size(200.dp),
                     contentAlignment = Alignment.Center) {
@@ -114,6 +167,7 @@ fun Container(nombre: String, usuario: String, posicion: String, ubicacion: Stri
                     }
                 }
             }
+
         }
     }
 }
