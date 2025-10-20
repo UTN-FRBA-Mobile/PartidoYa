@@ -36,7 +36,7 @@ interface FootballFieldsService {
     @POST("/api/partidos/equipo/{idPartido}")
     suspend fun joinMatchEqui(@Path("idPartido") idPartido: Int): Response<Unit>
 
-    @POST("/api/partidos/{idPartido}")
+    @POST("/api/partidos/cancelar/{idPartido}")
     suspend fun leaveMatch(@Path("idPartido") idPartido: Int): Response<Unit>
 
     @GET("/api/partidos/usuario/jugadores")

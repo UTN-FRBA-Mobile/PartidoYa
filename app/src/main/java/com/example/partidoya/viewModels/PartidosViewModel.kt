@@ -342,10 +342,10 @@ class PartidosViewModel() : ViewModel() {
     fun abandonarPartido(partido: Partido){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitClient.footballFieldsService.joinMatchEqui(partido.id)
+                val response = RetrofitClient.footballFieldsService.leaveMatch(partido.id)
                 if(response.isSuccessful) {
-                    _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
-                    Log.d("API PARTIDOS", "NUEVO EQUIPO EXITOSO")
+                    _misPartidos.value = _misPartidos.value.filterNot { p-> p.id == partido.id }
+                    Log.d("API PARTIDOS", "PARTIDO ABANDONADO CON EXITO")
                 }
             }
             catch (e: Exception){
