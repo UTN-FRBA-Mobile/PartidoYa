@@ -334,34 +334,12 @@ fun MatchPlayersCard(partido: PartidoJugadores, viewModel: PartidosViewModel, ub
                 Arrangement.Center
             ) {
 
-                Button(
-                    modifier = Modifier
-                        .width(169.dp)
-                        .height(49.dp),
-                    onClick = { mostrarAlerta=true },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF3C7440),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(text = "SUMARME", style = MaterialTheme.typography.bodyMedium)
-                }
+                BasicButton("SUMARME", { mostrarAlerta=true })
 
 
                     Spacer(Modifier.weight(1F))
 
-                    Button(
-                        modifier = Modifier
-                            .width(169.dp)
-                            .height(49.dp),
-                        onClick = { viewModel.descartarPartido(partido) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFA93838),
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(text = "DESCARTAR", style = MaterialTheme.typography.bodyMedium)
-                    }
+                    BasicButton("DESCARTAR", { viewModel.descartarPartido(partido) }, isSuccess = false)
 
                     if (mostrarAlerta) {
                         var posicionesOpciones: List<String> = partido.posicionesFaltantes.toList()
@@ -411,26 +389,11 @@ fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacio
                 Arrangement.Center){
                 var texto: String
 
-                Button(modifier = Modifier
-                    .width(169.dp)
-                    .height(49.dp),
-                    onClick = { viewModel.confirmarPartidoEquipo(partido) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF3C7440),
-                        contentColor = Color.White)){
-                    Text(text = "CONFIRMAR", style = MaterialTheme.typography.bodyMedium) }
+                BasicButton("CONFIRMAR", { viewModel.confirmarPartidoEquipo(partido) })
 
                 Spacer(Modifier.weight(1F))
 
-                Button(modifier = Modifier
-                    .width(169.dp)
-                    .height(49.dp),
-                    onClick = { viewModel.descartarPartido(partido) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFA93838),
-                        contentColor = Color.White)){
-                    Text(text = "DESCARTAR", style = MaterialTheme.typography.bodyMedium)
-                }
+                BasicButton("DESCARTAR", { viewModel.descartarPartido(partido) }, isSuccess = false)
             }
         }
     }
@@ -474,15 +437,7 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
             MediumText("POSICION: " + viewModel.posicionElegida(partido))
             Spacer(Modifier.height(5.dp))
 
-            Button(modifier = Modifier
-                .width(169.dp)
-                .height(49.dp),
-                onClick = { viewModel.abandonarPartido(partido) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFA93838),
-                    contentColor = Color.White)){
-                Text(text = "CANCELAR", style = MaterialTheme.typography.bodyMedium)
-            }
+            BasicButton("CANCELAR", { viewModel.abandonarPartido(partido) }, isSuccess = false)
         }
     }
 }
@@ -517,15 +472,7 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
 
             GenericInfoMatch(partido, onClickUbi)
 
-            Button(modifier = Modifier
-                .width(169.dp)
-                .height(49.dp),
-                onClick = { viewModel.abandonarPartido(partido) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFA93838),
-                    contentColor = Color.White)){
-                Text(text = "CANCELAR", style = MaterialTheme.typography.bodyMedium)
-            }
+            BasicButton("CANCELAR", { viewModel.abandonarPartido(partido) }, isSuccess = false)
         }
     }
 }
@@ -631,5 +578,18 @@ fun Filtro(texto: String, onClick: () -> Unit){
     ){
         Text(text = texto, style = MaterialTheme.typography.bodyMedium)
 
+    }
+}
+
+@Composable
+fun BasicButton(text: String, handleClick: () -> Unit, isSuccess: Boolean = true) {
+    Button(modifier = Modifier
+        .width(169.dp)
+        .height(49.dp),
+        onClick = { handleClick() },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(if (isSuccess) 0xFF3C7440 else 0xFFA93838),
+            contentColor = Color.White)){
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
     }
 }
