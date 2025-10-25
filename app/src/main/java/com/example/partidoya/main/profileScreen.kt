@@ -135,7 +135,7 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Cerar sesión") },
+                            text = { Text("Cerrar sesión") },
                             onClick = {
                                 logout()
                                 expanded = false
