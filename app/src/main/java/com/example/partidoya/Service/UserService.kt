@@ -15,4 +15,7 @@ interface UserService {
 
     @POST("api/user/profile")
     suspend fun updateProfileData(@Body profileData: UserProfileReq): Response<ApiResponse>
+
+    @POST("api/v1/auth/logout")
+    suspend fun logoutUser(): Response<Unit>
 }

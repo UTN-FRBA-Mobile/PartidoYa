@@ -21,14 +21,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,12 +55,21 @@ import com.example.partidoya.viewModels.ProfileViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel<ProfileViewModel>() ){
-
+    val logoutData = viewModel.logoutData
     val profile by viewModel.profileData.collectAsState()
 
     LaunchedEffect(Unit) {viewModel.obtenerDatosDelPerfil() }
 
-    if (profile == null) {
+    if (logoutData.logoutSuccess) {
+        navController.navigate("landingPage") {
+            popUpTo("home") {
+                inclusive = true
+            }
+        }
+        return
+    }
+
+    if (profile == null || logoutData.isLoading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
@@ -67,7 +83,8 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = vi
             profile.preferedPosition ?: "N/A",
             profile.location ?: "N/A",
             profile.playStyle ?: "N/A",
-            profile.description ?: "No has contado nada sobre ti"
+            profile.description ?: "No has contado nada sobre ti",
+            viewModel::logout
         )
 
     }
@@ -85,11 +102,12 @@ fun ProfileScreenPreview(){
             "más conocido como Dibu Martinez o simplemente Dibu, es un futbolista argentino " +
             "que juega en el Aston Villa de la Premier League.";
 
-    Container(null,nombre, usuario, posicion, ubicacion, modoJuego, presentacion)
+    Container(null,nombre, usuario, posicion, ubicacion, modoJuego, presentacion, logout = {})
 }
 
 @Composable
-fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String){
+fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, logout: () -> Unit){
+    var expanded by remember { mutableStateOf(false) }
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
@@ -102,8 +120,27 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                         .align(Alignment.End)
                         .padding(8.dp)
                 ) {
-                    MiniButton("Modificar perfil") {
-                        navController?.navigate("modifyProfile")
+                    IconButton (onClick = { expanded = true }) {
+                        Icon(Icons.Default.MoreVert, contentDescription = "Más acciones", tint = Color.White)
+                    }
+                    DropdownMenu (
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Modificar perfil") },
+                            onClick = {
+                                navController?.navigate("modifyProfile")
+                                expanded = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Cerar sesión") },
+                            onClick = {
+                                logout()
+                                expanded = false
+                            }
+                        )
                     }
                 }
 
