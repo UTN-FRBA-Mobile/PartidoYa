@@ -327,8 +327,20 @@ class PartidosViewModel() : ViewModel() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun descartarPartido(partidoConfirmado: Partido){
         _partidos.value = _partidos.value.filter { partido -> partido != partidoConfirmado }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.discardMatch(partidoConfirmado.id)
+                if(response.isSuccessful) {
+                    Log.d("API PARTIDOS", "PARTIDO DESCARTADO CON EXITO")
+                }
+            }
+            catch (e: Exception){
+                Log.e("API PARTIDOS", e.message, e)
+            }
+        }
     }
 
     fun eliminarPartidoConfirmado(){

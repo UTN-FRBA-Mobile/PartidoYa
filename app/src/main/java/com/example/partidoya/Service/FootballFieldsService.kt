@@ -48,5 +48,6 @@ interface FootballFieldsService {
     @GET("/api/participaciones/usuario")
     suspend fun getMyParticipations(): Response<List<ParticipacionRes>>
 
-
+    @POST("/api/partidos/descartar/{idPartido}")
+    suspend fun discardMatch(@Path("idPartido") idPartido: Int): Response<Unit>
 }
