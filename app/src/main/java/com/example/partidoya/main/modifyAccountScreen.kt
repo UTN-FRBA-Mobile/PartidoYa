@@ -46,7 +46,10 @@ fun ModifyAccountScreenContent(navController: NavController?  = null,viewModel: 
     val profile by viewModel.profileData.collectAsState()
     val uiState = viewModel.uiState
     val context = LocalContext.current
-
+    val playStyles by viewModel.playStyles.collectAsState()
+    val position by viewModel.positions.collectAsState()
+    val barrios by viewModel.positions.collectAsState()
+    val barriosOption by viewModel.barrioOptions.collectAsState(emptyList())
     LaunchedEffect (uiState.success) {
         if (uiState.success) {
             Toast.makeText(context, "Se actualizaron los datos del perfil", Toast.LENGTH_LONG).show()
@@ -54,6 +57,12 @@ fun ModifyAccountScreenContent(navController: NavController?  = null,viewModel: 
             navController?.navigate("home")
         }
     }
+    LaunchedEffect(Unit) {
+        viewModel.cargarPlayStyles()
+        viewModel.cargarPosiciones()
+        viewModel.cargarBarrios()
+    }
+
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()){
@@ -75,15 +84,20 @@ fun ModifyAccountScreenContent(navController: NavController?  = null,viewModel: 
                 onValueChange = {newUsername-> viewModel.onProfileChanged<String> {copy(userIdentifier = newUsername)}})
               //  profile?.apellido ?: "" , onValueChange = {newUserName-> viewModel.onProfileChanged<String> {copy( = newApellido)}})
 
-            OutlineLabelInput(label = "Estilo de juego", placeholder = "COMPETITIVO",singleLine = true, normalInputModifier, profile?.playStyle ?: "" ,
-                onValueChange = {newPlayStyle-> viewModel.onProfileChanged<String> {copy(playStyle = newPlayStyle)}})
+            AutoCompleteInput(label = "Estilo de juego",   profile?.playStyle ?: "" ,
+                onValueChange = {newPlayStyle-> viewModel.onProfileChanged<String> {copy(playStyle = newPlayStyle)}},
+                options = playStyles)
 
-            OutlineLabelInput(label = "Posicion preferida", placeholder = "Arquero", singleLine = true, normalInputModifier, profile?.preferedPosition ?: "" ,
-                onValueChange = {newPreferedPosition-> viewModel.onProfileChanged<String> {copy(preferedPosition = newPreferedPosition)}})
+            AutoCompleteInput(label = "Posicion preferida",
+                value= profile?.preferedPosition ?: "" ,
+                onValueChange = {newPreferedPosition-> viewModel.onProfileChanged<String> {copy(preferedPosition = newPreferedPosition)}},
+                options = position
+            )
 
             AutoCompleteInput(label = "Ubicacion",
                 profile?.location ?: "",
-                onValueChange = {newUbicacion-> viewModel.onProfileChanged<String> {copy(location = newUbicacion)}});
+                onValueChange = {newUbicacion-> viewModel.onProfileChanged<String> {copy(location = newUbicacion)}},
+                options = barriosOption);
 
             OutlineLabelInput(label = "Sobre vos", placeholder = ".....", singleLine = false, largeInputModifier,
                 profile?.description ?: "" ,

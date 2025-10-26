@@ -63,6 +63,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.example.partidoya.Service.DistanceCalculator
 import com.example.partidoya.domain.Cancha
+import com.example.partidoya.domain.Option
 import com.example.partidoya.domain.Partido
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
@@ -231,16 +232,16 @@ fun OutlineLabelInput(label: String, placeholder: String,singleLine: Boolean,mod
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit) {
+fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit, options: List<Option>) {
     //TODO: Esto tiene que salir de alguna api con las localidades
-    val options = listOf(
+    /*val options = listOf(
         "Villa Luro, CABA",
         "Caballito, CABA",
         "Moron, Buenos Aires",
         "Retiro, CABA",
         "Villa Ortuza, CABA",
         "Santa Rita, CABA"
-    )
+    )*/
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -267,12 +268,13 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
                 .heightIn(max = 200.dp)
         )
         {
-            options.filter { it.contains(value, ignoreCase = false) }
+            options
+                .filter { it.label.contains(value, ignoreCase = false) }
                 .forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
+                        text = { Text(option.label, style = MaterialTheme.typography.bodyMedium) },
                         onClick = {
-                            onValueChange(option)
+                            onValueChange(option.label)
                             expanded = false
                         }
                     )

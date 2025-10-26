@@ -18,6 +18,8 @@ object RetrofitClient {
     private var retrofit: Retrofit? = null
     private var userServiceInstance: UserService? = null
     private var footballFieldsServiceInstance: FootballFieldsService? = null
+    private var optionsServiceInstance: OptionsService? =null;
+    private var barrioServiceInstance: BarrioService? = null;
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun init(context: Context) {
@@ -31,9 +33,11 @@ object RetrofitClient {
             .client(client)
             .build()
     //val footballFieldsService = retrofit.create(FootballFieldsService::class.java)
-
-     userServiceInstance = retrofit!!.create(UserService::class.java)
+        userServiceInstance = retrofit!!.create(UserService::class.java)
         footballFieldsServiceInstance = retrofit!!.create(FootballFieldsService::class.java)
+        optionsServiceInstance = retrofit!!.create(OptionsService::class.java)
+        barrioServiceInstance = retrofit!!.create(BarrioService::class.java)
+
 }
 
     val userService: UserService
@@ -44,6 +48,13 @@ object RetrofitClient {
         get() = footballFieldsServiceInstance
             ?: throw IllegalStateException("RetrofitClient not initialized. Call init(context) first.")
 
+    val optionsService: OptionsService
+        get() = optionsServiceInstance
+            ?: throw IllegalStateException("RetrofitClient not initialized. Call init(context) first.")
+
+    val barrioService: BarrioService
+        get() = barrioServiceInstance
+            ?: throw IllegalStateException("RetrofitClient not initialized. Call init(context) first.")
     @RequiresApi(Build.VERSION_CODES.O)
     val gson = GsonBuilder() //Para convertir datos desde String a LocalDate y LocalTime
         .registerTypeAdapter(LocalDate::class.java, JsonDeserializer { json, _, _ ->
