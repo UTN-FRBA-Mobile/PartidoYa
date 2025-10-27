@@ -34,18 +34,6 @@ fun LandingPageScreen(navController: NavController){
 
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
-    val launcherRef = remember { mutableStateOf<ActivityResultLauncher<Intent>?>(null) }
-    /*val addAccountLauncher = rememberLauncherForActivityResult(
-
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            // Retry silent login after user returns
-            scope.launch {
-                googleAuth(context,launcherRef.value!!)
-            }
-        }
-    )*/
-    //launcherRef.value = addAccountLauncher
     Column (modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally){
