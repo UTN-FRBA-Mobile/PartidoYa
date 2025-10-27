@@ -86,4 +86,5 @@ object RetrofitClient {
         .baseUrl("http://10.0.2.2:8080/") // la URL
         .build()
         .create(AuthService::class.java)
+
 }

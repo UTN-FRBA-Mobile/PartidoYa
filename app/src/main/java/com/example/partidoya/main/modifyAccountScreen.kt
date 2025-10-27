@@ -85,18 +85,18 @@ fun ModifyAccountScreenContent(navController: NavController?  = null,viewModel: 
               //  profile?.apellido ?: "" , onValueChange = {newUserName-> viewModel.onProfileChanged<String> {copy( = newApellido)}})
 
             AutoCompleteInput(label = "Estilo de juego",   profile?.playStyle ?: "" ,
-                onValueChange = {newPlayStyle-> viewModel.onProfileChanged<String> {copy(playStyle = newPlayStyle)}},
+                onValueChange = {newPlayStyle-> viewModel.onProfileChanged<String> {copy(playStyle = newPlayStyle.key)}},
                 options = playStyles)
 
             AutoCompleteInput(label = "Posicion preferida",
                 value= profile?.preferedPosition ?: "" ,
-                onValueChange = {newPreferedPosition-> viewModel.onProfileChanged<String> {copy(preferedPosition = newPreferedPosition)}},
+                onValueChange = {newPreferedPosition-> viewModel.onProfileChanged<String> {copy(preferedPosition = newPreferedPosition.key)}},
                 options = position
             )
 
             AutoCompleteInput(label = "Ubicacion",
                 profile?.location ?: "",
-                onValueChange = {newUbicacion-> viewModel.onProfileChanged<String> {copy(location = newUbicacion)}},
+                onValueChange = {newUbicacion-> viewModel.onProfileChanged<String> {copy(location = newUbicacion.key)}},
                 options = barriosOption);
 
             OutlineLabelInput(label = "Sobre vos", placeholder = ".....", singleLine = false, largeInputModifier,

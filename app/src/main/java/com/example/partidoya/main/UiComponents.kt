@@ -73,7 +73,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun HomeButton(text:String, onClick: ()->Unit){
+fun HomeButton(text:String, onClick:  ()->Unit){
 
     Button(onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -232,7 +232,7 @@ fun OutlineLabelInput(label: String, placeholder: String,singleLine: Boolean,mod
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit, options: List<Option>) {
+fun AutoCompleteInput(label: String, value: String, onValueChange: (Option) -> Unit, options: List<Option>) {
     //TODO: Esto tiene que salir de alguna api con las localidades
     /*val options = listOf(
         "Villa Luro, CABA",
@@ -243,16 +243,17 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
         "Santa Rita, CABA"
     )*/
     var expanded by remember { mutableStateOf(false) }
+    var textValue by remember { mutableStateOf(value) }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
-            value = value,
+            value = textValue,
             colors = InputColors,
             shape = RoundedCornerShape(16.dp),
             onValueChange = { newValue ->
-                onValueChange(newValue)
+                textValue = newValue
                 expanded = newValue.isNotEmpty()
             },
             modifier = normalInputModifier
@@ -274,7 +275,8 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
                     DropdownMenuItem(
                         text = { Text(option.label, style = MaterialTheme.typography.bodyMedium) },
                         onClick = {
-                            onValueChange(option.label)
+                            textValue = option.label
+                            onValueChange(option)
                             expanded = false
                         }
                     )

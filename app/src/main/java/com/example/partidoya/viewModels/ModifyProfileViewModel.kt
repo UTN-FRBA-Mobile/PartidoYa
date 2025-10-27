@@ -132,7 +132,11 @@ class ModifyProfileViewModel:ViewModel() {
                     }
                     else{
                         Log.e("PROFILE", "Response body was null")
-                    }}
+                    }
+                }
+                else {
+                    Log.e("PROFILE", "Unsuccessful response: ${response.code()}, ${response.body()}")
+                }
             }
             catch (e: Exception){
                 Log.e("API PERFIL", e.message, e)
