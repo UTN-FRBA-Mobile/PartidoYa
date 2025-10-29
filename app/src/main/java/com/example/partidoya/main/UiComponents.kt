@@ -447,7 +447,6 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
             }
         }
     }
-}
 
 
 
@@ -487,7 +486,7 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
             }
         }
     }
-}
+
 
 @Composable
 fun GenericInfoMatch(partido: Partido, onClickUbi: (Cancha?) -> Unit){
