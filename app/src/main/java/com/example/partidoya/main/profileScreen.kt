@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +46,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -54,7 +56,7 @@ import com.example.partidoya.viewModels.ProfileViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel<ProfileViewModel>() ){
+fun ProfileScreen(navController: NavController, paddingValues: PaddingValues, horizontalPadding: Dp, viewModel: ProfileViewModel = viewModel<ProfileViewModel>() ){
     val logoutData = viewModel.logoutData
     val profile by viewModel.profileData.collectAsState()
 
@@ -84,7 +86,9 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = vi
             profile.location ?: "N/A",
             profile.playStyle ?: "N/A",
             profile.description ?: "No has contado nada sobre ti",
-            viewModel::logout
+            viewModel::logout,
+            paddingValues,
+            horizontalPadding
         )
 
     }
@@ -102,16 +106,16 @@ fun ProfileScreenPreview(){
             "más conocido como Dibu Martinez o simplemente Dibu, es un futbolista argentino " +
             "que juega en el Aston Villa de la Premier League.";
 
-    Container(null,nombre, usuario, posicion, ubicacion, modoJuego, presentacion, logout = {})
+    //Container(null,nombre, usuario, posicion, ubicacion, modoJuego, presentacion, logout = {})
 }
 
 @Composable
-fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, logout: () -> Unit){
+fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, logout: () -> Unit, paddingValues: PaddingValues, horizontalPadding: Dp){
     var expanded by remember { mutableStateOf(false) }
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
-        modifier = Modifier.fillMaxSize().offset(y = (-25).dp).padding(16.dp)) {
+        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding)) {
         GlassCard(){
 
                 // 🔹 Button aligned to top end

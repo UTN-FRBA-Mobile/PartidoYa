@@ -4,7 +4,7 @@ import com.example.partidoya.domain.Cancha
 import java.time.LocalDate
 import java.time.LocalTime
 
-abstract class PartidoRes(
+class PartidoRes(
     val id: Int,
     val tipo: String,
     val fecha: LocalDate,
@@ -13,6 +13,8 @@ abstract class PartidoRes(
     val duracion: Int,
     val formato: String,
     val cancha: Cancha?,
-    val barrio: String
-    //val organizador: Jugador
+    val barrio: String,
+    val hayRepresentante: Boolean,
+    var jugadoresFaltantes: Int,
+    var posicionesFaltantes: List<String>
 )

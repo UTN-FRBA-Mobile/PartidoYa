@@ -5,9 +5,13 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,21 +36,22 @@ import com.example.partidoya.viewModels.ProfileViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ModifyAccountScreen(navController: NavController){
- ModifyAccountScreenContent(navController)
+fun ModifyAccountScreen(navController: NavController, paddingValues: PaddingValues, horizontalPadding: Dp){
+ ModifyAccountScreenContent(navController, paddingValues, horizontalPadding)
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun ModifyAccountScreenPreview(){
-    ModifyAccountScreenContent()
+    //ModifyAccountScreenContent()
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ModifyAccountScreenContent(navController: NavController?  = null,viewModel: ModifyProfileViewModel = viewModel<ModifyProfileViewModel>() ){
+fun ModifyAccountScreenContent(navController: NavController?  = null, paddingValues: PaddingValues, horizontalPadding: Dp, viewModel: ModifyProfileViewModel = viewModel<ModifyProfileViewModel>() ){
     val profile by viewModel.profileData.collectAsState()
     val uiState = viewModel.uiState
     val context = LocalContext.current
+    var scrollState = rememberScrollState()
 
     LaunchedEffect (uiState.success) {
         if (uiState.success) {
@@ -56,7 +62,7 @@ fun ModifyAccountScreenContent(navController: NavController?  = null,viewModel: 
     }
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()){
+        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)){
 
         GlassCard(spaceBetween = 8.dp){
 

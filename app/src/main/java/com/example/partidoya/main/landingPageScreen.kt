@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -23,7 +24,7 @@ import com.example.partidoya.Preferences.Preferences
 import com.example.partidoya.R
 
 @Composable
-fun LandingPageScreen(navController: NavController){
+fun LandingPageScreen(navController: NavController, horizontalPadding: Dp){
     val context = LocalContext.current
     val preferences = Preferences(context)
 
@@ -31,7 +32,7 @@ fun LandingPageScreen(navController: NavController){
         preferences.clearToken()
     }
 
-    Column (modifier = Modifier.fillMaxSize(),
+    Column (modifier = Modifier.fillMaxSize().padding(horizontal = horizontalPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally){
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")
