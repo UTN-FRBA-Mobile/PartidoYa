@@ -15,6 +15,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +37,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,13 +47,13 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
@@ -73,7 +73,12 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
+fun Matches(
+    viewModel: PartidosViewModel,
+    mainViewModel: MainViewModel,
+    paddingValues: PaddingValues,
+    horizontalPadding: Dp
+){
     val partidos by viewModel.partidos.collectAsState()
     val filtroJugEqui by viewModel.filtroJugEqui.collectAsState()
     val context = LocalContext.current
@@ -84,6 +89,7 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     var viewMap by remember { mutableStateOf(false) }
     var canchaConsultada by remember { mutableStateOf<Cancha?>(null) }
+    var scrollState = rememberScrollState()
 
 
     //SI NO TENGO PERMISO PARA ACCEDER A SU UBICACION SE LO PIDO
@@ -99,10 +105,7 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     )
 
     LaunchedEffect(filtroJugEqui){
-        when(filtroJugEqui){
-            "Jugadores" -> viewModel.cargarPartidosJugadores()
-            "Equipo" -> viewModel.cargarPartidosEquipo()
-        }
+           viewModel.cargarPartidos(filtroJugEqui)
     }
 
     LaunchedEffect(partidoConfirmado) {
@@ -158,9 +161,9 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     }
 
 
-    Column (verticalArrangement = Arrangement.Center,
+    Column (verticalArrangement = if(isGranted && ubicacion == null) Arrangement.Center else Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)){
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)){
 
         GlassCardTitle("PARTIDOS")
         if(isGranted && ubicacion == null) { //Mientras intenta definir la ubicacion
@@ -168,10 +171,7 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
         }else {
 
             Row (verticalAlignment = Alignment.CenterVertically){
-                Filtro(filtroJugEqui, {viewModel.alternarFiltroJugEqui()})
-                Spacer(Modifier.width(5.dp))
                 Text("Agendar partidos en el calendario: ", color = Color.White,style = MaterialTheme.typography.bodyMedium)
-                Spacer(Modifier.weight(1F))
                 Switch(
                     checked = saveInCalendar,
                     onCheckedChange = { mainViewModel.toggleSaveInCalendar() },
@@ -179,40 +179,36 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
                 )
             }
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(partidos) { partido ->
-                    when (partido) {
-                        is PartidoJugadores -> MatchPlayersCard(partido, viewModel, ubicacion, { cancha -> canchaConsultada = cancha
+            Filtro(filtroJugEqui, {viewModel.alternarFiltroJugEqui()})
+
+            repeat(partidos.size){
+                index ->
+                    when (partidos[index]) {
+                        is PartidoJugadores -> MatchPlayersCard(partidos[index] as PartidoJugadores, viewModel, ubicacion, { cancha -> canchaConsultada = cancha
                                                                                                                         viewMap = true })
-                        is PartidoEquipo -> MatchTeamCard(partido, viewModel, ubicacion, {cancha -> canchaConsultada = cancha
+                        is PartidoEquipo -> MatchTeamCard(partidos[index] as PartidoEquipo, viewModel, ubicacion, {cancha -> canchaConsultada = cancha
                                                                                                                 viewMap = true})
                     }
-
                     Spacer(Modifier.height(15.dp))
                 }
             }
         }
     }
-}
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MyMatches(viewModel: PartidosViewModel){
-    val filtroJugEqui by viewModel.filtroJugEqui.collectAsState()
+fun MyMatches(viewModel: PartidosViewModel, paddingValues: PaddingValues, horizontalPadding: Dp){
     var viewMap by remember { mutableStateOf(false) }
     var canchaConsultada by remember { mutableStateOf<Cancha?>(null) }
     val partidos by viewModel.misPartidos.collectAsState()
+    val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
+    var scrollState = rememberScrollState()
 
-    LaunchedEffect(filtroJugEqui){
-        when(filtroJugEqui){
-            "Jugadores" -> viewModel.cargarMisPartidosJugadores()
-            "Equipo" -> viewModel.cargarMisPartidosEquipo()
-        }
+    LaunchedEffect(filtroOrgJug) {
+        viewModel.cargarMisPartidos(filtroOrgJug)
     }
+
 
     if(viewMap) {
         canchaConsultada?.let { cancha ->
@@ -229,26 +225,22 @@ fun MyMatches(viewModel: PartidosViewModel){
     }
 
 
-        Column (verticalArrangement = Arrangement.Center,
+        Column (verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)) {
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)) {
 
             GlassCardTitle("MIS PARTIDOS")
+            Filtro(filtroOrgJug, {viewModel.alternarFiltroOrgJug()})
 
-            Filtro(filtroJugEqui, { viewModel.alternarFiltroJugEqui() })
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(partidos) { partido ->
-                    when (partido) {
-                        is PartidoJugadores -> MyMatchPlayerCard(partido, viewModel, { cancha ->
+            repeat(partidos.size){
+                    index ->
+                    when (partidos[index]) {
+                        is PartidoJugadores -> MyMatchPlayerCard(partidos[index] as PartidoJugadores, viewModel, { cancha ->
                             canchaConsultada = cancha
                             viewMap = true
                         })
 
-                        is PartidoEquipo -> MyMatchTeamCard(partido, viewModel, { cancha ->
+                        is PartidoEquipo -> MyMatchTeamCard(partidos[index] as PartidoEquipo, viewModel, { cancha ->
                             canchaConsultada = cancha
                             viewMap = true
                         })
@@ -258,12 +250,10 @@ fun MyMatches(viewModel: PartidosViewModel){
                 }
             }
         }
-}
-
 
 @RequiresApi(Build.VERSION_CODES.O) //Necesario para el LocalTime
 @Composable
-fun CreateMatch(viewModel: PartidosViewModel) {
+fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, horizontalPadding: Dp) {
     var horarioSeleccionado by remember { mutableStateOf(LocalTime.of(0, 0)) }
     var fechaSeleccionada by remember { mutableStateOf(LocalDate.now()) }
     var duracionDefinida by remember { mutableStateOf("") }
@@ -311,7 +301,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp).verticalScroll(scrollState)
+        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)
     ) {
         GlassCard(){
             GlassCardTitle("CREAR PARTIDO")

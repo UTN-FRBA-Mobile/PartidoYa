@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -438,8 +439,8 @@ fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacio
 
 @Composable
 fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, onClickUbi: (Cancha?) -> Unit){
-
     var titulo = if(partido.jugadoresFaltantes == 0) "COMPLETO" else "INCOMPLETO"
+    val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
 
     Box(
         modifier = Modifier
@@ -466,18 +467,23 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
             )
 
             GenericInfoMatch(partido, onClickUbi)
+            MediumText("FORMATO: " + partido.formato)
+            Spacer(Modifier.height(5.dp))
 
             Spacer(Modifier.height(5.dp))
             MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
             Spacer(Modifier.height(5.dp))
 
-            MediumText("POSICION: " + viewModel.posicionElegida(partido))
-            Spacer(Modifier.height(5.dp))
+            if(filtroOrgJug == "Jugador") { //Si es organizador, no tiene posicion elegida
+                MediumText("POSICION: " + viewModel.posicionElegida(partido))
+                Spacer(Modifier.height(5.dp))
+            }
 
             Button(modifier = Modifier
                 .width(169.dp)
                 .height(49.dp),
-                onClick = { viewModel.abandonarPartido(partido) },
+                onClick = { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
+                          else viewModel.cancelarPartido(partido)},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFA93838),
                     contentColor = Color.White)){
@@ -491,8 +497,9 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
 
 @Composable
 fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClickUbi: (Cancha?) -> Unit){
-
-    var titulo = "CONFIRMADO"
+    var titulo = if(partido.hayRepresentante) "CONFIRMADO" else "SIN CONFIRMAR"
+    var colorTitulo = if(partido.hayRepresentante) Color.Green else Color.Red
+    val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
 
     Box(
         modifier = Modifier
@@ -511,16 +518,19 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
                 text = titulo,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                color = Color.Green,
+                color = colorTitulo,
                 style = MaterialTheme.typography.titleSmall
             )
 
             GenericInfoMatch(partido, onClickUbi)
+            MediumText("FORMATO: " + partido.formato)
+            Spacer(Modifier.height(5.dp))
 
             Button(modifier = Modifier
                 .width(169.dp)
                 .height(49.dp),
-                onClick = { viewModel.abandonarPartido(partido) },
+                onClick = { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
+                          else viewModel.cancelarPartido(partido)},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFA93838),
                     contentColor = Color.White)){

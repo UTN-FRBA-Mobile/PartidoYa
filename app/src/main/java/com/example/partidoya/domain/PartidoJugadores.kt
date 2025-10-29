@@ -14,6 +14,5 @@ class PartidoJugadores(
      barrio: String,
     var jugadoresFaltantes: Int,
     var posicionesFaltantes: List<String>,
-):
-    Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio)
+): Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio)
 

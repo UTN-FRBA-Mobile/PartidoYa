@@ -12,7 +12,4 @@ abstract class Partido(
     val formato: String,
     val cancha: Cancha?,
     val barrio: String
-    //val organizador: Jugador
-){
-
-}
+)
