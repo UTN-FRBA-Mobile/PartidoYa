@@ -11,5 +11,6 @@ abstract class Partido(
     val duracion: Int,
     val formato: String,
     val cancha: Cancha?,
-    val barrio: String
+    val barrio: String,
+    val puedeCancelar: Boolean
 )

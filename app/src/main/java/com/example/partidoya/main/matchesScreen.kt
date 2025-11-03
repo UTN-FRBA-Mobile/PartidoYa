@@ -262,6 +262,7 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
     var canchaDefinida by remember { mutableStateOf<Cancha?>(null) }
     var barrioDefinido by remember { mutableStateOf("-") }
+    var reputacionDefinida by remember { mutableStateOf(0) }
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
@@ -478,6 +479,16 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
                     completo = datosGeneralesCompletos
                 }
 
+                Text(
+                    text = "REPUTACIÓN MÍNIMA APLICABLE",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Left
+                )
+                Spacer(Modifier.height(10.dp))
+                DropDownReputacion(seleccion = reputacionDefinida, onClick =  { reputacion -> reputacionDefinida = reputacion})
+
                 Button(colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF3C7440),
                             contentColor = Color.White),
@@ -494,6 +505,7 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
                                         busquedaSeleccionada,
                                         canchaDefinida,
                                         barrioDefinido,
+                                        reputacionDefinida,
                                         cantJugadoresFaltantes,
                                         listaAux
                                     )
@@ -507,7 +519,8 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
                                         duracionDefinida.toIntOrNull() ?: 0,
                                         formatoSeleccionado,
                                         canchaDefinida,
-                                        barrioDefinido
+                                        barrioDefinido,
+                                        reputacionMinima = reputacionDefinida
                                     )
 
                             }
@@ -584,6 +597,42 @@ fun DropDownBarrios(viewModel: PartidosViewModel, seleccion: String?, onClick: (
                     },
                     onClick = {
                         onClick(barrio)
+                        expanded = false
+                    })
+            }
+        }
+    }
+}
+
+data class ItemReputacion(val name: String, val value: Int)
+@Composable
+fun DropDownReputacion(seleccion: Int?, onClick: (Int) -> Unit) {
+    val reputaciones = listOf(
+        ItemReputacion("INDISTINTO", 0),
+        ItemReputacion("REGULAR", 21),
+        ItemReputacion("BUENA", 41),
+        ItemReputacion("MUY BUENA", 61),
+        ItemReputacion("EXCELENTE", 81)
+    );
+
+    val nombreReputacion = if (seleccion != null) reputaciones.first { reputacion -> reputacion.value == seleccion }.name else "INDISTINTO"
+
+    var expanded by remember { mutableStateOf(false) } //si se expandió o no
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        DropdownButton(nombreReputacion, { expanded = true })
+
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            reputaciones.forEach { reputacion ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = reputacion.name,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    onClick = {
+                        onClick(reputacion.value)
                         expanded = false
                     })
             }

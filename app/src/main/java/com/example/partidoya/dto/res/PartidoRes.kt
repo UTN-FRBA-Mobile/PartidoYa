@@ -14,6 +14,7 @@ class PartidoRes(
     val formato: String,
     val cancha: Cancha?,
     val barrio: String,
+    val puedeCancelar: Boolean,
     val hayRepresentante: Boolean,
     var jugadoresFaltantes: Int,
     var posicionesFaltantes: List<String>

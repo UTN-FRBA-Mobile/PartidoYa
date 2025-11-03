@@ -8,5 +8,9 @@ data class UserProfileRes(
     val location: String,
     val playStyle: String,
     val preferedPosition: String,
-    val description: String
+    val description: String,
+    val reputation: Int,
+    val toPlayMatches: Int,
+    val playedMatches: Int,
+    val canceledMatches: Int
 )

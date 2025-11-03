@@ -12,5 +12,6 @@ class PartidoEquipo(
      formato: String,
      cancha: Cancha?,
      barrio: String,
+     puedeCancelar: Boolean,
     var hayRepresentante: Boolean
-): Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio)
+): Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio, puedeCancelar)

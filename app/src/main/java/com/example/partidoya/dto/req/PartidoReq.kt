@@ -13,6 +13,7 @@ class PartidoReq (
     val formato: String,
     val cancha: Cancha?,
     val barrio: String,
+    val reputacionMinima: Int,
     var jugadoresFaltantes: Int,
     var posicionesFaltantes: List<String>
     )

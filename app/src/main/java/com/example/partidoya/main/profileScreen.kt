@@ -13,14 +13,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
@@ -86,6 +88,10 @@ fun ProfileScreen(navController: NavController, paddingValues: PaddingValues, ho
             profile.location ?: "N/A",
             profile.playStyle ?: "N/A",
             profile.description ?: "No has contado nada sobre ti",
+            profile.reputation,
+            profile.toPlayMatches,
+            profile.playedMatches,
+            profile.canceledMatches,
             viewModel::logout,
             paddingValues,
             horizontalPadding
@@ -110,12 +116,14 @@ fun ProfileScreenPreview(){
 }
 
 @Composable
-fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, logout: () -> Unit, paddingValues: PaddingValues, horizontalPadding: Dp){
+fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, reputacion: Int, partidosPorJugar: Int, partidosJugados: Int, partidosCancelados: Int, logout: () -> Unit, paddingValues: PaddingValues, horizontalPadding: Dp){
     var expanded by remember { mutableStateOf(false) }
+    var scrollState = rememberScrollState()
+    var reputacionTipo = getTipoReputacion(reputacion)
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
-        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding)) {
+        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)) {
         GlassCard(){
 
                 // 🔹 Button aligned to top end
@@ -183,7 +191,7 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconLabel(posicion, Icons.Default.Star)
+                    IconLabel(posicion, Icons.Default.Favorite)
                     Spacer(modifier = Modifier.width(30.dp)) // space between the 2 IconLabels
                     IconLabel(ubicacion, Icons.Default.LocationOn)
                 }
@@ -198,6 +206,13 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                 }
             }
 
+            Spacer(Modifier.height(16.dp)) // space between the lines
+            Column (modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "Reputación: $reputacionTipo", fontSize = 14.sp, color = Color.White)
+                RatingComponent(reputacion)
+                Text(text = "Por jugar: $partidosPorJugar | Jugados: $partidosJugados | Cancelados: $partidosCancelados", fontSize = 14.sp, color = Color.White)
+            }
+
             Spacer(Modifier.height(20.dp))
             Column(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
@@ -209,6 +224,56 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                 }
             }
 
+        }
+    }
+}
+
+fun getTipoReputacion(value: Int): String {
+    if (value >= 81) {
+        return "Excelente"
+    } else if (value >=61) {
+        return "Muy Buena"
+    } else if (value >=41) {
+        return "Buena"
+    }
+    return "Regular"
+}
+
+@Composable
+fun RatingComponent (value: Int) {
+    var estrellasPintadas = 0;
+    estrellasPintadas = if (value <= 0) {
+        0;
+    } else if (value <= 20) {
+        1;
+    } else if (value <= 40) {
+        2;
+    } else if (value <= 60) {
+        3;
+    } else if (value <= 80) {
+        4;
+    } else {
+        5;
+    }
+
+    val totalEstrellas = 5;
+
+    val estrellasSinPintar = totalEstrellas - estrellasPintadas;
+
+    Row {
+        for (i in 1..estrellasPintadas) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = "STAR ICON WHITE $i",
+                tint = Color.Yellow
+            )
+        }
+        for (i in 1..estrellasSinPintar) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = "STAR ICON GRAY $i",
+                tint = Color.LightGray
+            )
         }
     }
 }

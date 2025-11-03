@@ -443,7 +443,7 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
             }
 
             BasicButton("CANCELAR", { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
-            else viewModel.cancelarPartido(partido) }, isSuccess = false)
+            else viewModel.cancelarPartido(partido) }, isSuccess = false, isEnabled = partido.puedeCancelar)
             }
         }
     }
@@ -482,7 +482,7 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
             Spacer(Modifier.height(5.dp))
 
             BasicButton("CANCELAR", { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
-            else viewModel.cancelarPartido(partido) }, isSuccess = false)
+            else viewModel.cancelarPartido(partido) }, isSuccess = false, isEnabled = partido.puedeCancelar)
             }
         }
     }
@@ -593,11 +593,12 @@ fun Filtro(texto: String, onClick: () -> Unit){
 }
 
 @Composable
-fun BasicButton(text: String, handleClick: () -> Unit, isSuccess: Boolean = true) {
+fun BasicButton(text: String, handleClick: () -> Unit, isSuccess: Boolean = true, isEnabled: Boolean = true) {
     Button(modifier = Modifier
         .width(169.dp)
         .height(49.dp),
         onClick = { handleClick() },
+        enabled = isEnabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(if (isSuccess) 0xFF3C7440 else 0xFFA93838),
             contentColor = Color.White)){

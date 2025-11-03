@@ -106,6 +106,7 @@ class PartidosViewModel() : ViewModel() {
                                 formato = p.formato,
                                 cancha = p.cancha,
                                 barrio = p.barrio,
+                                puedeCancelar = p.puedeCancelar,
                                 jugadoresFaltantes = p.jugadoresFaltantes,
                                 posicionesFaltantes = p.posicionesFaltantes
                             )
@@ -119,6 +120,7 @@ class PartidosViewModel() : ViewModel() {
                                 formato = p.formato,
                                 cancha = p.cancha,
                                 barrio = p.barrio,
+                                puedeCancelar = p.puedeCancelar,
                                 hayRepresentante = p.hayRepresentante
                             )
                         }
@@ -143,6 +145,7 @@ class PartidosViewModel() : ViewModel() {
         busqueda: String,
         cancha: Cancha?,
         zona: String,
+        reputacionMinima: Int,
         cantJugadores: Int,
         posiciones: List<String>)
     {
@@ -155,6 +158,7 @@ class PartidosViewModel() : ViewModel() {
             formato = formato,
             cancha = cancha,
             barrio = zona,
+            reputacionMinima = reputacionMinima,
             jugadoresFaltantes = cantJugadores,
             posicionesFaltantes = posiciones
         )
@@ -180,7 +184,8 @@ class PartidosViewModel() : ViewModel() {
         duracion: Int,
         formato: String,
         cancha: Cancha?,
-        zona: String
+        zona: String,
+        reputacionMinima: Int
     )
     {
 
@@ -193,6 +198,7 @@ class PartidosViewModel() : ViewModel() {
             formato = formato,
             cancha = cancha,
             barrio = zona,
+            reputacionMinima = reputacionMinima,
             jugadoresFaltantes = 0,
             posicionesFaltantes = emptyList()
         )
@@ -287,6 +293,7 @@ class PartidosViewModel() : ViewModel() {
                                 formato = p.formato,
                                 cancha = p.cancha,
                                 barrio = p.barrio,
+                                puedeCancelar = p.puedeCancelar,
                                 jugadoresFaltantes = p.jugadoresFaltantes,
                                 posicionesFaltantes = p.posicionesFaltantes
                             )
@@ -300,6 +307,7 @@ class PartidosViewModel() : ViewModel() {
                                 formato = p.formato,
                                 cancha = p.cancha,
                                 barrio = p.barrio,
+                                  puedeCancelar = p.puedeCancelar,
                                   hayRepresentante = p.hayRepresentante
                                 )
                         }
