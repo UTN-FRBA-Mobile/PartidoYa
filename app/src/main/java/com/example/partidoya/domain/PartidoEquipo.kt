@@ -13,5 +13,6 @@ class PartidoEquipo(
      cancha: Cancha?,
      barrio: String,
      puedeCancelar: Boolean,
-    var hayRepresentante: Boolean
-): Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio, puedeCancelar)
+    var hayRepresentante: Boolean,
+    detalleJugadores: List<DetalleJugador>? = null
+): Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio, puedeCancelar, detalleJugadores)

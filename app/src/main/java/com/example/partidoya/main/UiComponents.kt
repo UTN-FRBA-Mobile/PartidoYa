@@ -5,7 +5,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.provider.CalendarContract
-import android.provider.ContactsContract
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -27,12 +26,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
@@ -60,10 +62,9 @@ import com.example.partidoya.ui.theme.normalInputModifier
 import com.example.partidoya.ui.theme.unwrap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.zIndex
 import com.example.partidoya.Service.DistanceCalculator
 import com.example.partidoya.domain.Cancha
+import com.example.partidoya.domain.DetalleJugador
 import com.example.partidoya.domain.Partido
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
@@ -106,11 +107,11 @@ fun MiniButton(text: String,onClick: () -> Unit){
 
 @Composable
 
-fun GlassCard(spaceBetween: Dp = 0.dp,content: @Composable ColumnScope.() -> Unit){
+fun GlassCard(spaceBetween: Dp = 0.dp, esDarkGray: Boolean = false, content: @Composable ColumnScope.() -> Unit){
     //Permite pasar contenido dinamico para insertar en la columna
     Box(modifier = Modifier
         .background(
-            Color(0x33020202),
+            if (esDarkGray) Color.DarkGray else Color(0x33020202),
             shape = RoundedCornerShape(30.dp)
         )){
         Column(modifier = Modifier.padding(30.dp),
@@ -404,6 +405,7 @@ fun MatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, ubicacio
 fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, onClickUbi: (Cancha?) -> Unit){
     var titulo = if(partido.jugadoresFaltantes == 0) "COMPLETO" else "INCOMPLETO"
     val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
+    var mostrarAlertaDetalleJugadores by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -442,11 +444,16 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
                 Spacer(Modifier.height(5.dp))
             }
 
-            BasicButton("CANCELAR", { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
-            else viewModel.cancelarPartido(partido) }, isSuccess = false, isEnabled = partido.puedeCancelar)
-            }
+            FooterMatch(partido, filtroOrgJug, viewModel, {mostrarAlertaDetalleJugadores= true})
         }
     }
+    if (mostrarAlertaDetalleJugadores) {
+        VisualizarDetalleJugadores (
+            onDismiss = { mostrarAlertaDetalleJugadores = false },
+            detalleJugadores = partido.detalleJugadores
+        )
+    }
+}
 
 
 
@@ -455,6 +462,7 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
     var titulo = if(partido.hayRepresentante) "CONFIRMADO" else "SIN CONFIRMAR"
     var colorTitulo = if(partido.hayRepresentante) Color.Green else Color.Red
     val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
+    var mostrarAlertaDetalleJugadores by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -481,11 +489,38 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
             MediumText("FORMATO: " + partido.formato)
             Spacer(Modifier.height(5.dp))
 
-            BasicButton("CANCELAR", { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
-            else viewModel.cancelarPartido(partido) }, isSuccess = false, isEnabled = partido.puedeCancelar)
-            }
+            FooterMatch(partido, filtroOrgJug, viewModel, {mostrarAlertaDetalleJugadores=true})
         }
     }
+    if (mostrarAlertaDetalleJugadores) {
+        VisualizarDetalleJugadores (
+            onDismiss = { mostrarAlertaDetalleJugadores = false },
+            detalleJugadores = partido.detalleJugadores
+        )
+    }
+}
+
+@Composable
+fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewModel, accion: () -> Unit?) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        BasicButton("CANCELAR", { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
+        else viewModel.cancelarPartido(partido) }, isSuccess = false, isEnabled = partido.puedeCancelar)
+
+        if (partido.detalleJugadores != null && partido.detalleJugadores.isNotEmpty()) {
+            Text(
+                text = "Ver jugadores",
+                color = Color(0xFF1E88E5), // azul tipo link
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.clickable {
+                    accion()
+                }
+            )
+        }
+    }
+}
 
 
 @Composable
@@ -520,6 +555,76 @@ fun GenericInfoMatch(partido: Partido, onClickUbi: (Cancha?) -> Unit){
 @Composable
 fun MediumText(text: String){
     Text(text = text,style = MaterialTheme.typography.bodyMedium, color = Color.White)
+}
+
+@Composable
+fun RatingComponent (value: Int) {
+    var estrellasPintadas = 0;
+    estrellasPintadas = if (value <= 0) {
+        0;
+    } else if (value <= 20) {
+        1;
+    } else if (value <= 40) {
+        2;
+    } else if (value <= 60) {
+        3;
+    } else if (value <= 80) {
+        4;
+    } else {
+        5;
+    }
+
+    val totalEstrellas = 5;
+
+    val estrellasSinPintar = totalEstrellas - estrellasPintadas;
+
+    Row {
+        for (i in 1..estrellasPintadas) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = "STAR ICON WHITE $i",
+                tint = Color.Yellow
+            )
+        }
+        for (i in 1..estrellasSinPintar) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = "STAR ICON GRAY $i",
+                tint = Color.LightGray
+            )
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VisualizarDetalleJugadores(onDismiss: ()-> Unit, detalleJugadores: List<DetalleJugador>?){
+    BasicAlertDialog(
+        onDismissRequest = onDismiss,
+        content = {
+            GlassCard (esDarkGray = true){
+                Text(text = "Detalle Jugadores", style = MaterialTheme.typography.titleSmall, color = Color.White)
+                Spacer(Modifier.height(10.dp))
+                detalleJugadores?.forEach { detalleJugador ->
+                    Spacer(Modifier.height(10.dp))
+                    Text(detalleJugador.name.toString() + " " + detalleJugador.surname.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                    Spacer(Modifier.height(10.dp))
+                    Text(detalleJugador.celular.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                    Spacer(Modifier.height(10.dp))
+                    Text(detalleJugador.preferedPosition.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                    Spacer(Modifier.height(10.dp))
+                    Text(detalleJugador.playStyle.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                    Spacer(Modifier.height(10.dp))
+                    RatingComponent(detalleJugador.reputacion?.toInt() ?: 0)
+                    Spacer(Modifier.height(10.dp))
+                    HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
+                }
+                Spacer(Modifier.height(10.dp))
+                Button(onClick = onDismiss) { Text("VOLVER", style = MaterialTheme.typography.bodyMedium) }
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

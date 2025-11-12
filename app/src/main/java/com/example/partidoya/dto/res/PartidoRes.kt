@@ -1,6 +1,7 @@
 package com.example.partidoya.dto.res
 
 import com.example.partidoya.domain.Cancha
+import com.example.partidoya.domain.DetalleJugador
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -17,5 +18,6 @@ class PartidoRes(
     val puedeCancelar: Boolean,
     val hayRepresentante: Boolean,
     var jugadoresFaltantes: Int,
-    var posicionesFaltantes: List<String>
+    var posicionesFaltantes: List<String>,
+    var detalleJugadores: List<DetalleJugador>? = null
 )

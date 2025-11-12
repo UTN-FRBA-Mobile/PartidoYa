@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -239,44 +238,6 @@ fun getTipoReputacion(value: Int): String {
     return "Regular"
 }
 
-@Composable
-fun RatingComponent (value: Int) {
-    var estrellasPintadas = 0;
-    estrellasPintadas = if (value <= 0) {
-        0;
-    } else if (value <= 20) {
-        1;
-    } else if (value <= 40) {
-        2;
-    } else if (value <= 60) {
-        3;
-    } else if (value <= 80) {
-        4;
-    } else {
-        5;
-    }
-
-    val totalEstrellas = 5;
-
-    val estrellasSinPintar = totalEstrellas - estrellasPintadas;
-
-    Row {
-        for (i in 1..estrellasPintadas) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "STAR ICON WHITE $i",
-                tint = Color.Yellow
-            )
-        }
-        for (i in 1..estrellasSinPintar) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "STAR ICON GRAY $i",
-                tint = Color.LightGray
-            )
-        }
-    }
-}
 
 @Composable
 fun IconLabel (label: String, icon: ImageVector) {

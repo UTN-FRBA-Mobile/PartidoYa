@@ -12,5 +12,6 @@ abstract class Partido(
     val formato: String,
     val cancha: Cancha?,
     val barrio: String,
-    val puedeCancelar: Boolean
+    val puedeCancelar: Boolean,
+    val detalleJugadores: List<DetalleJugador>? = null
 )

@@ -108,7 +108,8 @@ class PartidosViewModel() : ViewModel() {
                                 barrio = p.barrio,
                                 puedeCancelar = p.puedeCancelar,
                                 jugadoresFaltantes = p.jugadoresFaltantes,
-                                posicionesFaltantes = p.posicionesFaltantes
+                                posicionesFaltantes = p.posicionesFaltantes,
+                                detalleJugadores = p.detalleJugadores
                             )
                         } else {
                             PartidoEquipo(
@@ -121,7 +122,8 @@ class PartidosViewModel() : ViewModel() {
                                 cancha = p.cancha,
                                 barrio = p.barrio,
                                 puedeCancelar = p.puedeCancelar,
-                                hayRepresentante = p.hayRepresentante
+                                hayRepresentante = p.hayRepresentante,
+                                detalleJugadores = p.detalleJugadores
                             )
                         }
 
@@ -295,7 +297,8 @@ class PartidosViewModel() : ViewModel() {
                                 barrio = p.barrio,
                                 puedeCancelar = p.puedeCancelar,
                                 jugadoresFaltantes = p.jugadoresFaltantes,
-                                posicionesFaltantes = p.posicionesFaltantes
+                                posicionesFaltantes = p.posicionesFaltantes,
+                                detalleJugadores = p.detalleJugadores
                             )
                         }else{
                               PartidoEquipo(
@@ -308,7 +311,8 @@ class PartidosViewModel() : ViewModel() {
                                 cancha = p.cancha,
                                 barrio = p.barrio,
                                   puedeCancelar = p.puedeCancelar,
-                                  hayRepresentante = p.hayRepresentante
+                                  hayRepresentante = p.hayRepresentante,
+                                  detalleJugadores = p.detalleJugadores
                                 )
                         }
 
