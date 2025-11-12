@@ -12,5 +12,6 @@ data class UserProfileRes(
     val reputation: Int,
     val toPlayMatches: Int,
     val playedMatches: Int,
-    val canceledMatches: Int
+    val canceledMatches: Int,
+    val celular: String
 )

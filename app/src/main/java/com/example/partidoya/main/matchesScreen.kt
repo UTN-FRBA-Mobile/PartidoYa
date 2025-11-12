@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -57,6 +55,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
@@ -351,7 +350,8 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
                 }
                 Spacer(Modifier.width(15.dp))
                 Column {
-                    LabelOverInput(label = "DURACIÓN(min)", onChange = { dur -> duracionDefinida = dur}, value = duracionDefinida)
+                    LabelOverInput(label = "DURACIÓN(min)", onChange = { dur ->
+                        if(dur.isDigitsOnly()) duracionDefinida = dur}, value = duracionDefinida)
                 }
             }
             Spacer(Modifier.height(15.dp))
@@ -450,7 +450,7 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
                             color = Color.White
                         )
                         Spacer(Modifier.width(15.dp))
-                        LabelOverInput(onChange = { cant -> cantJugadoresFalatantesDefinido = cant}, value = cantJugadoresFalatantesDefinido)
+                        LabelOverInput(onChange = { cant -> if(cant.isDigitsOnly()) cantJugadoresFalatantesDefinido = cant}, value = cantJugadoresFalatantesDefinido)
                     }
 
                     Spacer(Modifier.height(15.dp))
@@ -537,6 +537,7 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
                             canchaDefinida = null
                             barrioDefinido = ""
                             cantJugadoresFalatantesDefinido = ""
+                            reputacionDefinida = 0
                         }
 
 
@@ -571,8 +572,6 @@ fun DropDownFootballFields(viewModel: PartidosViewModel, seleccion: Cancha?, onC
                     })
 
             }
-
-
         }
     }
 }

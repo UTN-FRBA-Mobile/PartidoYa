@@ -27,9 +27,12 @@ class ModifyProfileViewModel:ViewModel() {
      preferedPosition = "",
      playStyle= "",
     location  = "",
-     description= ""
+     description= "",
+    celular="")
     )
-    )
+
+    private val _barrios = MutableStateFlow<List<String>>(emptyList())
+    val barrios = _barrios.asStateFlow()
 
     val profileData = _profileData.asStateFlow()
     var uiState by mutableStateOf(modifyProfileUiState())
@@ -65,8 +68,25 @@ class ModifyProfileViewModel:ViewModel() {
 
         Log.i("INFO","Cambiando datos" + _profileData.value)
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun cargarBarrios(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.getBarrios()
+                if(response.isSuccessful) {
+                    _barrios.value = response.body() ?: emptyList()
+                }
+            }
+            catch (e: Exception){
+                Log.e("API BARRIOS", e.message, e)
+            }
+        }
+
+    }
 }
 
 data class modifyProfileUiState(
     val success: Boolean = false
 )
+

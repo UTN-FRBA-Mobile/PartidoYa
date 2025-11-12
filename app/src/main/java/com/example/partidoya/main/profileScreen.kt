@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -81,12 +82,13 @@ fun ProfileScreen(navController: NavController, paddingValues: PaddingValues, ho
         val profile = profile!!
         Container(
             navController,
-            (profile.name ?: "No tienes nombre") + " " + (profile.surname ?: "No tienes apellido"),
-            profile.userIdentifier ?: "No tienes nombre de usuario",
-            profile.preferedPosition ?: "N/A",
-            profile.location ?: "N/A",
-            profile.playStyle ?: "N/A",
-            profile.description ?: "No has contado nada sobre ti",
+            (profile.name) + " " + (profile.surname),
+            profile.userIdentifier,
+            profile.preferedPosition,
+            profile.location,
+            profile.playStyle,
+            profile.description,
+            profile.celular,
             profile.reputation,
             profile.toPlayMatches,
             profile.playedMatches,
@@ -115,7 +117,7 @@ fun ProfileScreenPreview(){
 }
 
 @Composable
-fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, reputacion: Int, partidosPorJugar: Int, partidosJugados: Int, partidosCancelados: Int, logout: () -> Unit, paddingValues: PaddingValues, horizontalPadding: Dp){
+fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, celular:String, reputacion: Int, partidosPorJugar: Int, partidosJugados: Int, partidosCancelados: Int, logout: () -> Unit, paddingValues: PaddingValues, horizontalPadding: Dp){
     var expanded by remember { mutableStateOf(false) }
     var scrollState = rememberScrollState()
     var reputacionTipo = getTipoReputacion(reputacion)
@@ -166,7 +168,7 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                         modifier = Modifier.size(192.dp).clip(CircleShape))
                 }
                 Text(text = nombre, fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                Text(text = usuario, fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                Text(text = "@$usuario", fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.height(30.dp))
 
@@ -201,6 +203,8 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
+                    IconLabel(celular, Icons.Default.Phone)
+                    Spacer(modifier = Modifier.width(30.dp))
                     IconLabel(modoJuego, Icons.Default.Face)
                 }
             }
@@ -213,12 +217,20 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
             }
 
             Spacer(Modifier.height(20.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
-                Text(text = "Sobre mi", fontSize = 14.sp, color = Color.White)
-                Box (modifier = Modifier.width(364.dp).border(2.dp, Color.White, shape = RoundedCornerShape(16.dp)).height(250.dp)) {
-                    Box (modifier = Modifier.padding(16.dp)) {
-                        Text(text = presentacion, fontSize = 14.sp, color = Color.White)
+
+            if(presentacion != "") {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+                ) {
+                    Text(text = "Sobre mi", fontSize = 14.sp, color = Color.White)
+                    Box(
+                        modifier = Modifier.width(364.dp)
+                            .border(2.dp, Color.White, shape = RoundedCornerShape(16.dp))
+                            .height(250.dp)
+                    ) {
+                        Box(modifier = Modifier.padding(16.dp)) {
+                            Text(text = presentacion, fontSize = 14.sp, color = Color.White)
+                        }
                     }
                 }
             }

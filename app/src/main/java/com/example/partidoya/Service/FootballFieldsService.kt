@@ -54,5 +54,8 @@ interface FootballFieldsService {
     @POST("/api/partidos/suspender/{idPartido}")
     suspend fun suspendMatch(@Path("idPartido") idPartido: Int): Response<Unit>
 
+    @GET("/api/barrios")
+    suspend fun getBarrios(): Response<List<String>>
+
 
 }

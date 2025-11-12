@@ -22,8 +22,8 @@ val InputColors: TextFieldColors
         focusedTrailingIconColor = Color.White,
         unfocusedTrailingIconColor = Color.White,
         unfocusedBorderColor = Color.White,
-        focusedBorderColor = Color.Red,
-        cursorColor = Color.Red,
+        focusedBorderColor = Color.Black,
+        cursorColor = Color.Black,
         focusedTextColor = Color.White,
         unfocusedTextColor = Color.White
     )

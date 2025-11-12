@@ -3,8 +3,10 @@ package com.example.partidoya.main
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.provider.CalendarContract
+import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -69,6 +71,7 @@ import com.example.partidoya.domain.Partido
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.viewModels.PartidosViewModel
+import java.net.URI
 import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -212,7 +215,12 @@ fun LabelOverInput(
 }
 
 @Composable
-fun OutlineLabelInput(label: String, placeholder: String,singleLine: Boolean,modifier: InputModifier, value: String,onValueChange: (String)-> Unit){
+fun OutlineLabelInput(
+    label: String, placeholder: String,
+    singleLine: Boolean,
+    modifier: InputModifier, value: String,
+    onValueChange: (String) -> Unit
+){
 
     OutlinedTextField(
         colors = InputColors,
@@ -233,16 +241,7 @@ fun OutlineLabelInput(label: String, placeholder: String,singleLine: Boolean,mod
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit) {
-    //TODO: Esto tiene que salir de alguna api con las localidades
-    val options = listOf(
-        "Villa Luro, CABA",
-        "Caballito, CABA",
-        "Moron, Buenos Aires",
-        "Retiro, CABA",
-        "Villa Ortuza, CABA",
-        "Santa Rita, CABA"
-    )
+fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit, barrios: List<String>) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -269,7 +268,7 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
                 .heightIn(max = 200.dp)
         )
         {
-            options.filter { it.contains(value, ignoreCase = false) }
+            barrios.filter { it.contains(value, ignoreCase = false) }
                 .forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
@@ -407,6 +406,7 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
     val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
     var mostrarAlertaDetalleJugadores by remember { mutableStateOf(false) }
 
+
     Box(
         modifier = Modifier
             .width(386.dp)
@@ -509,15 +509,17 @@ fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewM
         BasicButton("CANCELAR", { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
         else viewModel.cancelarPartido(partido) }, isSuccess = false, isEnabled = partido.puedeCancelar)
 
-        if (partido.detalleJugadores != null && partido.detalleJugadores.isNotEmpty()) {
-            Text(
-                text = "Ver jugadores",
-                color = Color(0xFF1E88E5), // azul tipo link
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable {
-                    accion()
-                }
-            )
+        if(filtroOrgJug != "Jugador") {
+            if (partido.detalleJugadores != null && partido.detalleJugadores.isNotEmpty()) {
+                Text(
+                    text = "Ver jugadores",
+                    color = Color(0xFF1E88E5), // azul tipo link
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable {
+                        accion()
+                    }
+                )
+            }
         }
     }
 }
@@ -599,7 +601,7 @@ fun RatingComponent (value: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VisualizarDetalleJugadores(onDismiss: ()-> Unit, detalleJugadores: List<DetalleJugador>?){
+fun VisualizarDetalleJugadores(onDismiss: ()-> Unit ,detalleJugadores: List<DetalleJugador>?){
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         content = {
@@ -611,8 +613,6 @@ fun VisualizarDetalleJugadores(onDismiss: ()-> Unit, detalleJugadores: List<Deta
                     Text(detalleJugador.name.toString() + " " + detalleJugador.surname.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
                     Spacer(Modifier.height(10.dp))
                     Text(detalleJugador.celular.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
-                    Spacer(Modifier.height(10.dp))
-                    Text(detalleJugador.preferedPosition.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
                     Spacer(Modifier.height(10.dp))
                     Text(detalleJugador.playStyle.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
                     Spacer(Modifier.height(10.dp))
