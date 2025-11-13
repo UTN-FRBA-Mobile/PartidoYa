@@ -745,8 +745,7 @@ fun AutoCompleteInputBarrios(label: String,value: String,onValueChange: (String)
                     onValueChange(newValue)
                     expanded = newValue.isNotEmpty()
                 },
-                modifier = normalInputModifier
-                    .unwrap()
+                modifier = Modifier
                     .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true)
                     .fillMaxWidth()
                     .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
