@@ -206,10 +206,8 @@ fun LabelOverInput(
                     }
                 }else null,
             modifier = Modifier
-                .width(322.dp)
-                .height(56.dp)
-                .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
-
+                .fillMaxWidth()
+                .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp))
             )
     }
 }
@@ -425,8 +423,8 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = when(titulo){
-                    "COMPLETO" -> Color.Green
-                    else -> Color.Red
+                    "COMPLETO" -> Color(0xFF2E8B57)
+                    else -> Color(0xFFD32F2F)
                 },
                 style = MaterialTheme.typography.titleSmall
             )
@@ -460,7 +458,7 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
 @Composable
 fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClickUbi: (Cancha?) -> Unit){
     var titulo = if(partido.hayRepresentante) "CONFIRMADO" else "SIN CONFIRMAR"
-    var colorTitulo = if(partido.hayRepresentante) Color.Green else Color.Red
+    var colorTitulo = if(partido.hayRepresentante) Color(0xFF2E8B57) else Color(0xFFD32F2F)
     val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
     var mostrarAlertaDetalleJugadores by remember { mutableStateOf(false) }
 
@@ -504,14 +502,15 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
 fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewModel, accion: () -> Unit?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         BasicButton("CANCELAR", { if(filtroOrgJug == "Jugador") viewModel.abandonarPartido(partido)
         else viewModel.cancelarPartido(partido) }, isSuccess = false, isEnabled = partido.puedeCancelar)
 
-        if(filtroOrgJug != "Jugador") {
-            if (partido.detalleJugadores != null && partido.detalleJugadores.isNotEmpty()) {
-                Text(
+        if(filtroOrgJug != "Jugador" && partido.detalleJugadores != null && partido.detalleJugadores.isNotEmpty()) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
                     text = "Ver jugadores",
                     color = Color(0xFF1E88E5), // azul tipo link
                     textDecoration = TextDecoration.Underline,
@@ -519,7 +518,6 @@ fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewM
                         accion()
                     }
                 )
-            }
         }
     }
 }
@@ -708,5 +706,73 @@ fun BasicButton(text: String, handleClick: () -> Unit, isSuccess: Boolean = true
             containerColor = Color(if (isSuccess) 0xFF3C7440 else 0xFFA93838),
             contentColor = Color.White)){
         Text(text = text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AutoCompleteInputBarrios(label: String,value: String,onValueChange: (String) -> Unit, barrios: List<String>) {
+    var expanded by remember { mutableStateOf(false) }
+    Column() {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White
+        )
+        Spacer(Modifier.height(15.dp))
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+
+            TextField(
+                textStyle = MaterialTheme.typography.bodyMedium,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.White,
+                    focusedTrailingIconColor = Color.White,
+                    unfocusedTrailingIconColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+
+                ),
+                value = value,
+                onValueChange = { newValue ->
+                    onValueChange(newValue)
+                    expanded = newValue.isNotEmpty()
+                },
+                modifier = normalInputModifier
+                    .unwrap()
+                    .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true)
+                    .fillMaxWidth()
+                    .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
+                singleLine = true
+            )
+
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .heightIn(max = 200.dp)
+            )
+            {
+                barrios.filter { it.contains(value, ignoreCase = false) }
+                    .forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
+                            onClick = {
+                                onValueChange(option)
+                                expanded = false
+                            }
+                        )
+                    }
+
+            }
+        }
     }
 }

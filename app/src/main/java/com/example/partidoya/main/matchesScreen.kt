@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,7 +61,9 @@ import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.viewModels.MainViewModel
+import com.example.partidoya.viewModels.ModifyProfileViewModel
 import com.example.partidoya.viewModels.PartidosViewModel
+import com.example.partidoya.viewModels.ProfileViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -168,7 +171,6 @@ fun Matches(
         if(isGranted && ubicacion == null) { //Mientras intenta definir la ubicacion
                 Text(text = "CALCULANDO LA UBICACIÓN...", style = MaterialTheme.typography.bodyLarge, color = Color.White)
         }else {
-
             Row (verticalAlignment = Alignment.CenterVertically){
                 Text("Agendar partidos en el calendario: ", color = Color.White,style = MaterialTheme.typography.bodyMedium)
                 Switch(
@@ -252,7 +254,7 @@ fun MyMatches(viewModel: PartidosViewModel, paddingValues: PaddingValues, horizo
 
 @RequiresApi(Build.VERSION_CODES.O) //Necesario para el LocalTime
 @Composable
-fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, horizontalPadding: Dp) {
+fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProfileViewModel,paddingValues: PaddingValues, horizontalPadding: Dp) {
     var horarioSeleccionado by remember { mutableStateOf(LocalTime.of(0, 0)) }
     var fechaSeleccionada by remember { mutableStateOf(LocalDate.now()) }
     var duracionDefinida by remember { mutableStateOf("") }
@@ -260,12 +262,13 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
     var busquedaSeleccionada by remember { mutableStateOf("") }
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
     var canchaDefinida by remember { mutableStateOf<Cancha?>(null) }
-    var barrioDefinido by remember { mutableStateOf("-") }
+    var barrioDefinido by remember { mutableStateOf("") }
     var reputacionDefinida by remember { mutableStateOf(0) }
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
     var partidoCreadoConExito by remember { mutableStateOf(false) }
+    val barrios by viewModel.barrios.collectAsState()
 
 
     //Formato para traducir los dias a español
@@ -278,6 +281,7 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
 
     LaunchedEffect(Unit) { //Se ejecuta una unica vez al cargar la pantalla
         viewModel.cargarCanchas()
+        modifyProfileViewModel.cargarBarrios()
     }
 
     LaunchedEffect(barrioDefinido) { //Se ejecuta solo cuando cambia el barrio
@@ -389,17 +393,24 @@ fun CreateMatch(viewModel: PartidosViewModel, paddingValues: PaddingValues, hori
                 }
             }
                 Spacer(Modifier.height(15.dp))
-                Spacer(Modifier.height(15.dp))
                // LabelOverInput(label = "BARRIO", onChange = { barrio -> barrioDefinido = barrio}, value = barrioDefinido)
-                Text(
+                /*Text(
                     text = "BARRIO",
                     modifier = Modifier.fillMaxWidth(),
                     color = Color.White,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Left
                 )
-                Spacer(Modifier.height(10.dp))
-                DropDownBarrios(viewModel = viewModel, seleccion = barrioDefinido, onClick =  { barrio -> barrioDefinido = barrio})
+                Spacer(Modifier.height(10.dp))*/
+                //DropDownBarrios(viewModel = viewModel, seleccion = barrioDefinido, onClick =  { barrio -> barrioDefinido = barrio})
+
+                AutoCompleteInputBarrios(
+                    label = "BARRIO",
+                    barrioDefinido,
+                    onValueChange = { barrio -> barrioDefinido = barrio},
+                    barrios);
+
+
 
                 Spacer(Modifier.height(15.dp))
 

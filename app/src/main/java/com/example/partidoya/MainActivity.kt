@@ -35,7 +35,9 @@ import com.example.partidoya.main.NewAccountScreen
 import com.example.partidoya.main.ProfileScreen
 import com.example.partidoya.ui.theme.PartidoYaTheme
 import com.example.partidoya.viewModels.MainViewModel
+import com.example.partidoya.viewModels.ModifyProfileViewModel
 import com.example.partidoya.viewModels.PartidosViewModel
+import com.example.partidoya.viewModels.ProfileViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -55,6 +57,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
     val partidosViewModel: PartidosViewModel = viewModel()
     val mainViewModel: MainViewModel = viewModel()
+    val modifyProfileViewModel: ModifyProfileViewModel = viewModel()
     val navController = rememberNavController()
     val context = LocalContext.current
     val horizontalPadding = 10.dp
@@ -75,7 +78,7 @@ fun App() {
                 composable("landingPage") { LandingPageScreen(navController, horizontalPadding) }
                 composable("profile" ) { ProfileScreen(navController,paddingValues,horizontalPadding) }
                 composable("matches") { Matches(partidosViewModel, mainViewModel, paddingValues, horizontalPadding) }
-                composable("createMatch") { CreateMatch(partidosViewModel,paddingValues,horizontalPadding) }
+                composable("createMatch") { CreateMatch(partidosViewModel,modifyProfileViewModel,paddingValues,horizontalPadding) }
                 composable ("modifyProfile" ) { ModifyAccountScreen(navController,paddingValues,horizontalPadding) }
                 composable ("myMatches" ) { MyMatches(partidosViewModel,paddingValues, horizontalPadding ) }
             }

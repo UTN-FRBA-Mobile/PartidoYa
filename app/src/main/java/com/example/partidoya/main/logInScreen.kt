@@ -76,12 +76,6 @@ fun LogInScreen(navController: NavController, horizontalPadding: Dp ,viewModel: 
             HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
             Spacer(Modifier.height(50.dp))
             HomeButton("Continuar", onClick = {viewModel.login()})
-            Spacer(Modifier.height(30.dp))
-            Text(text = "¿Olvidaste tu contraseña?",
-                color = Color.White,
-                fontStyle = FontStyle.Italic,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable(onClick = {}))
         }
     }
 }
