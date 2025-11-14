@@ -66,6 +66,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import com.example.partidoya.Service.DistanceCalculator
 import com.example.partidoya.domain.Cancha
+
+/* Cosas que cambio ciro que estan en conflicto
+<<<<<<< HEAD
+import com.example.partidoya.domain.Option
+=======
+ */
 import com.example.partidoya.domain.DetalleJugador
 import com.example.partidoya.domain.Partido
 import com.example.partidoya.domain.PartidoEquipo
@@ -77,7 +83,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun HomeButton(text:String, onClick: ()->Unit){
+fun HomeButton(text:String, onClick:  ()->Unit){
 
     Button(onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -239,18 +245,34 @@ fun OutlineLabelInput(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
+/* Cosas que cambio ciro que estan en conflicto
+<<<<<<< HEAD
+fun AutoCompleteInput(label: String, value: String, onValueChange: (Option) -> Unit, options: List<Option>) {
+    //TODO: Esto tiene que salir de alguna api con las localidades
+    /*val options = listOf(
+        "Villa Luro, CABA",
+        "Caballito, CABA",
+        "Moron, Buenos Aires",
+        "Retiro, CABA",
+        "Villa Ortuza, CABA",
+        "Santa Rita, CABA"
+    )*/
+=======
+ */
 fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit, barrios: List<String>) {
     var expanded by remember { mutableStateOf(false) }
+    var textValue by remember { mutableStateOf(value) }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
-            value = value,
+            value = textValue,
             colors = InputColors,
             shape = RoundedCornerShape(16.dp),
             onValueChange = { newValue ->
-                onValueChange(newValue)
+                textValue = newValue
                 expanded = newValue.isNotEmpty()
             },
             modifier = normalInputModifier
@@ -266,11 +288,19 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
                 .heightIn(max = 200.dp)
         )
         {
+
+/* Cosas que cambio ciro que estan en conflicto
+<<<<<<< HEAD
+            options
+                .filter { it.label.contains(value, ignoreCase = false) }
+=======
+ */
             barrios.filter { it.contains(value, ignoreCase = false) }
                 .forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
                         onClick = {
+                            textValue = option
                             onValueChange(option)
                             expanded = false
                         }
