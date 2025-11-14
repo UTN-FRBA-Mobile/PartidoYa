@@ -15,15 +15,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -36,7 +36,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,21 +46,24 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import com.example.partidoya.domain.Cancha
 import com.example.partidoya.domain.PartidoEquipo
 import com.example.partidoya.domain.PartidoJugadores
 import com.example.partidoya.viewModels.MainViewModel
+import com.example.partidoya.viewModels.ModifyProfileViewModel
 import com.example.partidoya.viewModels.PartidosViewModel
+import com.example.partidoya.viewModels.ProfileViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -73,7 +75,12 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
+fun Matches(
+    viewModel: PartidosViewModel,
+    mainViewModel: MainViewModel,
+    paddingValues: PaddingValues,
+    horizontalPadding: Dp
+){
     val partidos by viewModel.partidos.collectAsState()
     val filtroJugEqui by viewModel.filtroJugEqui.collectAsState()
     val context = LocalContext.current
@@ -84,6 +91,7 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     var viewMap by remember { mutableStateOf(false) }
     var canchaConsultada by remember { mutableStateOf<Cancha?>(null) }
+    var scrollState = rememberScrollState()
 
 
     //SI NO TENGO PERMISO PARA ACCEDER A SU UBICACION SE LO PIDO
@@ -99,10 +107,7 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     )
 
     LaunchedEffect(filtroJugEqui){
-        when(filtroJugEqui){
-            "Jugadores" -> viewModel.cargarPartidosJugadores()
-            "Equipo" -> viewModel.cargarPartidosEquipo()
-        }
+           viewModel.cargarPartidos(filtroJugEqui)
     }
 
     LaunchedEffect(partidoConfirmado) {
@@ -158,20 +163,16 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
     }
 
 
-    Column (verticalArrangement = Arrangement.Center,
+    Column (verticalArrangement = if(isGranted && ubicacion == null) Arrangement.Center else Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)){
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)){
 
         GlassCardTitle("PARTIDOS")
         if(isGranted && ubicacion == null) { //Mientras intenta definir la ubicacion
                 Text(text = "CALCULANDO LA UBICACIÓN...", style = MaterialTheme.typography.bodyLarge, color = Color.White)
         }else {
-
             Row (verticalAlignment = Alignment.CenterVertically){
-                Filtro(filtroJugEqui, {viewModel.alternarFiltroJugEqui()})
-                Spacer(Modifier.width(5.dp))
                 Text("Agendar partidos en el calendario: ", color = Color.White,style = MaterialTheme.typography.bodyMedium)
-                Spacer(Modifier.weight(1F))
                 Switch(
                     checked = saveInCalendar,
                     onCheckedChange = { mainViewModel.toggleSaveInCalendar() },
@@ -179,40 +180,36 @@ fun Matches(viewModel: PartidosViewModel, mainViewModel: MainViewModel){
                 )
             }
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(partidos) { partido ->
-                    when (partido) {
-                        is PartidoJugadores -> MatchPlayersCard(partido, viewModel, ubicacion, { cancha -> canchaConsultada = cancha
+            Filtro(filtroJugEqui, {viewModel.alternarFiltroJugEqui()})
+
+            repeat(partidos.size){
+                index ->
+                    when (partidos[index]) {
+                        is PartidoJugadores -> MatchPlayersCard(partidos[index] as PartidoJugadores, viewModel, ubicacion, { cancha -> canchaConsultada = cancha
                                                                                                                         viewMap = true })
-                        is PartidoEquipo -> MatchTeamCard(partido, viewModel, ubicacion, {cancha -> canchaConsultada = cancha
+                        is PartidoEquipo -> MatchTeamCard(partidos[index] as PartidoEquipo, viewModel, ubicacion, {cancha -> canchaConsultada = cancha
                                                                                                                 viewMap = true})
                     }
-
                     Spacer(Modifier.height(15.dp))
                 }
             }
         }
     }
-}
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MyMatches(viewModel: PartidosViewModel){
-    val filtroJugEqui by viewModel.filtroJugEqui.collectAsState()
+fun MyMatches(viewModel: PartidosViewModel, paddingValues: PaddingValues, horizontalPadding: Dp){
     var viewMap by remember { mutableStateOf(false) }
     var canchaConsultada by remember { mutableStateOf<Cancha?>(null) }
     val partidos by viewModel.misPartidos.collectAsState()
+    val filtroOrgJug by viewModel.filtroOrgJug.collectAsState()
+    var scrollState = rememberScrollState()
 
-    LaunchedEffect(filtroJugEqui){
-        when(filtroJugEqui){
-            "Jugadores" -> viewModel.cargarMisPartidosJugadores()
-            "Equipo" -> viewModel.cargarMisPartidosEquipo()
-        }
+    LaunchedEffect(filtroOrgJug) {
+        viewModel.cargarMisPartidos(filtroOrgJug)
     }
+
 
     if(viewMap) {
         canchaConsultada?.let { cancha ->
@@ -229,26 +226,22 @@ fun MyMatches(viewModel: PartidosViewModel){
     }
 
 
-        Column (verticalArrangement = Arrangement.Center,
+        Column (verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp)) {
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)) {
 
             GlassCardTitle("MIS PARTIDOS")
+            Filtro(filtroOrgJug, {viewModel.alternarFiltroOrgJug()})
 
-            Filtro(filtroJugEqui, { viewModel.alternarFiltroJugEqui() })
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(partidos) { partido ->
-                    when (partido) {
-                        is PartidoJugadores -> MyMatchPlayerCard(partido, viewModel, { cancha ->
+            repeat(partidos.size){
+                    index ->
+                    when (partidos[index]) {
+                        is PartidoJugadores -> MyMatchPlayerCard(partidos[index] as PartidoJugadores, viewModel, { cancha ->
                             canchaConsultada = cancha
                             viewMap = true
                         })
 
-                        is PartidoEquipo -> MyMatchTeamCard(partido, viewModel, { cancha ->
+                        is PartidoEquipo -> MyMatchTeamCard(partidos[index] as PartidoEquipo, viewModel, { cancha ->
                             canchaConsultada = cancha
                             viewMap = true
                         })
@@ -258,12 +251,10 @@ fun MyMatches(viewModel: PartidosViewModel){
                 }
             }
         }
-}
-
 
 @RequiresApi(Build.VERSION_CODES.O) //Necesario para el LocalTime
 @Composable
-fun CreateMatch(viewModel: PartidosViewModel) {
+fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProfileViewModel,paddingValues: PaddingValues, horizontalPadding: Dp) {
     var horarioSeleccionado by remember { mutableStateOf(LocalTime.of(0, 0)) }
     var fechaSeleccionada by remember { mutableStateOf(LocalDate.now()) }
     var duracionDefinida by remember { mutableStateOf("") }
@@ -271,11 +262,13 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     var busquedaSeleccionada by remember { mutableStateOf("") }
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
     var canchaDefinida by remember { mutableStateOf<Cancha?>(null) }
-    var barrioDefinido by remember { mutableStateOf("-") }
+    var barrioDefinido by remember { mutableStateOf("") }
+    var reputacionDefinida by remember { mutableStateOf(0) }
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
     var partidoCreadoConExito by remember { mutableStateOf(false) }
+    val barrios by viewModel.barrios.collectAsState()
 
 
     //Formato para traducir los dias a español
@@ -288,6 +281,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
 
     LaunchedEffect(Unit) { //Se ejecuta una unica vez al cargar la pantalla
         viewModel.cargarCanchas()
+        modifyProfileViewModel.cargarBarrios()
     }
 
     LaunchedEffect(barrioDefinido) { //Se ejecuta solo cuando cambia el barrio
@@ -311,7 +305,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().padding(bottom = 70.dp, top = 30.dp, start = 10.dp, end = 10.dp).verticalScroll(scrollState)
+        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = horizontalPadding).verticalScroll(scrollState)
     ) {
         GlassCard(){
             GlassCardTitle("CREAR PARTIDO")
@@ -360,7 +354,8 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                 }
                 Spacer(Modifier.width(15.dp))
                 Column {
-                    LabelOverInput(label = "DURACIÓN(min)", onChange = { dur -> duracionDefinida = dur}, value = duracionDefinida)
+                    LabelOverInput(label = "DURACIÓN(min)", onChange = { dur ->
+                        if(dur.isDigitsOnly()) duracionDefinida = dur}, value = duracionDefinida)
                 }
             }
             Spacer(Modifier.height(15.dp))
@@ -398,17 +393,24 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                 }
             }
                 Spacer(Modifier.height(15.dp))
-                Spacer(Modifier.height(15.dp))
                // LabelOverInput(label = "BARRIO", onChange = { barrio -> barrioDefinido = barrio}, value = barrioDefinido)
-                Text(
+                /*Text(
                     text = "BARRIO",
                     modifier = Modifier.fillMaxWidth(),
                     color = Color.White,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Left
                 )
-                Spacer(Modifier.height(10.dp))
-                DropDownBarrios(viewModel = viewModel, seleccion = barrioDefinido, onClick =  { barrio -> barrioDefinido = barrio})
+                Spacer(Modifier.height(10.dp))*/
+                //DropDownBarrios(viewModel = viewModel, seleccion = barrioDefinido, onClick =  { barrio -> barrioDefinido = barrio})
+
+                AutoCompleteInputBarrios(
+                    label = "BARRIO",
+                    barrioDefinido,
+                    onValueChange = { barrio -> barrioDefinido = barrio},
+                    barrios);
+
+
 
                 Spacer(Modifier.height(15.dp))
 
@@ -459,7 +461,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                             color = Color.White
                         )
                         Spacer(Modifier.width(15.dp))
-                        LabelOverInput(onChange = { cant -> cantJugadoresFalatantesDefinido = cant}, value = cantJugadoresFalatantesDefinido)
+                        LabelOverInput(onChange = { cant -> if(cant.isDigitsOnly()) cantJugadoresFalatantesDefinido = cant}, value = cantJugadoresFalatantesDefinido)
                     }
 
                     Spacer(Modifier.height(15.dp))
@@ -488,6 +490,16 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                     completo = datosGeneralesCompletos
                 }
 
+                Text(
+                    text = "REPUTACIÓN MÍNIMA APLICABLE",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Left
+                )
+                Spacer(Modifier.height(10.dp))
+                DropDownReputacion(seleccion = reputacionDefinida, onClick =  { reputacion -> reputacionDefinida = reputacion})
+
                 Button(colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF3C7440),
                             contentColor = Color.White),
@@ -504,6 +516,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                                         busquedaSeleccionada,
                                         canchaDefinida,
                                         barrioDefinido,
+                                        reputacionDefinida,
                                         cantJugadoresFaltantes,
                                         listaAux
                                     )
@@ -517,7 +530,8 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                                         duracionDefinida.toIntOrNull() ?: 0,
                                         formatoSeleccionado,
                                         canchaDefinida,
-                                        barrioDefinido
+                                        barrioDefinido,
+                                        reputacionMinima = reputacionDefinida
                                     )
 
                             }
@@ -534,6 +548,7 @@ fun CreateMatch(viewModel: PartidosViewModel) {
                             canchaDefinida = null
                             barrioDefinido = ""
                             cantJugadoresFalatantesDefinido = ""
+                            reputacionDefinida = 0
                         }
 
 
@@ -568,8 +583,6 @@ fun DropDownFootballFields(viewModel: PartidosViewModel, seleccion: Cancha?, onC
                     })
 
             }
-
-
         }
     }
 }
@@ -594,6 +607,42 @@ fun DropDownBarrios(viewModel: PartidosViewModel, seleccion: String?, onClick: (
                     },
                     onClick = {
                         onClick(barrio)
+                        expanded = false
+                    })
+            }
+        }
+    }
+}
+
+data class ItemReputacion(val name: String, val value: Int)
+@Composable
+fun DropDownReputacion(seleccion: Int?, onClick: (Int) -> Unit) {
+    val reputaciones = listOf(
+        ItemReputacion("INDISTINTO", 0),
+        ItemReputacion("REGULAR", 21),
+        ItemReputacion("BUENA", 41),
+        ItemReputacion("MUY BUENA", 61),
+        ItemReputacion("EXCELENTE", 81)
+    );
+
+    val nombreReputacion = if (seleccion != null) reputaciones.first { reputacion -> reputacion.value == seleccion }.name else "INDISTINTO"
+
+    var expanded by remember { mutableStateOf(false) } //si se expandió o no
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        DropdownButton(nombreReputacion, { expanded = true })
+
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            reputaciones.forEach { reputacion ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = reputacion.name,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    onClick = {
+                        onClick(reputacion.value)
                         expanded = false
                     })
             }

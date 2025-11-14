@@ -33,9 +33,12 @@ class ModifyProfileViewModel:ViewModel() {
      preferedPosition = "",
      playStyle= "",
     location  = "",
-     description= ""
+     description= "",
+    celular="")
     )
-    )
+
+    private val _barrios = MutableStateFlow<List<String>>(emptyList())
+    val barrios = _barrios.asStateFlow()
 
     val profileData = _profileData.asStateFlow()
     private val _playStyles = MutableStateFlow<List<Option>>(emptyList())
@@ -43,14 +46,13 @@ class ModifyProfileViewModel:ViewModel() {
     private val _positions = MutableStateFlow<List<Option>>(emptyList())
     val positions = _positions.asStateFlow()
 
-    private val _barrios = MutableStateFlow<List<Barrio>>(emptyList())
-    val barrios = _barrios.asStateFlow()
-
+/* Cambios de ciro que entran en conflicto
     val barrioOptions = _barrios.map { barrios ->
         barrios.map { barrio ->
             Option(barrio.id.toString(), barrio.nombre)
         }
     }
+ */
 
     var uiState by mutableStateOf(modifyProfileUiState())
         private set
@@ -75,6 +77,7 @@ class ModifyProfileViewModel:ViewModel() {
         )
     }
 
+/* Cambios de ciro que entran en conflicto
     @RequiresApi(Build.VERSION_CODES.O)
     fun cargarBarrios(){
         getRequest(
@@ -83,6 +86,8 @@ class ModifyProfileViewModel:ViewModel() {
             "BARRIOS"
         )
     }
+
+ */
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun <T>getRequest(
@@ -149,8 +154,26 @@ class ModifyProfileViewModel:ViewModel() {
 
         Log.i("INFO","Cambiando datos" + _profileData.value)
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun cargarBarrios(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.footballFieldsService.getBarrios()
+                if(response.isSuccessful) {
+                    val barrios: List<Barrio> = response.body() ?: emptyList()
+                    _barrios.value = barrios.map { it.nombre }
+                }
+            }
+            catch (e: Exception){
+                Log.e("API BARRIOS", e.message, e)
+            }
+        }
+
+    }
 }
 
 data class modifyProfileUiState(
     val success: Boolean = false
 )
+

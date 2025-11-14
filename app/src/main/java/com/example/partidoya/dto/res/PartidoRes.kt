@@ -1,10 +1,11 @@
 package com.example.partidoya.dto.res
 
 import com.example.partidoya.domain.Cancha
+import com.example.partidoya.domain.DetalleJugador
 import java.time.LocalDate
 import java.time.LocalTime
 
-abstract class PartidoRes(
+class PartidoRes(
     val id: Int,
     val tipo: String,
     val fecha: LocalDate,
@@ -13,6 +14,10 @@ abstract class PartidoRes(
     val duracion: Int,
     val formato: String,
     val cancha: Cancha?,
-    val barrio: String
-    //val organizador: Jugador
+    val barrio: String,
+    val puedeCancelar: Boolean,
+    val hayRepresentante: Boolean,
+    var jugadoresFaltantes: Int,
+    var posicionesFaltantes: List<String>,
+    var detalleJugadores: List<DetalleJugador>? = null
 )

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -31,7 +33,7 @@ import com.example.partidoya.viewModels.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun LogInScreen(navController: NavController, viewModel: LoginViewModel = viewModel <LoginViewModel>()){
+fun LogInScreen(navController: NavController, horizontalPadding: Dp ,viewModel: LoginViewModel = viewModel <LoginViewModel>()){
     val uiState = viewModel.uiState
     val context = LocalContext.current
 
@@ -54,7 +56,7 @@ fun LogInScreen(navController: NavController, viewModel: LoginViewModel = viewMo
 
     Column (verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()) {
+        modifier = Modifier.fillMaxSize().padding(horizontal = horizontalPadding)) {
         GlassCard(){
             GlassCardTitle("INICIAR SESIÓN")
             LabelOverInput(
@@ -74,12 +76,6 @@ fun LogInScreen(navController: NavController, viewModel: LoginViewModel = viewMo
             HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
             Spacer(Modifier.height(50.dp))
             HomeButton("Continuar", onClick = {viewModel.login()})
-            Spacer(Modifier.height(30.dp))
-            Text(text = "¿Olvidaste tu contraseña?",
-                color = Color.White,
-                fontStyle = FontStyle.Italic,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable(onClick = {}))
         }
     }
 }

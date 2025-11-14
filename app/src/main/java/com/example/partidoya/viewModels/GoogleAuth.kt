@@ -25,7 +25,7 @@ class GoogleAuth: ViewModel(){
             try {
                 val response = RetrofitClient.authService
                     .googleLogin(GoogleLoginRequest(token))
-                uiState = uiState.copy(isLoading = false, loginSuccess = true, token = response.token)
+                uiState = uiState.copy(isLoading = false, loginSuccess = true, token = response.token, register = response.register)
             } catch (e: Exception) {
                 Log.e("AUTH LOGIN", e.message.toString())
                 uiState = uiState.copy(isLoading = false, error = "Error al intentar loguearse")
@@ -39,5 +39,6 @@ data class GoogleAuthUiState(
     val isLoading: Boolean = false,
     val loginSuccess: Boolean = false,
     val token: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val register: Boolean? = null
 )

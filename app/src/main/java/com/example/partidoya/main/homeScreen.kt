@@ -19,19 +19,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.partidoya.Preferences.Preferences
 
 @Composable
-fun HomeScreen(navController: NavController){
+fun HomeScreen(navController: NavController, horizontalPadding: Dp){
     val context = LocalContext.current
     val preferences = Preferences(context)
     // Token a mano
     Log.d("TOKEN", preferences.getToken().toString());
 
-    Column (modifier = Modifier.fillMaxSize(),
+    Column (modifier = Modifier.fillMaxSize().padding(horizontal = horizontalPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")

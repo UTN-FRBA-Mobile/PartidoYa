@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,13 +40,13 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun LandingPageScreen(navController: NavController, googleAuth: GoogleAuth = viewModel<GoogleAuth>()){
+fun LandingPageScreen(navController: NavController, horizontalPadding: Dp,googleAuth: GoogleAuth = viewModel<GoogleAuth>()){
 
     val uiState = googleAuth.uiState
     val activity = LocalActivity.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
+    val preferences = Preferences(context)
 
     //TODO: Meter esto en una funcion para no repetir codigo
     LaunchedEffect (uiState.loginSuccess) {
@@ -54,7 +55,9 @@ fun LandingPageScreen(navController: NavController, googleAuth: GoogleAuth = vie
             // Llama al callback de navegación
             val preferences = Preferences(context)
             preferences.saveToken(uiState.token.toString())
-            navController.navigate("home")
+            if (uiState.register == true)
+                navController.navigate("modifyProfile")
+            else navController.navigate("home")
         }
     }
     LaunchedEffect (uiState.error) {
@@ -62,7 +65,12 @@ fun LandingPageScreen(navController: NavController, googleAuth: GoogleAuth = vie
             Toast.makeText(context, uiState.error, Toast.LENGTH_LONG).show()
         }
     }
-    Column (modifier = Modifier.fillMaxSize(),
+
+    LaunchedEffect(Unit) {
+        preferences.clearToken()
+    }
+
+    Column (modifier = Modifier.fillMaxSize().padding(horizontal = horizontalPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally){
         Image(painter = painterResource(id = R.drawable.logoapp), contentDescription = "Logo de la App")

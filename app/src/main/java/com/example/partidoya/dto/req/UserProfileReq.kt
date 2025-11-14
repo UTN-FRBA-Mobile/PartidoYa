@@ -7,7 +7,8 @@ data class UserProfileReq (
     val location: String,
     val playStyle: String,
     val preferedPosition: String,
-    val description: String
+    val description: String,
+    val celular: String
 )
 
 

@@ -4,7 +4,7 @@ import com.example.partidoya.domain.Cancha
 import java.time.LocalDate
 import java.time.LocalTime
 
-abstract class PartidoReq (
+class PartidoReq (
     val tipo: String,
     val fecha: LocalDate,
     val dia: String,
@@ -12,6 +12,8 @@ abstract class PartidoReq (
     val duracion: Int,
     val formato: String,
     val cancha: Cancha?,
-    val barrio: String
-    //val organizador: Jugador
+    val barrio: String,
+    val reputacionMinima: Int,
+    var jugadoresFaltantes: Int,
+    var posicionesFaltantes: List<String>
     )
