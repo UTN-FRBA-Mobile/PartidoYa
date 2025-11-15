@@ -472,11 +472,12 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
                 Spacer(Modifier.height(5.dp))
             }
 
-            FooterMatch(partido, filtroOrgJug, viewModel, {mostrarAlertaDetalleJugadores= true})
+            FooterMatch(partido, filtroOrgJug, viewModel, "Ver jugadores" ,{mostrarAlertaDetalleJugadores= true})
         }
     }
     if (mostrarAlertaDetalleJugadores) {
         VisualizarDetalleJugadores (
+            titulo = "Jugadores",
             onDismiss = { mostrarAlertaDetalleJugadores = false },
             detalleJugadores = partido.detalleJugadores
         )
@@ -517,11 +518,12 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
             MediumText("FORMATO: " + partido.formato)
             Spacer(Modifier.height(5.dp))
 
-            FooterMatch(partido, filtroOrgJug, viewModel, {mostrarAlertaDetalleJugadores=true})
+            FooterMatch(partido, filtroOrgJug, viewModel, "Ver representante",{mostrarAlertaDetalleJugadores=true})
         }
     }
     if (mostrarAlertaDetalleJugadores) {
         VisualizarDetalleJugadores (
+            titulo = "Representante",
             onDismiss = { mostrarAlertaDetalleJugadores = false },
             detalleJugadores = partido.detalleJugadores
         )
@@ -529,7 +531,7 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
 }
 
 @Composable
-fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewModel, accion: () -> Unit?) {
+fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewModel, nombreAccion: String, accion: () -> Unit?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -541,7 +543,7 @@ fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewM
         if(filtroOrgJug != "Jugador" && partido.detalleJugadores != null && partido.detalleJugadores.isNotEmpty()) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                    text = "Ver jugadores",
+                    text = nombreAccion,
                     color = Color(0xFF1E88E5), // azul tipo link
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
@@ -629,12 +631,12 @@ fun RatingComponent (value: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VisualizarDetalleJugadores(onDismiss: ()-> Unit ,detalleJugadores: List<DetalleJugador>?){
+fun VisualizarDetalleJugadores(titulo: String, onDismiss: ()-> Unit ,detalleJugadores: List<DetalleJugador>?){
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         content = {
             GlassCard (esDarkGray = true){
-                Text(text = "Detalle Jugadores", style = MaterialTheme.typography.titleSmall, color = Color.White)
+                Text(text = titulo, style = MaterialTheme.typography.titleSmall, color = Color.White)
                 Spacer(Modifier.height(10.dp))
                 detalleJugadores?.forEach { detalleJugador ->
                     Spacer(Modifier.height(10.dp))
@@ -644,6 +646,10 @@ fun VisualizarDetalleJugadores(onDismiss: ()-> Unit ,detalleJugadores: List<Deta
                     Spacer(Modifier.height(10.dp))
                     Text(detalleJugador.playStyle.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
                     Spacer(Modifier.height(10.dp))
+                    if (detalleJugador.preferedPosition != "") {
+                        Text(detalleJugador.preferedPosition.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                        Spacer(Modifier.height(10.dp))
+                    }
                     RatingComponent(detalleJugador.reputacion?.toInt() ?: 0)
                     Spacer(Modifier.height(10.dp))
                     HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))

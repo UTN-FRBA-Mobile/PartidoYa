@@ -257,7 +257,7 @@ fun MyMatches(viewModel: PartidosViewModel, paddingValues: PaddingValues, horizo
 fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProfileViewModel,paddingValues: PaddingValues, horizontalPadding: Dp) {
     var horarioSeleccionado by remember { mutableStateOf(LocalTime.of(0, 0)) }
     var fechaSeleccionada by remember { mutableStateOf(LocalDate.now()) }
-    var duracionDefinida by remember { mutableStateOf("") }
+    var duracionDefinida by remember { mutableStateOf("60") }
     var formatoSeleccionado by remember { mutableStateOf("") }
     var busquedaSeleccionada by remember { mutableStateOf("") }
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
@@ -776,7 +776,7 @@ fun DateSelection(fecha: LocalDate, onClick: (LocalDate) -> Unit){
                     contentColor = Color.White
                 ),
                 onClick = {
-                    DatePickerDialog(
+                    val datePicker = DatePickerDialog(
                         context, //el contexto de Android (necesario para abrir el diálogo)
 
                         // Callback que se ejecuta cuando el usuario elige una fecha
@@ -788,7 +788,11 @@ fun DateSelection(fecha: LocalDate, onClick: (LocalDate) -> Unit){
                         fecha.year,
                         fecha.monthValue - 1,
                         fecha.dayOfMonth
-                    ).show()
+                    )
+
+                    datePicker.datePicker.minDate = System.currentTimeMillis()
+                    datePicker.show()
+
                 }) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,

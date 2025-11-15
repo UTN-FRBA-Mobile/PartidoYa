@@ -158,19 +158,10 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                 }
 
             Column (verticalArrangement = Arrangement.spacedBy(30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-
-
-
-                Box (modifier = Modifier
-                    .size(200.dp),
-                    contentAlignment = Alignment.Center) {
-                    Image(painter = painterResource(id = R.drawable.fotodibu), contentDescription = "Foto perfil",  contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(192.dp).clip(CircleShape))
-                }
                 Text(text = nombre, fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
                 Text(text = "@$usuario", fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
             }
-            Spacer(Modifier.height(30.dp))
+            Spacer(Modifier.height(32.dp))
 
             // First version of icons + labels (too much text to be on the same line)
             /*Row (
@@ -209,14 +200,14 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                 }
             }
 
-            Spacer(Modifier.height(16.dp)) // space between the lines
+            Spacer(Modifier.height(32.dp)) // space between the lines
             Column (modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = "Reputación: $reputacionTipo", fontSize = 14.sp, color = Color.White)
                 RatingComponent(reputacion)
                 Text(text = "Por jugar: $partidosPorJugar | Jugados: $partidosJugados | Cancelados: $partidosCancelados", fontSize = 14.sp, color = Color.White)
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(32.dp))
 
             if(presentacion != "") {
                 Column(
