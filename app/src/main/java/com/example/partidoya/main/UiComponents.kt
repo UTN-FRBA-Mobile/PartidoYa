@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -77,17 +79,36 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun HomeButton(text:String, onClick: ()->Unit){
+fun HomeButton(text: String, onClick: () -> Unit) {
 
-    Button(onClick = onClick,
+    var isLoading by remember { mutableStateOf(false) }
+
+    Button(
+        onClick = {
+            isLoading = true
+            onClick()
+        },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
-            contentColor = Color.Black),
+            contentColor = Color.Black
+        ),
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .width(322.dp)
-            .height(56.dp)){
-        Text(text=text, style = MaterialTheme.typography.bodyMedium)
+            .height(56.dp)
+    ) {
+        if (!isLoading) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        } else {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp,
+                color = Color.Black
+            )
+        }
     }
 }
 
