@@ -83,6 +83,15 @@ fun HomeButton(text: String, onClick: () -> Unit) {
 
     var isLoading by remember { mutableStateOf(false) }
 
+    // Start a timer when the button is clicked
+    LaunchedEffect(isLoading) {
+        if (isLoading) {
+            kotlinx.coroutines.delay(5000)
+            // if after 5 sec, we're still on the same page, isLoading turns false
+            isLoading = false
+        }
+    }
+
     Button(
         onClick = {
             isLoading = true
