@@ -66,9 +66,8 @@ fun LogInScreen(navController: NavController, horizontalPadding: Dp ,viewModel: 
                 value = uiState.email
             )
             Spacer(Modifier.height(15.dp))
-            LabelOverInput(
+            PasswordTextField(
                 label = "CONTRASEÑA",
-                icon = Icons.Default.Lock,
                 onChange = { cont -> viewModel.onPasswordChange(cont)},
                 value = uiState.password
             )

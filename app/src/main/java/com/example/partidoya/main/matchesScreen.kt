@@ -267,7 +267,7 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
-    var partidoCreadoConExito by remember { mutableStateOf(false) }
+    val partidoCreadoConExito by viewModel.partidoCreadoConExito.collectAsState()
     val barrios by viewModel.barrios.collectAsState()
 
 
@@ -299,7 +299,7 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
 
     if(partidoCreadoConExito){
         ToastMatchCreated()
-        partidoCreadoConExito = false
+        viewModel.toastPartidoCreadoEnviado()
     }
 
     Column(
@@ -461,7 +461,12 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                             color = Color.White
                         )
                         Spacer(Modifier.width(15.dp))
-                        LabelOverInput(onChange = { cant -> if(cant.isDigitsOnly()) cantJugadoresFalatantesDefinido = cant}, value = cantJugadoresFalatantesDefinido)
+                        LabelOverInput(onChange = { cant -> if(cant.isDigitsOnly()) {
+                            if(cant.isEmpty() || cant.get(0) != '0') //Evita cadenas como '002' o '0'
+                                cantJugadoresFalatantesDefinido = cant
+                        }
+
+                                                  }, value = cantJugadoresFalatantesDefinido)
                     }
 
                     Spacer(Modifier.height(15.dp))
@@ -535,10 +540,6 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                                     )
 
                             }
-
-                            //TODO corroborar que se haya creado el partido exitosamente en el backend
-                            partidoCreadoConExito = true
-
 
                             fechaSeleccionada = LocalDate.now()
                             horarioSeleccionado = LocalTime.of(0,0)

@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -56,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.partidoya.ui.theme.InputColors
@@ -241,6 +243,49 @@ fun OutlineLabelInput(
 }
 
 
+@Composable
+fun PasswordTextField(
+    label: String? = null,
+    onChange: (String) -> Unit,
+    value: String
+){
+    Column {
+
+        Text(
+            text = "CONTRASEÑA",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White
+        )
+
+        Spacer(Modifier.height(15.dp))
+        TextField(
+            textStyle = MaterialTheme.typography.bodyMedium,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White,
+                focusedTrailingIconColor = Color.White,
+                unfocusedTrailingIconColor = Color.White,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            value = value,
+            onValueChange = onChange,
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
+            visualTransformation = PasswordVisualTransformation(),
+            trailingIcon ={
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Password icon"
+                )
+            }
+        )
+    }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -268,11 +313,12 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
         onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
-            value = textValue,
+            value = value,
             colors = InputColors,
             shape = RoundedCornerShape(16.dp),
             onValueChange = { newValue ->
                 textValue = newValue
+                onValueChange(newValue)
                 expanded = newValue.isNotEmpty()
             },
             modifier = normalInputModifier
@@ -295,7 +341,7 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
                 .filter { it.label.contains(value, ignoreCase = false) }
 =======
  */
-            barrios.filter { it.contains(value, ignoreCase = false) }
+            barrios.filter { it.contains(value, ignoreCase = true) }
                 .forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
@@ -790,7 +836,7 @@ fun AutoCompleteInputBarrios(label: String,value: String,onValueChange: (String)
                     .heightIn(max = 200.dp)
             )
             {
-                barrios.filter { it.contains(value, ignoreCase = false) }
+                barrios.filter { it.contains(value, ignoreCase = true) }
                     .forEach { option ->
                         DropdownMenuItem(
                             text = { Text(option, style = MaterialTheme.typography.bodyMedium) },

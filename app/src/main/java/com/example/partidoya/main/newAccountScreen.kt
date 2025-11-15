@@ -74,16 +74,14 @@ fun NewAccountScreen(navController: NavController, horizontalPadding: Dp, viewMo
                 value = uiState.email
             )
             Spacer(Modifier.height(15.dp))
-            LabelOverInput(
+            PasswordTextField(
                 label = "CONTRASEÑA*",
-                icon = Icons.Default.Lock,
                 onChange = { cont -> viewModel.onPasswordChange(cont)},
                 value = uiState.password
             )
             Spacer(Modifier.height(15.dp))
-            LabelOverInput(
+            PasswordTextField(
                 label = "REPETIR CONTRASEÑA*",
-                icon = Icons.Default.Lock,
                 onChange = { cont -> viewModel.onPasswordRepeatableChange(cont)},
                 value = uiState.passwordRepeatable
             )
@@ -91,8 +89,6 @@ fun NewAccountScreen(navController: NavController, horizontalPadding: Dp, viewMo
             HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
             Spacer(Modifier.height(50.dp))
             HomeButton("Continuar", onClick = {handleContinuar()})
-            Spacer(Modifier.height(15.dp))
-            HomeButton("Continuar con Google", onClick = {})
             Spacer(Modifier.height(30.dp))
             Text(text = "Ya tengo una cuenta",
                 color = Color.White,
