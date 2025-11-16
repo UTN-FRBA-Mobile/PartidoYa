@@ -15,6 +15,7 @@ class PartidoJugadores(
         puedeCancelar: Boolean,
     var jugadoresFaltantes: Int,
     var posicionesFaltantes: List<String>,
+        seriedad: String,
     detalleJugadores: List<DetalleJugador>? = null
-): Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio, puedeCancelar, detalleJugadores)
+): Partido(id,fecha, dia, horario, duracion, formato, cancha, barrio, puedeCancelar, detalleJugadores, seriedad)
 

@@ -5,6 +5,6 @@ data class DetalleJugador (
     val surname: String? = null,
     val celular: String? = null,
     val reputacion: Int? = null,
-    val playStyle: String? = null,
+    //val playStyle: String? = null,
     val preferedPosition: String? = null,
 )

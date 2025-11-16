@@ -56,6 +56,9 @@ class PartidosViewModel() : ViewModel() {
     private val _filtroOrgJug = MutableStateFlow<String>("Jugador")
     val filtroOrgJug = _filtroOrgJug.asStateFlow()
 
+    private val _filtroSeriedad = MutableStateFlow<String>("Recreativo")
+    val filtroSeriedad = _filtroSeriedad.asStateFlow()
+
     private val _partidoCreadoConExito = MutableStateFlow<Boolean>(false)
     val partidoCreadoConExito = _partidoCreadoConExito.asStateFlow()
 
@@ -85,16 +88,24 @@ class PartidosViewModel() : ViewModel() {
         return barriosDisp.distinct()
     }
 
-    fun cargarPartidos(filtro: String){
+    fun cargarPartidos(filtro: String, filtroSeriedad: String){
         _partidos.value = emptyList<Partido>()
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response: Response<List<PartidoRes>>
 
-                if(filtro == "Jugadores")
-                    response = RetrofitClient.footballFieldsService.getMatchesJug()
-                else
-                    response = RetrofitClient.footballFieldsService.getMatchesEqui()
+                if(filtro == "Jugadores") {
+                    if (filtroSeriedad == "Competitivo")
+                        response = RetrofitClient.footballFieldsService.getMatchesJugComp()
+                    else
+                        response = RetrofitClient.footballFieldsService.getMatchesJugRec()
+                }
+                else {
+                    if (filtroSeriedad == "Competitivo")
+                        response = RetrofitClient.footballFieldsService.getMatchesEquiComp()
+                    else
+                        response = RetrofitClient.footballFieldsService.getMatchesEquiRec()
+                }
 
                 if (response.isSuccessful) {
                     val partidosRes = response.body() ?: emptyList()
@@ -112,7 +123,8 @@ class PartidosViewModel() : ViewModel() {
                                 puedeCancelar = p.puedeCancelar,
                                 jugadoresFaltantes = p.jugadoresFaltantes,
                                 posicionesFaltantes = p.posicionesFaltantes,
-                                detalleJugadores = p.detalleJugadores
+                                detalleJugadores = p.detalleJugadores,
+                                seriedad = p.seriedad
                             )
                         } else {
                             PartidoEquipo(
@@ -126,7 +138,8 @@ class PartidosViewModel() : ViewModel() {
                                 barrio = p.barrio,
                                 puedeCancelar = p.puedeCancelar,
                                 hayRepresentante = p.hayRepresentante,
-                                detalleJugadores = p.detalleJugadores
+                                detalleJugadores = p.detalleJugadores,
+                                seriedad = p.seriedad
                             )
                         }
 
@@ -152,7 +165,8 @@ class PartidosViewModel() : ViewModel() {
         zona: String,
         reputacionMinima: Int,
         cantJugadores: Int,
-        posiciones: List<String>)
+        posiciones: List<String>,
+        seriedad: String)
     {
         val partidoJugReq = PartidoReq(
             tipo = "jugadores",
@@ -165,7 +179,8 @@ class PartidosViewModel() : ViewModel() {
             barrio = zona,
             reputacionMinima = reputacionMinima,
             jugadoresFaltantes = cantJugadores,
-            posicionesFaltantes = posiciones
+            posicionesFaltantes = posiciones,
+            seriedad = seriedad
         )
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -192,7 +207,8 @@ class PartidosViewModel() : ViewModel() {
         formato: String,
         cancha: Cancha?,
         zona: String,
-        reputacionMinima: Int
+        reputacionMinima: Int,
+        seriedad: String
     )
     {
 
@@ -207,7 +223,8 @@ class PartidosViewModel() : ViewModel() {
             barrio = zona,
             reputacionMinima = reputacionMinima,
             jugadoresFaltantes = 0,
-            posicionesFaltantes = emptyList()
+            posicionesFaltantes = emptyList(),
+            seriedad = seriedad
         )
 
 
@@ -309,7 +326,8 @@ class PartidosViewModel() : ViewModel() {
                                 puedeCancelar = p.puedeCancelar,
                                 jugadoresFaltantes = p.jugadoresFaltantes,
                                 posicionesFaltantes = p.posicionesFaltantes,
-                                detalleJugadores = p.detalleJugadores
+                                detalleJugadores = p.detalleJugadores,
+                                seriedad = p.seriedad
                             )
                         }else{
                               PartidoEquipo(
@@ -323,7 +341,8 @@ class PartidosViewModel() : ViewModel() {
                                 barrio = p.barrio,
                                   puedeCancelar = p.puedeCancelar,
                                   hayRepresentante = p.hayRepresentante,
-                                  detalleJugadores = p.detalleJugadores
+                                  detalleJugadores = p.detalleJugadores,
+                                  seriedad = p.seriedad
                                 )
                         }
 
@@ -363,6 +382,10 @@ class PartidosViewModel() : ViewModel() {
     fun alternarFiltroOrgJug(){
         _misPartidos.value = emptyList() //Tuve que ponerlo aca porque sino se ejecutaba despues de un recompose y rompia al buscar la posicion del organizador de un partido de jugadores
         _filtroOrgJug.value =  if(_filtroOrgJug.value == "Jugador") "Organizador" else  "Jugador"
+    }
+
+    fun alternarFiltroSeriedad(){
+        _filtroSeriedad.value =  if(_filtroSeriedad.value == "Competitivo") "Recreativo" else  "Competitivo"
     }
 
     fun abandonarPartido(partido: Partido){

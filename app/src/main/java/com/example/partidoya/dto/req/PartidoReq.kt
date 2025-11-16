@@ -15,5 +15,6 @@ class PartidoReq (
     val barrio: String,
     val reputacionMinima: Int,
     var jugadoresFaltantes: Int,
-    var posicionesFaltantes: List<String>
+    var posicionesFaltantes: List<String>,
+    var seriedad: String
     )

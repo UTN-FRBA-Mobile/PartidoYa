@@ -115,7 +115,7 @@ LaunchedEffect(existingProfile) {
                     name = existingProfile.name ?: "",
                     surname = existingProfile.surname ?: "",
                     userIdentifier = existingProfile.userIdentifier ?: "",
-                    playStyle = existingProfile.playStyle ?: "",
+                    //playStyle = existingProfile.playStyle ?: "",
                     location = existingProfile.location ?: "",
                     celular = existingProfile.celular ?: "",
                     description = existingProfile.description ?: "",
@@ -145,7 +145,7 @@ LaunchedEffect(existingProfile) {
  */
         var completo = profile?.name != "" && profile?.surname != "" &&
         profile?.userIdentifier != "" && profile?.preferedPosition != "" &&
-        profile?.playStyle != "" && profile?.location != "" &&
+        //profile?.playStyle != "" && profile?.location != "" &&
         profile?.celular != ""
 
         Column(
@@ -224,13 +224,13 @@ LaunchedEffect(existingProfile) {
                         }
                     })
 
-                DropDownEstiloJuego(seleccion = profile?.playStyle, onClick =  { newPlayStyle ->
+                /*DropDownEstiloJuego(seleccion = profile?.playStyle, onClick =  { newPlayStyle ->
                     viewModel.onProfileChanged<String> {
                         copy(
                             playStyle = newPlayStyle
                         )
                     }
-                })
+                })*/
 
                 DropDownPosicionFavorita (seleccion = profile?.preferedPosition, onClick =  { newPosition ->
                     viewModel.onProfileChanged<String> {

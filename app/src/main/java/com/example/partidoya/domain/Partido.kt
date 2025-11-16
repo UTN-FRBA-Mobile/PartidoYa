@@ -13,5 +13,6 @@ abstract class Partido(
     val cancha: Cancha?,
     val barrio: String,
     val puedeCancelar: Boolean,
-    val detalleJugadores: List<DetalleJugador>? = null
+    val detalleJugadores: List<DetalleJugador>? = null,
+    val seriedad: String
 )

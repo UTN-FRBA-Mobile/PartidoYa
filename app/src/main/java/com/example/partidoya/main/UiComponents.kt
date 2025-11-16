@@ -511,6 +511,8 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
             MediumText("FORMATO: " + partido.formato)
             Spacer(Modifier.height(5.dp))
 
+            MediumText("SERIEDAD: " + partido.seriedad)
+
             Spacer(Modifier.height(5.dp))
             MediumText("JUGADORES FALTANTES: " + partido.jugadoresFaltantes)
             Spacer(Modifier.height(5.dp))
@@ -564,6 +566,9 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
 
             GenericInfoMatch(partido, onClickUbi)
             MediumText("FORMATO: " + partido.formato)
+            Spacer(Modifier.height(5.dp))
+
+            MediumText("SERIEDAD: " + partido.seriedad)
             Spacer(Modifier.height(5.dp))
 
             FooterMatch(partido, filtroOrgJug, viewModel, "Ver representante",{mostrarAlertaDetalleJugadores=true})
@@ -691,8 +696,8 @@ fun VisualizarDetalleJugadores(titulo: String, onDismiss: ()-> Unit ,detalleJuga
                     Text(detalleJugador.name.toString() + " " + detalleJugador.surname.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
                     Spacer(Modifier.height(10.dp))
                     Text(detalleJugador.celular.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
-                    Spacer(Modifier.height(10.dp))
-                    Text(detalleJugador.playStyle.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                    //Spacer(Modifier.height(10.dp))
+                    //Text(detalleJugador.playStyle.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
                     Spacer(Modifier.height(10.dp))
                     if (detalleJugador.preferedPosition != "") {
                         Text(detalleJugador.preferedPosition.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)

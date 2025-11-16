@@ -86,7 +86,7 @@ fun ProfileScreen(navController: NavController, paddingValues: PaddingValues, ho
             profile.userIdentifier,
             profile.preferedPosition,
             profile.location,
-            profile.playStyle,
+            //profile.playStyle,
             profile.description,
             profile.celular,
             profile.reputation,
@@ -117,7 +117,7 @@ fun ProfileScreenPreview(){
 }
 
 @Composable
-fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, modoJuego: String, presentacion: String, celular:String, reputacion: Int, partidosPorJugar: Int, partidosJugados: Int, partidosCancelados: Int, logout: () -> Unit, paddingValues: PaddingValues, horizontalPadding: Dp){
+fun Container(navController: NavController?=null,nombre: String, usuario: String, posicion: String, ubicacion: String, presentacion: String, celular:String, reputacion: Int, partidosPorJugar: Int, partidosJugados: Int, partidosCancelados: Int, logout: () -> Unit, paddingValues: PaddingValues, horizontalPadding: Dp){
     var expanded by remember { mutableStateOf(false) }
     var scrollState = rememberScrollState()
     var reputacionTipo = getTipoReputacion(reputacion)
@@ -195,8 +195,8 @@ fun Container(navController: NavController?=null,nombre: String, usuario: String
                     horizontalArrangement = Arrangement.Center
                 ) {
                     IconLabel(celular, Icons.Default.Phone)
-                    Spacer(modifier = Modifier.width(30.dp))
-                    IconLabel(modoJuego, Icons.Default.Face)
+                    //Spacer(modifier = Modifier.width(30.dp))
+                    //IconLabel(modoJuego, Icons.Default.Face)
                 }
             }
 

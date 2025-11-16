@@ -28,7 +28,7 @@ object RetrofitClient {
         .build()
     retrofit =
         Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create()) // Para parsear automágicamente el json
+            .addConverterFactory(GsonConverterFactory.create(gson)) // Para parsear automágicamente el json
             .baseUrl("http://10.0.2.2:8080/") // la URL
             .client(client)
             .build()
@@ -37,7 +37,6 @@ object RetrofitClient {
         footballFieldsServiceInstance = retrofit!!.create(FootballFieldsService::class.java)
         optionsServiceInstance = retrofit!!.create(OptionsService::class.java)
         barrioServiceInstance = retrofit!!.create(BarrioService::class.java)
-
 }
 
     val userService: UserService

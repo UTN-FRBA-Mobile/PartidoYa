@@ -83,6 +83,7 @@ fun Matches(
 ){
     val partidos by viewModel.partidos.collectAsState()
     val filtroJugEqui by viewModel.filtroJugEqui.collectAsState()
+    val filtroSeriedad by viewModel.filtroSeriedad.collectAsState()
     val context = LocalContext.current
     var isGranted by remember { mutableStateOf(false) }
     var ubicacion by remember { mutableStateOf<Location?>(null) }
@@ -106,8 +107,8 @@ fun Matches(
         }
     )
 
-    LaunchedEffect(filtroJugEqui){
-           viewModel.cargarPartidos(filtroJugEqui)
+    LaunchedEffect(filtroJugEqui, filtroSeriedad){
+           viewModel.cargarPartidos(filtroJugEqui, filtroSeriedad)
     }
 
     LaunchedEffect(partidoConfirmado) {
@@ -180,7 +181,12 @@ fun Matches(
                 )
             }
 
-            Filtro(filtroJugEqui, {viewModel.alternarFiltroJugEqui()})
+            Row (modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center){
+                Filtro(filtroJugEqui, { viewModel.alternarFiltroJugEqui() })
+                Spacer(Modifier.width(10.dp))
+                Filtro(filtroSeriedad, { viewModel.alternarFiltroSeriedad() })
+            }
 
             repeat(partidos.size){
                 index ->
@@ -263,6 +269,7 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
     var canchaDefinida by remember { mutableStateOf<Cancha?>(null) }
     var barrioDefinido by remember { mutableStateOf("") }
+    var seriedadSeleccionada by remember { mutableStateOf("") }
     var reputacionDefinida by remember { mutableStateOf(0) }
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
@@ -277,11 +284,11 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
     var diaSeleccionado = fechaSeleccionada.format(format).uppercase()
     var completo = false
     var datosGeneralesCompletos = duracionDefinida != "" && formatoSeleccionado != "" && busquedaSeleccionada != "" &&
-                                    barrioDefinido != "" && canchaDefinida != null
+                                    barrioDefinido != "" && canchaDefinida != null && seriedadSeleccionada != ""
 
     LaunchedEffect(Unit) { //Se ejecuta una unica vez al cargar la pantalla
         viewModel.cargarCanchas()
-        modifyProfileViewModel.cargarBarrios()
+        //modifyProfileViewModel.cargarBarrios()
     }
 
     LaunchedEffect(barrioDefinido) { //Se ejecuta solo cuando cambia el barrio
@@ -495,6 +502,22 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                     completo = datosGeneralesCompletos
                 }
 
+
+            Spacer(Modifier.height(10.dp))
+
+            Row {
+                MatchFormatButton(
+                    "COMPETITIVO",
+                    seriedadSeleccionada == "COMPETITIVO",
+                    { seriedadSeleccionada = "COMPETITIVO" })
+                Spacer(Modifier.width(15.dp))
+                MatchFormatButton(
+                    "RECREATIVO",
+                    seriedadSeleccionada == "RECREATIVO",
+                    { seriedadSeleccionada = "RECREATIVO" })
+            }
+
+            Spacer(Modifier.height(10.dp))
                 Text(
                     text = "REPUTACIÓN MÍNIMA APLICABLE",
                     modifier = Modifier.fillMaxWidth(),
@@ -523,7 +546,8 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                                         barrioDefinido,
                                         reputacionDefinida,
                                         cantJugadoresFaltantes,
-                                        listaAux
+                                        listaAux,
+                                        seriedad = seriedadSeleccionada
                                     )
 
                             } else {
@@ -536,7 +560,8 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                                         formatoSeleccionado,
                                         canchaDefinida,
                                         barrioDefinido,
-                                        reputacionMinima = reputacionDefinida
+                                        reputacionMinima = reputacionDefinida,
+                                        seriedad = seriedadSeleccionada
                                     )
 
                             }
@@ -549,6 +574,7 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                             canchaDefinida = null
                             barrioDefinido = ""
                             cantJugadoresFalatantesDefinido = ""
+                            seriedadSeleccionada = ""
                             reputacionDefinida = 0
                         }
 

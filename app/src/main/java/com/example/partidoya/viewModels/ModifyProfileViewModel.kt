@@ -31,7 +31,7 @@ class ModifyProfileViewModel:ViewModel() {
      surname  = "",
     userIdentifier = "",
      preferedPosition = "",
-     playStyle= "",
+     //playStyle= "",
     location  = "",
      description= "",
     celular="")

@@ -19,5 +19,6 @@ class PartidoRes(
     val hayRepresentante: Boolean,
     var jugadoresFaltantes: Int,
     var posicionesFaltantes: List<String>,
+    var seriedad: String,
     var detalleJugadores: List<DetalleJugador>? = null
 )

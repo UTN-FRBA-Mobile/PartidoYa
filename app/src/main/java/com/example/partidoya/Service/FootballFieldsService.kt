@@ -20,11 +20,15 @@ interface FootballFieldsService {
     @POST("/api/partidos")
     suspend fun newMatch(@Body partido: PartidoReq): Response<PartidoRes>
 
-    @GET("/api/partidos/jugadores")
-    suspend fun getMatchesJug(): Response<List<PartidoRes>>
+    @GET("/api/partidos/jugadores/competitivo")
+    suspend fun getMatchesJugComp(): Response<List<PartidoRes>>
+    @GET("/api/partidos/jugadores/recreativo")
+    suspend fun getMatchesJugRec(): Response<List<PartidoRes>>
 
-    @GET("/api/partidos/equipo")
-    suspend fun getMatchesEqui(): Response<List<PartidoRes>>
+    @GET("/api/partidos/equipo/competitivo")
+    suspend fun getMatchesEquiComp(): Response<List<PartidoRes>>
+    @GET("/api/partidos/equipo/recreativo")
+    suspend fun getMatchesEquiRec(): Response<List<PartidoRes>>
 
     @POST("/api/partidos/jugadores/{idPartido}")
     suspend fun joinMatchJug(@Path("idPartido") idPartido: Int , @Body participacion: ParticipacionReq): Response<Unit>
