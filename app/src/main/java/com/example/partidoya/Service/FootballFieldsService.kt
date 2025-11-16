@@ -1,5 +1,6 @@
 package com.example.partidoya.Service
 
+import com.example.partidoya.domain.Barrio
 import com.example.partidoya.domain.Cancha
 import com.example.partidoya.dto.req.ParticipacionReq
 import com.example.partidoya.dto.req.PartidoReq
@@ -54,8 +55,10 @@ interface FootballFieldsService {
     @POST("/api/partidos/suspender/{idPartido}")
     suspend fun suspendMatch(@Path("idPartido") idPartido: Int): Response<Unit>
 
+    //IMPORTANTE: Ciro cambio esto que originalmente estaba como string
+    //Esto fue porque el enpoint de barrios devuelve un barrio
     @GET("/api/barrios")
-    suspend fun getBarrios(): Response<List<String>>
+    suspend fun getBarrios(): Response<List<Barrio>>
 
 
 }
