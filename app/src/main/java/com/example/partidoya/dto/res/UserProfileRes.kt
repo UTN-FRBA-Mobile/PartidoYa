@@ -6,7 +6,7 @@ data class UserProfileRes(
     val surname: String,
     val userIdentifier: String,
     val location: String,
-    val playStyle: String,
+    //val playStyle: String,
     val preferedPosition: String,
     val description: String,
     val reputation: Int,
