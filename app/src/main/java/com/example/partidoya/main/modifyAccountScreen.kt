@@ -232,19 +232,13 @@ LaunchedEffect(existingProfile) {
                     }
                 })
 
-                OutlineLabelInput(
-                    label = "Posicion preferida",
-                    placeholder = "Arquero",
-                    singleLine = true,
-                    normalInputModifier,
-                    profile?.preferedPosition ?: "",
-                    onValueChange = { newPreferedPosition ->
-                        viewModel.onProfileChanged<String> {
-                            copy(
-                                preferedPosition = newPreferedPosition
-                            )
-                        }
-                    })
+                DropDownPosicionFavorita (seleccion = profile?.preferedPosition, onClick =  { newPosition ->
+                    viewModel.onProfileChanged<String> {
+                        copy(
+                            preferedPosition = newPosition
+                        )
+                    }
+                })
 
                 AutoCompleteInput(
                     label = "Ubicacion",
@@ -276,7 +270,11 @@ LaunchedEffect(existingProfile) {
                 Spacer(Modifier.height(10.dp))
 
                 Button(
-                    onClick = { viewModel.modificarPerfil() },
+                    onClick = {
+                        if(barrios.contains(profile?.location))
+                            viewModel.modificarPerfil()
+                        else
+                            Toast.makeText(context,"Error, ingrese un barrio de entre las opciones", Toast.LENGTH_LONG).show()},
                     enabled = completo,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
@@ -308,18 +306,19 @@ ExposedDropdownMenuBox(
     onExpandedChange = { expanded = !expanded }
 ){
     OutlinedTextField(
-    value = seleccion?:"",
-    colors = InputColors,
-    shape = RoundedCornerShape(16.dp),
-    onValueChange = { newValue ->
-        onClick(newValue)
-        expanded = newValue.isNotEmpty()
-    },
-    modifier = normalInputModifier
-        .unwrap()
-        .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
-    singleLine = true,
-    label = { Text("Estilo de Juego", style = MaterialTheme.typography.bodyMedium) },
+        value = seleccion?:"",
+        colors = InputColors,
+        shape = RoundedCornerShape(16.dp),
+        onValueChange = { newValue ->
+            onClick(newValue)
+            expanded = newValue.isNotEmpty()
+        },
+        modifier = normalInputModifier
+            .unwrap()
+            .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
+        readOnly = true,
+        label = { Text("Estilo de Juego", style = MaterialTheme.typography.bodyMedium) },
+        placeholder = {Text("COMPETITIVO",style = MaterialTheme.typography.bodyMedium)}
     )
     ExposedDropdownMenu(
         expanded = expanded,
@@ -337,6 +336,50 @@ modifier = Modifier
         }
 
 }
-
 }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropDownPosicionFavorita(seleccion: String?, onClick: (String) -> Unit) {
+    val posiciones = listOf("ARQUERO", "DEFENSOR", "MEDIOCAMPISTA", "DELANTERO");
+    var expanded by remember { mutableStateOf(false) } //si se expandió o no
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ){
+        OutlinedTextField(
+            value = seleccion?:"",
+            colors = InputColors,
+            shape = RoundedCornerShape(16.dp),
+            onValueChange = { newValue ->
+                onClick(newValue)
+                expanded = newValue.isNotEmpty()
+            },
+            modifier = normalInputModifier
+                .unwrap()
+                .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
+            readOnly = true,
+            label = { Text("Posición preferida", style = MaterialTheme.typography.bodyMedium) },
+            placeholder = {Text("ARQUERO",style = MaterialTheme.typography.bodyMedium)}
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .heightIn(max = 200.dp)
+        )
+        {
+            posiciones.forEach { posicion ->
+                DropdownMenuItem(
+                    text = { Text(posicion, style = MaterialTheme.typography.bodyMedium) },
+                    onClick = {onClick(posicion)
+                        expanded = false}
+                )
+            }
+
+        }
+
+    }
 }
