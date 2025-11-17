@@ -25,6 +25,7 @@ Para crear una cuenta, debes:
 
 <p align="center">
   <img src="./docs/assets/images/Inscription.png" alt="Pantalla de inscripción" width="40%">
+  <img src="./docs/assets/images/ProfileCreation.png" alt="Pantalla de creación del perfil" width="40%">
 </p>
 
 ---
