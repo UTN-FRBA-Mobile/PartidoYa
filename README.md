@@ -1,5 +1,8 @@
 # 🏆 PartidoYa
-![Logo de la aplicación](./images/logo.png)
+<p align="center">
+  <img src="./docs/assets/images/AppLogo.png" alt="Logo de la app" width="40%">
+</p>
+
 
 PartidoYa es una aplicación móvil diseñada para ayudarte a **encontrar jugadores**, **organizar partidos de fútbol** y **participar en encuentros cerca de ti**.  
 Aquí encontrarás una guía completa para aprender a utilizar la aplicación.
@@ -7,7 +10,7 @@ Aquí encontrarás una guía completa para aprender a utilizar la aplicación.
 ---
 
 ## 📱 Pantalla Principal
-![Pantalla principal](./images/pantalla_principal.png)
+![Pantalla principal](./docs/assets/images/MainScreen.png)
 
 En esta pantalla podrás:
 - Ver los partidos disponibles cerca de tu ubicación.
@@ -17,7 +20,7 @@ En esta pantalla podrás:
 ---
 
 ## 📝 Registro / Creación de Cuenta
-![Pantalla de registro](./images/registro.png)
+![Pantalla de registro](./docs/assets/images/)
 
 Para crear una cuenta:
 1. Introduce tu nombre, correo electrónico y contraseña.
@@ -27,7 +30,7 @@ Para crear una cuenta:
 ---
 
 ## 🔐 Inicio de Sesión
-![Pantalla de inicio de sesión](./images/login.png)
+![Pantalla de inicio de sesión](./docs/assets/images/)
 
 Accede a tu cuenta introduciendo tu correo y contraseña.  
 Si olvidaste tu contraseña, puedes solicitar su recuperación.
@@ -35,7 +38,7 @@ Si olvidaste tu contraseña, puedes solicitar su recuperación.
 ---
 
 ## 🏠 Pantalla Principal (Usuario Conectado)
-![Pantalla usuario conectado](./images/home_conectado.png)
+![Pantalla usuario conectado](./docs/assets/images/)
 
 Una vez autenticado, podrás:
 - Ver los partidos disponibles.
@@ -46,7 +49,7 @@ Una vez autenticado, podrás:
 ---
 
 ## 👤 Perfil del Usuario
-![Pantalla de perfil](./images/perfil.png)
+![Pantalla de perfil](./docs/assets/images/)
 
 Desde tu perfil puedes:
 - Ver y editar tu información personal.
@@ -56,7 +59,7 @@ Desde tu perfil puedes:
 ---
 
 ## ➕ Crear un Partido
-![Pantalla crear partido](./images/crear_partido.png)
+![Pantalla crear partido](./docs/assets/images/)
 
 Para organizar un partido:
 1. Indica la fecha, hora y ubicación.
@@ -67,7 +70,7 @@ Para organizar un partido:
 ---
 
 ## 🔎 Partidos que Buscan Jugadores
-![Pantalla partidos buscan jugadores](./images/buscar_partidos.png)
+![Pantalla partidos buscan jugadores](./docs/assets/images/)
 
 Aquí podrás:
 - Ver partidos que necesitan jugadores.
@@ -77,7 +80,7 @@ Aquí podrás:
 ---
 
 ## 📅 Mis Partidos – Como Organizador
-![Pantalla mis partidos organizador](./images/mis_partidos_organizador.png)
+![Pantalla mis partidos organizador](./docs/assets/images/)
 
 En esta sección podrás:
 - Gestionar los partidos que has creado.
@@ -87,7 +90,7 @@ En esta sección podrás:
 ---
 
 ## ⚽ Mis Partidos – Como Jugador
-![Pantalla mis partidos jugador](./images/mis_partidos_jugador.png)
+![Pantalla mis partidos jugador](./docs/assets/images/)
 
 Aquí encontrarás:
 - Los partidos a los que te has unido.
@@ -96,5 +99,4 @@ Aquí encontrarás:
 
 ---
 
-## 📬 Contacto
-Para cualquier duda o sugerencia, no dudes en ponerte en contacto con el equipo de PartidoYa.
+## 📬 Autores
