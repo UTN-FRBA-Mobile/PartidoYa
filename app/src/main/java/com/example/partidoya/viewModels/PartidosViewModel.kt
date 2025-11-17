@@ -56,6 +56,9 @@ class PartidosViewModel() : ViewModel() {
     private val _filtroOrgJug = MutableStateFlow<String>("Jugador")
     val filtroOrgJug = _filtroOrgJug.asStateFlow()
 
+    private val _partidoCreadoConExito = MutableStateFlow<Boolean>(false)
+    val partidoCreadoConExito = _partidoCreadoConExito.asStateFlow()
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun cargarCanchas(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -168,8 +171,10 @@ class PartidosViewModel() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitClient.footballFieldsService.newMatch(partidoJugReq)
-                if(response.isSuccessful)
+                if(response.isSuccessful) {
                     Log.d("API PARTIDOS", "CREADO CON EXITO")
+                    _partidoCreadoConExito.value = true
+                }
             }
             catch (e: Exception){
                 Log.e("API PARTIDOS", e.message, e)
@@ -209,8 +214,10 @@ class PartidosViewModel() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitClient.footballFieldsService.newMatch(partidoEqReq)
-                if(response.isSuccessful)
+                if (response.isSuccessful){
                     Log.d("API PARTIDOS", "CREADO CON EXITO")
+                    _partidoCreadoConExito.value = true
+                }
             }
             catch (e: Exception){
                 Log.e("API PARTIDOS", e.message, e)
@@ -219,6 +226,10 @@ class PartidosViewModel() : ViewModel() {
 
     }
 
+
+    fun toastPartidoCreadoEnviado(){
+        _partidoCreadoConExito.value = false
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.O)

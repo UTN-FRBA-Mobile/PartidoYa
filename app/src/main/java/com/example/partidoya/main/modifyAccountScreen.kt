@@ -71,6 +71,14 @@ fun ModifyAccountScreenContent(navController: NavController?  = null, paddingVal
     val barrios by viewModel.barrios.collectAsState()
     val uiState = viewModel.uiState
     val context = LocalContext.current
+    /* Cosas que cambio ciro que estan en conflicto
+<<<<<<< HEAD
+    val playStyles by viewModel.playStyles.collectAsState()
+    val position by viewModel.positions.collectAsState()
+    val barrios by viewModel.positions.collectAsState()
+    val barriosOption by viewModel.barrioOptions.collectAsState(emptyList())
+=======
+     */
     var scrollState = rememberScrollState()
 
     LaunchedEffect (uiState.success) {
@@ -81,193 +89,223 @@ fun ModifyAccountScreenContent(navController: NavController?  = null, paddingVal
         }
     }
 
-    LaunchedEffect(Unit) {
-        profileViewModel.obtenerDatosDelPerfil()
-        viewModel.cargarBarrios()
-    }
+/* Cosas que cambio ciro que estan en conflicto
+<<<<<<< HEAD
+LaunchedEffect(Unit) {
+    viewModel.cargarPlayStyles()
+    viewModel.cargarPosiciones()
+    viewModel.cargarBarrios()
+}
 
-    LaunchedEffect(existingProfile) {
-            existingProfile?.let { existingProfile ->
-                viewModel.onProfileChanged<String> {
-                    copy(
-                        name = existingProfile.name ?: "",
-                        surname = existingProfile.surname ?: "",
-                        userIdentifier = existingProfile.userIdentifier ?: "",
-                        playStyle = existingProfile.playStyle ?: "",
-                        location = existingProfile.location ?: "",
-                        celular = existingProfile.celular ?: "",
-                        description = existingProfile.description ?: "",
-                        preferedPosition = existingProfile.preferedPosition ?: ""
-                    )
-                }
+Column (verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier.fillMaxSize()){
+=======
+ */
+
+LaunchedEffect(Unit) {
+    profileViewModel.obtenerDatosDelPerfil()
+    viewModel.cargarBarrios()
+}
+
+LaunchedEffect(existingProfile) {
+        existingProfile?.let { existingProfile ->
+            viewModel.onProfileChanged<String> {
+                copy(
+                    name = existingProfile.name ?: "",
+                    surname = existingProfile.surname ?: "",
+                    userIdentifier = existingProfile.userIdentifier ?: "",
+                    playStyle = existingProfile.playStyle ?: "",
+                    location = existingProfile.location ?: "",
+                    celular = existingProfile.celular ?: "",
+                    description = existingProfile.description ?: "",
+                    preferedPosition = existingProfile.preferedPosition ?: ""
+                )
             }
-    }
+        }
+}
 
-            var completo = profile?.name != "" && profile?.surname != "" &&
-            profile?.userIdentifier != "" && profile?.preferedPosition != "" &&
-            profile?.playStyle != "" && profile?.location != "" &&
-            profile?.celular != ""
+/* Cosas que cambio ciro que estan en conflicto
+<<<<<<< HEAD
+        AutoCompleteInput(label = "Estilo de juego",   profile?.playStyle ?: "" ,
+            onValueChange = {newPlayStyle-> viewModel.onProfileChanged<String> {copy(playStyle = newPlayStyle.key)}},
+            options = playStyles)
 
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = horizontalPadding)
-                    .verticalScroll(scrollState)
-            ) {
+        AutoCompleteInput(label = "Posicion preferida",
+            value= profile?.preferedPosition ?: "" ,
+            onValueChange = {newPreferedPosition-> viewModel.onProfileChanged<String> {copy(preferedPosition = newPreferedPosition.key)}},
+            options = position
+        )
 
-                GlassCard(spaceBetween = 8.dp) {
-                    Text(
-                        text = "Completa tus datos",
-                        fontSize = 30.sp, color = Color.White,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    OutlineLabelInput(
-                        label = "Nombre",
-                        placeholder = "Pepe",
-                        singleLine = true,
-                        normalInputModifier,
-                        profile?.name ?: "",
-                        onValueChange = { newNombre ->
-                            viewModel.onProfileChanged<String> {
-                                copy(
-                                    name = newNombre
-                                )
-                            }
-                        })
-                    OutlineLabelInput(
-                        label = "Apellido",
-                        placeholder = "Gonzales",
-                        singleLine = true,
-                        normalInputModifier,
-                        profile?.surname ?: "",
-                        onValueChange = { newApellido ->
-                            viewModel.onProfileChanged<String> {
-                                copy(
-                                    surname = newApellido
-                                )
-                            }
-                        })
-                    //Ver donde se incluye
-                    //OutlineLabelInput(label = "Nombre de usuario", placeholder = "@PepZals",normalInputModifier,
-                    OutlineLabelInput(
-                        label = "Nombre de usuario",
-                        placeholder = "boquitaPasion",
-                        singleLine = true,
-                        normalInputModifier,
-                        profile?.userIdentifier ?: "",
-                        onValueChange = { newUsername ->
-                            viewModel.onProfileChanged<String> {
-                                copy(
-                                    userIdentifier = newUsername
-                                )
-                            }
-                        })
-                    //  profile?.apellido ?: "" , onValueChange = {newUserName-> viewModel.onProfileChanged<String> {copy( = newApellido)}})
+        AutoCompleteInput(label = "Ubicacion",
+            profile?.location ?: "",
+            onValueChange = {newUbicacion-> viewModel.onProfileChanged<String> {copy(location = newUbicacion.key)}},
+            options = barriosOption);
+=======
+ */
+        var completo = profile?.name != "" && profile?.surname != "" &&
+        profile?.userIdentifier != "" && profile?.preferedPosition != "" &&
+        profile?.playStyle != "" && profile?.location != "" &&
+        profile?.celular != ""
 
-                    OutlineLabelInput(
-                        label = "Telefono",
-                        placeholder = "11 1234 5678",
-                        singleLine = true,
-                        normalInputModifier,
-                        profile?.celular ?: "",
-                        onValueChange = { newCelular ->
-                            if(newCelular.isDigitsOnly()) {
-                                viewModel.onProfileChanged<String> {
-                                    copy(
-                                        celular = newCelular
-                                    )
-                                }
-                            }
-                        })
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = horizontalPadding)
+                .verticalScroll(scrollState)
+        ) {
 
-                    DropDownEstiloJuego(seleccion = profile?.playStyle, onClick =  { newPlayStyle ->
+            GlassCard(spaceBetween = 8.dp) {
+                Text(
+                    text = "Completa tus datos",
+                    fontSize = 30.sp, color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(Modifier.height(10.dp))
+                OutlineLabelInput(
+                    label = "Nombre",
+                    placeholder = "Pepe",
+                    singleLine = true,
+                    normalInputModifier,
+                    profile?.name ?: "",
+                    onValueChange = { newNombre ->
                         viewModel.onProfileChanged<String> {
                             copy(
-                                playStyle = newPlayStyle
+                                name = newNombre
+                            )
+                        }
+                    })
+                OutlineLabelInput(
+                    label = "Apellido",
+                    placeholder = "Gonzales",
+                    singleLine = true,
+                    normalInputModifier,
+                    profile?.surname ?: "",
+                    onValueChange = { newApellido ->
+                        viewModel.onProfileChanged<String> {
+                            copy(
+                                surname = newApellido
+                            )
+                        }
+                    })
+                //Ver donde se incluye
+                //OutlineLabelInput(label = "Nombre de usuario", placeholder = "@PepZals",normalInputModifier,
+                OutlineLabelInput(
+                    label = "Nombre de usuario",
+                    placeholder = "boquitaPasion",
+                    singleLine = true,
+                    normalInputModifier,
+                    profile?.userIdentifier ?: "",
+                    onValueChange = { newUsername ->
+                        viewModel.onProfileChanged<String> {
+                            copy(
+                                userIdentifier = newUsername
+                            )
+                        }
+                    })
+                //  profile?.apellido ?: "" , onValueChange = {newUserName-> viewModel.onProfileChanged<String> {copy( = newApellido)}})
+
+                OutlineLabelInput(
+                    label = "Telefono",
+                    placeholder = "11 1234 5678",
+                    singleLine = true,
+                    normalInputModifier,
+                    profile?.celular ?: "",
+                    onValueChange = { newCelular ->
+                        if(newCelular.isDigitsOnly()) {
+                            viewModel.onProfileChanged<String> {
+                                copy(
+                                    celular = newCelular
+                                )
+                            }
+                        }
+                    })
+
+                DropDownEstiloJuego(seleccion = profile?.playStyle, onClick =  { newPlayStyle ->
+                    viewModel.onProfileChanged<String> {
+                        copy(
+                            playStyle = newPlayStyle
+                        )
+                    }
+                })
+
+                DropDownPosicionFavorita (seleccion = profile?.preferedPosition, onClick =  { newPosition ->
+                    viewModel.onProfileChanged<String> {
+                        copy(
+                            preferedPosition = newPosition
+                        )
+                    }
+                })
+
+                AutoCompleteInput(
+                    label = "Ubicacion",
+                    profile?.location ?: "",
+                    onValueChange = { newUbicacion ->
+                        viewModel.onProfileChanged<String> {
+                            copy(
+                                location = newUbicacion
+                            )
+                        }
+                    },
+                    barrios);
+
+                OutlineLabelInput(
+                    label = "Sobre vos",
+                    placeholder = ".....",
+                    singleLine = false,
+                    largeInputModifier,
+                    profile?.description ?: "",
+                    onValueChange = { newPresentacion ->
+                        viewModel.onProfileChanged<String> {
+                            copy(
+                                description = newPresentacion
                             )
                         }
                     })
 
-                    OutlineLabelInput(
-                        label = "Posicion preferida",
-                        placeholder = "Arquero",
-                        singleLine = true,
-                        normalInputModifier,
-                        profile?.preferedPosition ?: "",
-                        onValueChange = { newPreferedPosition ->
-                            viewModel.onProfileChanged<String> {
-                                copy(
-                                    preferedPosition = newPreferedPosition
-                                )
-                            }
-                        })
 
-                    AutoCompleteInput(
-                        label = "Ubicacion",
-                        profile?.location ?: "",
-                        onValueChange = { newUbicacion ->
-                            viewModel.onProfileChanged<String> {
-                                copy(
-                                    location = newUbicacion
-                                )
-                            }
-                        },
-                        barrios);
+                Spacer(Modifier.height(10.dp))
 
-                    OutlineLabelInput(
-                        label = "Sobre vos",
-                        placeholder = ".....",
-                        singleLine = false,
-                        largeInputModifier,
-                        profile?.description ?: "",
-                        onValueChange = { newPresentacion ->
-                            viewModel.onProfileChanged<String> {
-                                copy(
-                                    description = newPresentacion
-                                )
-                            }
-                        })
-
-
-                    Spacer(Modifier.height(10.dp))
-
-                    Button(
-                        onClick = { viewModel.modificarPerfil() },
-                        enabled = completo,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color.Black
-                        ),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .width(322.dp)
-                            .height(56.dp)
-                    ) {
-                        Text(text = "Confirmar datos", style = MaterialTheme.typography.bodyMedium)
-                    }
+                Button(
+                    onClick = {
+                        if(barrios.contains(profile?.location))
+                            viewModel.modificarPerfil()
+                        else
+                            Toast.makeText(context,"Error, ingrese un barrio de entre las opciones", Toast.LENGTH_LONG).show()},
+                    enabled = completo,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.Black
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .width(322.dp)
+                        .height(56.dp)
+                ) {
+                    Text(text = "Confirmar datos", style = MaterialTheme.typography.bodyMedium)
                 }
-
             }
+
         }
+    }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropDownEstiloJuego(seleccion: String?, onClick: (String) -> Unit) {
-    val estilos = listOf("COMPETITIVO", "RECREATIVO");
+val estilos = listOf("COMPETITIVO", "RECREATIVO");
 
-    var expanded by remember { mutableStateOf(false) } //si se expandió o no
+var expanded by remember { mutableStateOf(false) } //si se expandió o no
 
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ){
-        OutlinedTextField(
+ExposedDropdownMenuBox(
+    expanded = expanded,
+    onExpandedChange = { expanded = !expanded }
+){
+    OutlinedTextField(
         value = seleccion?:"",
         colors = InputColors,
         shape = RoundedCornerShape(16.dp),
@@ -278,25 +316,70 @@ fun DropDownEstiloJuego(seleccion: String?, onClick: (String) -> Unit) {
         modifier = normalInputModifier
             .unwrap()
             .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
-        singleLine = true,
+        readOnly = true,
         label = { Text("Estilo de Juego", style = MaterialTheme.typography.bodyMedium) },
+        placeholder = {Text("COMPETITIVO",style = MaterialTheme.typography.bodyMedium)}
+    )
+    ExposedDropdownMenu(
+        expanded = expanded,
+onDismissRequest = { expanded = false },
+modifier = Modifier
+    .heightIn(max = 200.dp)
+)
+{
+    estilos.forEach { estilo ->
+            DropdownMenuItem(
+                text = { Text(estilo, style = MaterialTheme.typography.bodyMedium) },
+                onClick = {onClick(estilo)
+                        expanded = false}
+            )
+        }
+
+}
+}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropDownPosicionFavorita(seleccion: String?, onClick: (String) -> Unit) {
+    val posiciones = listOf("ARQUERO", "DEFENSOR", "MEDIOCAMPISTA", "DELANTERO");
+    var expanded by remember { mutableStateOf(false) } //si se expandió o no
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ){
+        OutlinedTextField(
+            value = seleccion?:"",
+            colors = InputColors,
+            shape = RoundedCornerShape(16.dp),
+            onValueChange = { newValue ->
+                onClick(newValue)
+                expanded = newValue.isNotEmpty()
+            },
+            modifier = normalInputModifier
+                .unwrap()
+                .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true),
+            readOnly = true,
+            label = { Text("Posición preferida", style = MaterialTheme.typography.bodyMedium) },
+            placeholder = {Text("ARQUERO",style = MaterialTheme.typography.bodyMedium)}
         )
         ExposedDropdownMenu(
             expanded = expanded,
-    onDismissRequest = { expanded = false },
-    modifier = Modifier
-        .heightIn(max = 200.dp)
-    )
-    {
-        estilos.forEach { estilo ->
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .heightIn(max = 200.dp)
+        )
+        {
+            posiciones.forEach { posicion ->
                 DropdownMenuItem(
-                    text = { Text(estilo, style = MaterialTheme.typography.bodyMedium) },
-                    onClick = {onClick(estilo)
-                            expanded = false}
+                    text = { Text(posicion, style = MaterialTheme.typography.bodyMedium) },
+                    onClick = {onClick(posicion)
+                        expanded = false}
                 )
             }
 
-    }
+        }
 
-}
+    }
 }

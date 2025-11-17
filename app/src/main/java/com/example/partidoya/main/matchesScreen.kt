@@ -257,7 +257,7 @@ fun MyMatches(viewModel: PartidosViewModel, paddingValues: PaddingValues, horizo
 fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProfileViewModel,paddingValues: PaddingValues, horizontalPadding: Dp) {
     var horarioSeleccionado by remember { mutableStateOf(LocalTime.of(0, 0)) }
     var fechaSeleccionada by remember { mutableStateOf(LocalDate.now()) }
-    var duracionDefinida by remember { mutableStateOf("") }
+    var duracionDefinida by remember { mutableStateOf("60") }
     var formatoSeleccionado by remember { mutableStateOf("") }
     var busquedaSeleccionada by remember { mutableStateOf("") }
     var posicionesSeleccionadas = remember { mutableStateListOf<String>() }
@@ -267,7 +267,7 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
     var cantJugadoresFalatantesDefinido by remember { mutableStateOf("") }
     var scrollState = rememberScrollState()
     var cantJugadoresFaltantes by remember { mutableStateOf(0) }
-    var partidoCreadoConExito by remember { mutableStateOf(false) }
+    val partidoCreadoConExito by viewModel.partidoCreadoConExito.collectAsState()
     val barrios by viewModel.barrios.collectAsState()
 
 
@@ -299,7 +299,7 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
 
     if(partidoCreadoConExito){
         ToastMatchCreated()
-        partidoCreadoConExito = false
+        viewModel.toastPartidoCreadoEnviado()
     }
 
     Column(
@@ -461,7 +461,12 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                             color = Color.White
                         )
                         Spacer(Modifier.width(15.dp))
-                        LabelOverInput(onChange = { cant -> if(cant.isDigitsOnly()) cantJugadoresFalatantesDefinido = cant}, value = cantJugadoresFalatantesDefinido)
+                        LabelOverInput(onChange = { cant -> if(cant.isDigitsOnly()) {
+                            if(cant.isEmpty() || cant.get(0) != '0') //Evita cadenas como '002' o '0'
+                                cantJugadoresFalatantesDefinido = cant
+                        }
+
+                                                  }, value = cantJugadoresFalatantesDefinido)
                     }
 
                     Spacer(Modifier.height(15.dp))
@@ -535,10 +540,6 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                                     )
 
                             }
-
-                            //TODO corroborar que se haya creado el partido exitosamente en el backend
-                            partidoCreadoConExito = true
-
 
                             fechaSeleccionada = LocalDate.now()
                             horarioSeleccionado = LocalTime.of(0,0)
@@ -776,7 +777,7 @@ fun DateSelection(fecha: LocalDate, onClick: (LocalDate) -> Unit){
                     contentColor = Color.White
                 ),
                 onClick = {
-                    DatePickerDialog(
+                    val datePicker = DatePickerDialog(
                         context, //el contexto de Android (necesario para abrir el diálogo)
 
                         // Callback que se ejecuta cuando el usuario elige una fecha
@@ -788,7 +789,11 @@ fun DateSelection(fecha: LocalDate, onClick: (LocalDate) -> Unit){
                         fecha.year,
                         fecha.monthValue - 1,
                         fecha.dayOfMonth
-                    ).show()
+                    )
+
+                    datePicker.datePicker.minDate = System.currentTimeMillis()
+                    datePicker.show()
+
                 }) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,

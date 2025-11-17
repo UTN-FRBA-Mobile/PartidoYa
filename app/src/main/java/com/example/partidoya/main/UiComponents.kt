@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -58,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.partidoya.ui.theme.InputColors
@@ -79,7 +81,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun HomeButton(text: String, onClick: () -> Unit) {
+fun HomeButton(text:String, onClick:  ()->Unit){
 
     var isLoading by remember { mutableStateOf(false) }
 
@@ -265,12 +267,56 @@ fun OutlineLabelInput(
 }
 
 
+@Composable
+fun PasswordTextField(
+    label: String? = null,
+    onChange: (String) -> Unit,
+    value: String
+){
+    Column {
+
+        Text(
+            text = "CONTRASEÑA",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White
+        )
+
+        Spacer(Modifier.height(15.dp))
+        TextField(
+            textStyle = MaterialTheme.typography.bodyMedium,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White,
+                focusedTrailingIconColor = Color.White,
+                unfocusedTrailingIconColor = Color.White,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            value = value,
+            onValueChange = onChange,
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.White, shape = RoundedCornerShape(10.dp)),
+            visualTransformation = PasswordVisualTransformation(),
+            trailingIcon ={
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Password icon"
+                )
+            }
+        )
+    }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Unit, barrios: List<String>) {
     var expanded by remember { mutableStateOf(false) }
+    var textValue by remember { mutableStateOf(value) }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
@@ -280,6 +326,7 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
             colors = InputColors,
             shape = RoundedCornerShape(16.dp),
             onValueChange = { newValue ->
+                textValue = newValue
                 onValueChange(newValue)
                 expanded = newValue.isNotEmpty()
             },
@@ -301,6 +348,7 @@ fun AutoCompleteInput(label: String,value: String,onValueChange: (String) -> Uni
                     DropdownMenuItem(
                         text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
                         onClick = {
+                            textValue = option
                             onValueChange(option)
                             expanded = false
                         }
@@ -472,11 +520,12 @@ fun MyMatchPlayerCard(partido: PartidoJugadores, viewModel: PartidosViewModel, o
                 Spacer(Modifier.height(5.dp))
             }
 
-            FooterMatch(partido, filtroOrgJug, viewModel, {mostrarAlertaDetalleJugadores= true})
+            FooterMatch(partido, filtroOrgJug, viewModel, "Ver jugadores" ,{mostrarAlertaDetalleJugadores= true})
         }
     }
     if (mostrarAlertaDetalleJugadores) {
         VisualizarDetalleJugadores (
+            titulo = "Jugadores",
             onDismiss = { mostrarAlertaDetalleJugadores = false },
             detalleJugadores = partido.detalleJugadores
         )
@@ -517,11 +566,12 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
             MediumText("FORMATO: " + partido.formato)
             Spacer(Modifier.height(5.dp))
 
-            FooterMatch(partido, filtroOrgJug, viewModel, {mostrarAlertaDetalleJugadores=true})
+            FooterMatch(partido, filtroOrgJug, viewModel, "Ver representante",{mostrarAlertaDetalleJugadores=true})
         }
     }
     if (mostrarAlertaDetalleJugadores) {
         VisualizarDetalleJugadores (
+            titulo = "Representante",
             onDismiss = { mostrarAlertaDetalleJugadores = false },
             detalleJugadores = partido.detalleJugadores
         )
@@ -529,7 +579,7 @@ fun MyMatchTeamCard(partido: PartidoEquipo, viewModel: PartidosViewModel, onClic
 }
 
 @Composable
-fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewModel, accion: () -> Unit?) {
+fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewModel, nombreAccion: String, accion: () -> Unit?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -541,7 +591,7 @@ fun FooterMatch(partido: Partido, filtroOrgJug: String, viewModel: PartidosViewM
         if(filtroOrgJug != "Jugador" && partido.detalleJugadores != null && partido.detalleJugadores.isNotEmpty()) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                    text = "Ver jugadores",
+                    text = nombreAccion,
                     color = Color(0xFF1E88E5), // azul tipo link
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
@@ -629,12 +679,12 @@ fun RatingComponent (value: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VisualizarDetalleJugadores(onDismiss: ()-> Unit ,detalleJugadores: List<DetalleJugador>?){
+fun VisualizarDetalleJugadores(titulo: String, onDismiss: ()-> Unit ,detalleJugadores: List<DetalleJugador>?){
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         content = {
             GlassCard (esDarkGray = true){
-                Text(text = "Detalle Jugadores", style = MaterialTheme.typography.titleSmall, color = Color.White)
+                Text(text = titulo, style = MaterialTheme.typography.titleSmall, color = Color.White)
                 Spacer(Modifier.height(10.dp))
                 detalleJugadores?.forEach { detalleJugador ->
                     Spacer(Modifier.height(10.dp))
@@ -644,6 +694,10 @@ fun VisualizarDetalleJugadores(onDismiss: ()-> Unit ,detalleJugadores: List<Deta
                     Spacer(Modifier.height(10.dp))
                     Text(detalleJugador.playStyle.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
                     Spacer(Modifier.height(10.dp))
+                    if (detalleJugador.preferedPosition != "") {
+                        Text(detalleJugador.preferedPosition.toString(), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                        Spacer(Modifier.height(10.dp))
+                    }
                     RatingComponent(detalleJugador.reputacion?.toInt() ?: 0)
                     Spacer(Modifier.height(10.dp))
                     HorizontalDivider(thickness = 5.dp, color = Color.White,modifier = Modifier.width(322.dp))
@@ -790,7 +844,7 @@ fun AutoCompleteInputBarrios(label: String,value: String,onValueChange: (String)
                     .heightIn(max = 200.dp)
             )
             {
-                barrios.filter { it.contains(value, ignoreCase = false) }
+                barrios.filter { it.contains(value, ignoreCase = true) }
                     .forEach { option ->
                         DropdownMenuItem(
                             text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
