@@ -101,7 +101,7 @@ Desde esta pantalla, también es posible **ver la ubicación del cancha en el ma
 ---
 
 ## 📬 Autores
-- **Ciro Fernandez**
-- **Gerardo Muñoz**
-- **Ramiro Navarro**
-- **Théo Parezys**
+- **Ciro Fernandez** ([@Ziro41](https://github.com/Ziro41))
+- **Gerardo Muñoz** ([@GerrMunoz](https://github.com/GerrMunoz))
+- **Ramiro Navarro** ([@rami-nava](https://github.com/rami-nava))
+- **Théo Parezys** ([@MirageOff](https://github.com/MirageOff))
