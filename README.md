@@ -56,6 +56,7 @@ Desde el perfil puedes **consultar y editar** tu información personal.
 
 <p align="center">
   <img src="./docs/assets/images/ProfilePreview.png" alt="Pantalla del perfil personal" width="40%">
+  <img src="./docs/assets/images/InfoModifications.png" alt="Pantalla de la modificación de los datos personales" width="40%">
 </p>
 
 ---
