@@ -503,21 +503,30 @@ fun CreateMatch(viewModel: PartidosViewModel, modifyProfileViewModel: ModifyProf
                 }
 
 
-            Spacer(Modifier.height(10.dp))
+            Text(
+                text = "SERIEDAD",
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Left
+            )
+            Spacer(Modifier.height(15.dp))
 
-            Row {
+            Column {
                 MatchFormatButton(
                     "COMPETITIVO",
                     seriedadSeleccionada == "COMPETITIVO",
-                    { seriedadSeleccionada = "COMPETITIVO" })
-                Spacer(Modifier.width(15.dp))
+                    { seriedadSeleccionada = "COMPETITIVO" },
+                    Modifier.fillMaxWidth())
+                Spacer(Modifier.height(8.dp))
                 MatchFormatButton(
                     "RECREATIVO",
                     seriedadSeleccionada == "RECREATIVO",
-                    { seriedadSeleccionada = "RECREATIVO" })
+                    { seriedadSeleccionada = "RECREATIVO" },
+                    Modifier.fillMaxWidth())
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(15.dp))
                 Text(
                     text = "REPUTACIÓN MÍNIMA APLICABLE",
                     modifier = Modifier.fillMaxWidth(),
@@ -724,8 +733,8 @@ fun DropdownButton(text: String, onClick: () -> Unit){
 }
 
 @Composable
-fun MatchFormatButton(text: String, selected: Boolean, onClick: ()->Unit){
-    Button(modifier = Modifier.width(160.dp).height(35.dp),
+fun MatchFormatButton(text: String, selected: Boolean, onClick: ()->Unit, modifier: Modifier = Modifier){
+    Button(modifier = Modifier.then(modifier).width(160.dp).height(35.dp),
             onClick = onClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = if(selected) Color(0xFF3C7440) else Color.Transparent,
