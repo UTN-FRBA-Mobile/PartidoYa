@@ -144,9 +144,9 @@ LaunchedEffect(existingProfile) {
 =======
  */
         var completo = profile?.name != "" && profile?.surname != "" &&
-        profile?.userIdentifier != "" && profile?.preferedPosition != "" &&
-        //profile?.playStyle != "" && profile?.location != "" &&
+        profile?.userIdentifier != "" && profile?.preferedPosition != "" && profile?.location != "" &&
         profile?.celular != ""
+        //profile?.playStyle != "" &&
 
         Column(
             verticalArrangement = Arrangement.Center,
