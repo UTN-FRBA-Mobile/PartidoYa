@@ -5,11 +5,11 @@ Aquí encontrarás una guía completa para aprender a utilizar la aplicación.
 ---
 
 ## 📱 Pantalla Principal
-Lorsque tu ouvres l'application, tu arrives sur un écran qui te demande de te connecter.
-Tu peux alors choisir de : 
-- Créer un compte.
-- Te connecter avec un compte existant.
-- Te connecter en utilisant Google.
+Al abrir la aplicación, llegarás a una pantalla que te solicita **iniciar sesión**.  
+Puedes elegir entre:
+- **Crear una cuenta**.
+- **Iniciar sesión** con una cuenta existente.
+- **Iniciar sesión** usando **Google**.
 
 <p align="center">
   <img src="./docs/assets/images/MainScreen.png" alt="Pantalla principal" width="40%">
@@ -18,39 +18,40 @@ Tu peux alors choisir de :
 ---
 
 ## 📝 Registro
-Pour créer un compte, tu dois :
-1. Spécifier ton adresse mail et ton mot de passe dans un premier temps.
-2. Puis dans un second temps, compléter tes informations de joueur (nom, style de jeu, poste de prédilection, etc).
-3. Tu peux alors utiliser PartidoYa! pour trouver ton prochain match !
+Para crear una cuenta, debes:
+1. Especificar tu **correo electrónico** y **contraseña** en un primer paso.
+2. Luego, completar tu **información de jugador** (nombre, estilo de juego, posición favorita, etc.).
+3. ¡Ahora puedes usar **PartidoYa!** para encontrar tu próximo partido!
 
 <p align="center">
-  <img src="./docs/assets/images/Inscription.png" alt="Pantalla de inscripcion" width="40%">
+  <img src="./docs/assets/images/Inscription.png" alt="Pantalla de inscripción" width="40%">
 </p>
 
 ---
 
 ## 🔐 Inicio de Sesión
-Si tu possèdes déjà un compte, il te suffit de renseigner ton adresse mail et ton mot de passe pour te connecter à l'application.
+Si ya tienes una cuenta, solo necesitas ingresar tu **correo electrónico** y **contraseña** para **acceder a la aplicación**.
 
 <p align="center">
-  <img src="docs/assets/images/Login.png" alt="Pantalla de login" width="40%">
+  <img src="docs/assets/images/Login.png" alt="Pantalla de inicio de sesión" width="40%">
 </p>
 
 ---
 
 ## 🏠 Pantalla Principal (Usuario Conectado)
-Une fois connecté, tu arrives sur l'écran principal. Sur celui-ci, tu retrouves :
-- Les boutons "Buscar Jugadores" et "Buscar Partidos".
-- Une barre de navigation en bas de ton écran. Celle-ci te permettra d'accéder aux différents onglets de l'application.
+Una vez **conectado**, llegarás a la **pantalla principal**, donde encontrarás:
+- Los botones **"Buscar Jugadores"** y **"Buscar Partidos"**.
+- Una **barra de navegación** en la parte inferior que permite acceder a las diferentes secciones de la aplicación.
 
 <p align="center">
-  <img src="./docs/assets/images/LoggedMainScreen.png" alt="Pantalla principal (usario conectado)" width="40%">
+  <img src="./docs/assets/images/LoggedMainScreen.png" alt="Pantalla principal (usuario conectado)" width="40%">
 </p>
 
 ---
 
 ## 👤 Perfil del Usuario
-L'icône tout à droite de la barre de navigation t'amène vers ton profil de joueur. Depuis le profil, tu peux consulter et modifier tes informations personnelles.
+El ícono ubicado a la **derecha** de la barra de navegación te lleva a tu **perfil de jugador**.  
+Desde el perfil puedes **consultar y editar** tu información personal.
 
 <p align="center">
   <img src="./docs/assets/images/ProfilePreview.png" alt="Pantalla del perfil personal" width="40%">
@@ -59,46 +60,46 @@ L'icône tout à droite de la barre de navigation t'amène vers ton profil de jo
 ---
 
 ## ➕ Crear un Partido
-L'écran principal (accessible via l'icône centrale) propose plusieurs boutons, dont "Buscar Jugadores".
-En appuyant sur ce bouton, l'utilisateur accède à la page de création de match.
-Il lui suffit ensuite de renseigner l'heure de début, la durée et le format du match, ainsi que le nombre de joueurs manquants (en indiquant éventuellement leur poste).
-Le match est alors publié, et d'autres utilisateurs peuvent s'inscrire pour y participer.
+La **pantalla principal** (accesible desde el ícono central) ofrece varios botones, incluido **"Buscar Jugadores"**.  
+Al presionar este botón, el usuario accede a la **página de creación de partido**.  
+Debes indicar la **hora de inicio**, la **duración**, el **tipo del partido** y el **número de jugadores necesarios** (indicando eventualmente su posición).  
+El partido se **publica**, y otros usuarios pueden **inscribirse** para participar.
 
 <p align="center">
-  <img src="./docs/assets/images/GameCreation.png" alt="Pantalla de creacion de partido" width="40%">
+  <img src="./docs/assets/images/GameCreation.png" alt="Pantalla de creación de partido" width="40%">
 </p>
 
 ---
 
 ## 🔎 Buscar un Partido
-L'écran principal propose aussi de chercher parmi les matchs déjà publiés via le bouton "Buscar Partidos".
-Lorsque le bouton est cliqué, les différents matchs existants sont proposés. Il est alors possible de s'inscrire à un ou plusieurs d'entre eux.
-De plus, si tu cliques sur le nom du terrain, une fenêtre s'ouvre affichant l'emplacement exact de celui-ci et offrant la possibilité d'ouvrir l'itinéraire dans Google Maps pour t'y rendre facilement.
+La **pantalla principal** también permite **buscar entre los partidos ya publicados** mediante el botón **"Buscar Partidos"**.  
+Al pulsar este botón, se muestran los partidos existentes, y es posible **inscribirse en uno o varios** de ellos.  
+Además, al hacer clic en el **nombre del cancha**, se abre una ventana mostrando la **ubicación exacta** y la opción de **abrir la ruta en Google Maps** para llegar fácilmente.
 
 <p align="center">
-  <img src="./docs/assets/images/SearchGames.png" alt="Pantalla de buscado de partido" width="40%">
-  <img src="./docs/assets/images/Map.png" alt="Pantalla con el map por la cancha" width="40%">
+  <img src="./docs/assets/images/SearchGames.png" alt="Pantalla de búsqueda de partido" width="40%">
+  <img src="./docs/assets/images/Map.png" alt="Pantalla con el mapa de la cancha" width="40%">
 </p>
 
 ---
 
 ## 📅 Mis Partidos
-L'icône de gauche nous emmène vers l'onglet "Mis Partidos", recensant tous les matchs auxquels l'utilisateur est inscrit.
-Les matchs sont divisés en 2 sections :
-1. Les matchs créés et publiés (dont l'utilisateur est organisateur).
-2. Les matchs rejoints en tant que joueur.
+El ícono de la **izquierda** te lleva a la sección **"Mis Partidos"**, donde se registran todos los partidos en los que el usuario está inscrito.  
+Los partidos se dividen en **2 secciones**:
+1. Partidos **creados y publicados** (donde el usuario es **organizador**).
+2. Partidos **a los que te has unido** como jugador.
 
-Depuis cet écran, il est également possible de consulter l'emplacement du terrain sur la carte ou d'annuler ta participation à un match.
+Desde esta pantalla, también es posible **ver la ubicación del cancha en el mapa** o **cancelar tu participación** en un partido.
 
 <p align="center">
   <img src="./docs/assets/images/PlayerGamesView.png" alt="Pantalla Mis Partidos (jugador)" width="40%">
-  <img src="./docs/assets/images/OrganizerGamesView.png" alt="Pantalla MyGames (organizador)" width="40%">
+  <img src="./docs/assets/images/OrganizerGamesView.png" alt="Pantalla Mis Partidos (organizador)" width="40%">
 </p>
 
 ---
 
 ## 📬 Autores
-- Ciro Fernandez
-- Gerardo Muñoz
-- Ramiro Navarro
-- Théo Parezys
+- **Ciro Fernandez**
+- **Gerardo Muñoz**
+- **Ramiro Navarro**
+- **Théo Parezys**
