@@ -105,3 +105,7 @@ Desde esta pantalla, también es posible **ver la ubicación del cancha en el ma
 - **Gerardo Muñoz** ([@GerrMunoz](https://github.com/GerrMunoz))
 - **Ramiro Navarro** ([@rami-nava](https://github.com/rami-nava))
 - **Théo Parezys** ([@MirageOff](https://github.com/MirageOff))
+
+
+## Link al backend
+https://github.com/rami-nava/partidoYa-backend 
