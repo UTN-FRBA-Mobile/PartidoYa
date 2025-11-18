@@ -99,6 +99,64 @@ Desde esta pantalla, también es posible **ver la ubicación del cancha en el ma
 </p>
 
 ---
+## Configuracion Oauth
+Para configuar el servicio de google Oauth se debe crear un web client en google cloud
+<img width="1919" height="944" alt="image" src="https://github.com/user-attachments/assets/e0999f7a-e3bb-465e-85a3-861ef2dd4833" />
+
+En la carpeta strings reemplazar web_client_id por el id del cliente creado
+<img width="913" height="22" alt="image" src="https://github.com/user-attachments/assets/ee32052e-e0c4-451c-b719-388fd365d78b" />
+
+Crear un cliente de android
+<img width="1917" height="944" alt="image" src="https://github.com/user-attachments/assets/031c6f27-71f2-4be0-bb54-1ff19b0fff92" />
+
+Indicar nombre del paquete com.example.partidoya y certificado SHA-1
+
+<img width="564" height="187" alt="image" src="https://github.com/user-attachments/assets/94bc34a8-263d-4cb3-ac84-dcb0bab80b32" />
+
+El certificado SHA-1 se puede obtener con el siguiente comando
+
+keytool -list -v \
+  -keystore ~/.android/debug.keystore \
+  -alias androiddebugkey \
+  -storepass android \
+  -keypass android
+  
+<img width="1042" height="308" alt="image" src="https://github.com/user-attachments/assets/3300deb6-2740-4424-95f4-ddca86c271aa" />
+
+
+En caso de que no exista generar con el comando a continuacion
+
+keytool -genkeypair -v \
+  -keystore ~/.android/debug.keystore \
+  -storepass android \
+  -alias androiddebugkey \
+  -keypass android \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000 \
+  -dname "CN=Android Debug,O=Android,C=US"
+  
+---
+## Puesta en marcha del backend
+Se necesita java con maven
+Base de datos postgress
+
+En el archivo application.yml indicar:
+Url de la base de datos con el sigueinte formatto jdbc:{URL}?sslmode=require
+Usuario y contrasenia de la base
+Secreto del JWT
+
+<img width="524" height="528" alt="image" src="https://github.com/user-attachments/assets/0cd2b675-5054-4cbd-aaf2-21171c6fa18d" />
+
+Compilar con el comando
+
+mvn clean install
+
+Levantar el backend con el comando
+
+java -jar target/api-0.0.1-SNAPSHOT.jar
+
+---
 
 ## 📬 Autores
 - **Ciro Fernandez** ([@Ziro41](https://github.com/Ziro41))
